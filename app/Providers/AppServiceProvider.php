@@ -19,6 +19,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        use Illuminate\Support\Facades\URL;
+
+public function boot(): void
+{
+    // Esto obliga a que toda URL generada sea https
+    if ($this->app->environment('production')) {
+        URL::forceScheme('https');
+    }
+}
     }
 }

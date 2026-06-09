@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: mi-proyecto-laravel
+    runtime: php
+    plan: free
+    buildCommand: "composer install && php artisan migrate --force"
+    startCommand: "apache2-foreground"
+    envVars:
+      - key: DB_HOST
+        value: switchback.proxy.rlwy.net
+      - key: DB_PORT
+        value: 53723
+      - key: DB_DATABASE
+        value: railway
+      - key: DB_USERNAME
+        value: root
+      - key: DB_PASSWORD
+        value: ocfIAXdwnaPCYsCcpvWepKMpWODXxWmZ
+      - key: APP_KEY
+        generate: true

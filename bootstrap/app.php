@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Configuración para que Laravel confíe en HTTPS de Render
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'es_admin' => \App\Http\Middleware\EsAdmin::class,
         ]);

@@ -28,12 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // CORREGIDO: Redirección según rol
-        if (auth()->user()->rol === 'administrador') {
-            return redirect()->route('admin.productos.index');
-        }
-
-        return redirect()->route('home');
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

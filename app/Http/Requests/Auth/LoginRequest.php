@@ -42,12 +42,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // CORRECTO: Mapeamos el input 'email' del formulario hacia tu columna 'correo' de la BD
-        if (! Auth::attempt(['correo' => $this->email, 'password' => $this->password], $this->boolean('remember'))) {
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => __('auth.failed'),
+                'email' => trans('auth.failed'),
             ]);
         }
 

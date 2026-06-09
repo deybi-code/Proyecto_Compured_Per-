@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Route;
 // ==========================================
 // RUTAS PÚBLICAS (VISIBLES PARA TODOS)
 // ==========================================
-
 // 1. Ruta del Home (Inicio de la tienda)
 Route::get('/', function () {
     // Todos los productos para el inicio
@@ -92,3 +91,7 @@ Route::middleware(['auth', \App\Http\Middleware\EsAdmin::class])->group(function
 });
 
 require __DIR__.'/auth.php';
+// Rutas de prueba para descartar problemas
+Route::get('/prueba-panel', function () {
+    return "Si ves este mensaje, el servidor y Laravel funcionan correctamente. El problema es solo el sistema de Login.";
+});

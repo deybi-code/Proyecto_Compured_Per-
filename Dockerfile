@@ -1,19 +1,15 @@
 # ============================================================
+# St# ============================================================
 # Stage 1: Build assets (Node + Vite)
 # ============================================================
 FROM node:20-alpine AS assets
-
 WORKDIR /app
-
 COPY package.json package-lock.json* ./
-RUN npm ci --ignore-scripts
-
-COPY resources/ resources/
-COPY vite.config.js ./
-COPY public/ public/
-
+RUN npm install
+COPY . .
 RUN npm run build
 
+# ... resto del Dockerfile igual ...
 # ============================================================
 # Stage 2: PHP app (PHP 8.2 + Nginx + FPM)
 # ============================================================

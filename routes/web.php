@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Route;
 // ==========================================
 // RUTAS PÚBLICAS (VISIBLES PARA TODOS)
 // ==========================================
-
+Route::get('/prueba-panel', function () {
+    return "Si ves esto, el panel de control funciona perfectamente.";
+});
 // 1. Ruta del Home (Inicio de la tienda)
 Route::get('/', function () {
     // Todos los productos para el inicio

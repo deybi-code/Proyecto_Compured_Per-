@@ -82,7 +82,5 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
 
 EXPOSE 80
-# Instalar dependencias de JS y compilar
-RUN npm install
-RUN npm run build
+
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

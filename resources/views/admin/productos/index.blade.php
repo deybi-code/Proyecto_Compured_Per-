@@ -309,7 +309,7 @@
 
         <div class="metrics-grid">
             <div class="metric-card" style="border-left-color: var(--primary-blue);">
-                <div class="metric-info"><h3>Total Ítems</h3><p>{{ count($destacados ?? []) }}</p></div>
+                <div class="metric-info"><h3>Total Ítems</h3><p>{{ count($productos ?? $destacados ?? []) }}</p></div>
                 <i class="fas fa-boxes metric-icon"></i>
             </div>
             <div class="metric-card" style="border-left-color: var(--success-green);">
@@ -332,28 +332,31 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($destacados ?? [] as $producto)
+                    @forelse($productos ?? $destacados ?? [] as $producto)
                     <tr>
                         <td>
-                            <img src="{{ asset('img/' . $producto->imagen) }}" class="img-preview-table" alt="Product Image">
+                            <!-- Muestra la foto actual del producto -->
+                            <img src="{{ asset('img/' . $producto->imagen) }}" class="img-preview-table" alt="Product Image" onerror="this.src='{{ asset('img/logo.png') }}'">
                         </td>
+                        <!-- Corregido para que use el campo exacto de tu tabla: id_producto -->
                         <td style="font-weight: 600;">{{ $producto->nombre }}</td>
                         <td><span class="badge badge-success">{{ $producto->categoria_filtro ?? 'Compured' }}</span></td>
                         <td style="font-weight: 700; color: var(--primary-blue);">S/ {{ $producto->precio }}</td>
                         <td>
-                            <span class="badge {{ ($producto->stock ?? 10) > 5 ? 'badge-success' : 'badge-danger' }}">
-                                {{ $producto->stock ?? '12' }} Unid.
+                            <span class="badge {{ ($producto->stock ?? 0) > 5 ? 'badge-success' : 'badge-danger' }}">
+                                {{ $producto->stock ?? '0' }} Unid.
                             </span>
                         </td>
                         <td>
                             <div class="actions-cell">
-                                <a href="{{ route('admin.productos.edit', $producto->id) }}" class="btn-icon btn-edit" title="Editar Producto">
+                                <!-- Enlace dinámico para ir a la vista de edición (donde cambias fotos, nombres, etc.) -->
+                                <a href="{{ route('admin.productos.edit', $producto->id_producto ?? $producto->id) }}" class="btn-icon btn-edit" title="Editar Producto y Fotos">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <form action="{{ route('admin.productos.destroy', $producto->id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('admin.productos.destroy', $producto->id_producto ?? $producto->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Seguro de eliminar este producto?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-icon btn-delete" title="Eliminar" onclick="return confirm('¿Seguro de eliminar este producto?')">
+                                    <button type="submit" class="btn-icon btn-delete" title="Eliminar">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
@@ -361,7 +364,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">No se registran productos en el sistema.</td></tr>
+                    <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">No se registran productos en el sistema. Verifique la variable del Controlador.</td></tr>
                     @endforelse
                 </tbody>
             </table>

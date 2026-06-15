@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Compured Peru</title>
-
     <style>
         * {
             margin: 0;
@@ -139,6 +138,7 @@
         <form method="POST" action="{{ route('register') }}">
             @csrf
 
+            <!-- Campo Nombre -->
             <div class="form-group">
                 <label for="name">Nombre Completo</label>
                 <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Ingresa tu nombre" required autofocus autocomplete="name">
@@ -147,6 +147,7 @@
                 @enderror
             </div>
 
+            <!-- Campo Correo Electrónico -->
             <div class="form-group">
                 <label for="email">Correo Electrónico</label>
                 <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="ejemplo@compured.com" required autocomplete="username">
@@ -155,6 +156,7 @@
                 @enderror
             </div>
 
+            <!-- Campo Contraseña -->
             <div class="form-group">
                 <label for="password">Contraseña</label>
                 <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required autocomplete="new-password">
@@ -163,6 +165,7 @@
                 @enderror
             </div>
 
+            <!-- Campo Confirmar Contraseña -->
             <div class="form-group">
                 <label for="password_confirmation">Confirmar Contraseña</label>
                 <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Repite tu contraseña" required autocomplete="new-password">

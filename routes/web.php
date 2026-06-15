@@ -8,18 +8,15 @@ use Illuminate\Support\Facades\Route;
 // ==========================================
 // RUTAS PÚBLICAS (VISIBLES PARA TODOS)
 // ==========================================
+
 // 1. Ruta del Home (Inicio de la tienda)
 Route::get('/', function () {
-    // Todos los productos para el inicio
     $productos = Producto::all();
-
-    // Productos para la sección de "destacados" (tomamos 4 para rellenar la sección)
     $destacados = Producto::query()->where('mostrar_inicio', 1)->take(4)->get();
-
-    // Enviamos ambas variables a la vista
     return view('index', compact('productos', 'destacados'));
 })->name('inicio');
 
+// 2. Buscador global
 Route::get('/buscar', function (\Illuminate\Http\Request $request) {
     $termino = $request->query('q') ?? $request->query('buscar') ?? '';
 
@@ -31,6 +28,7 @@ Route::get('/buscar', function (\Illuminate\Http\Request $request) {
     return view('buscar', compact('productos', 'termino'));
 })->name('buscar');
 
+// 3. Carrito de Compras
 Route::get('/carrito', function () {
     return view('carrito');
 })->name('carrito');
@@ -40,19 +38,17 @@ Route::get('/carrito', function () {
 // ==========================================
 Route::get('/categoria/{id}', function ($id) {
     $productos = Producto::query()->where('id_categoria', $id)->get();
-
-    // Asignamos el valor a la variable $categoria que espera tu vista
     $categoria = $id;
-
     return view('categoria', compact('productos', 'categoria'));
 })->name('categoria');
 
 // ==========================================
-// RUTA DE DETALLE DE PRODUCTO
+// RUTA DE DETALLE DE PRODUCTO (CORREGIDA)
 // ==========================================
-Route::get('/producto/{id}', function ($id) {
-    // 1. Traemos el producto principal
-    $producto = Producto::findOrFail($id);
+// Soporta tanto /products/id como /producto/id para sincronizar con tus enlaces del Home
+Route::get('/products/{id}', function ($id) {
+    // CORRECCIÓN CRÍTICA: Buscar usando la clave id_producto para evitar el Error 500
+    $producto = Producto::where('id_producto', $id)->firstOrFail();
 
     $relacionados = Producto::query()
         ->where('id_categoria', $producto->id_categoria)
@@ -60,13 +56,23 @@ Route::get('/producto/{id}', function ($id) {
         ->take(4)
         ->get();
 
-    // 3. Enviamos ambas variables a la vista
     return view('producto', compact('producto', 'relacionados'));
 })->name('producto');
+
+// Clon de compatibilidad por si alguna vista aún llama a /producto/{id}
+Route::get('/producto/{id}', function ($id) {
+    $producto = Producto::where('id_producto', $id)->firstOrFail();
+    $relacionados = Producto::query()
+        ->where('id_categoria', $producto->id_categoria)
+        ->where('id_producto', '!=', $id)
+        ->take(4)
+        ->get();
+    return view('producto', compact('producto', 'relacionados'));
+});
+
 // ==========================================
 // RUTAS PROTEGIDAS (USUARIOS NORMALES)
 // ==========================================
-
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -80,7 +86,6 @@ Route::middleware('auth')->group(function () {
 // ==========================================
 // RUTAS DE ADMINISTRADOR (SOLO ADMIN)
 // ==========================================
-
 Route::middleware(['auth', \App\Http\Middleware\EsAdmin::class])->group(function () {
     Route::get('/admin/productos', [AdminProductoController::class, 'index'])->name('admin.productos.index');
     Route::get('/admin/productos/create', [AdminProductoController::class, 'create'])->name('admin.productos.create');
@@ -91,6 +96,7 @@ Route::middleware(['auth', \App\Http\Middleware\EsAdmin::class])->group(function
 });
 
 require __DIR__.'/auth.php';
+
 // Rutas de prueba para descartar problemas
 Route::get('/prueba-panel', function () {
     return "Si ves este mensaje, el servidor y Laravel funcionan correctamente. El problema es solo el sistema de Login.";

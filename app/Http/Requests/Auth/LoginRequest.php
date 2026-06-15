@@ -39,19 +39,20 @@ class LoginRequest extends FormRequest
      * @throws ValidationException
      */
     public function authenticate(): void
-    {
-        $this->ensureIsNotRateLimited();
+{
+    $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+    // Modificado para usar 'correo' en lugar de 'email' según tu base de datos
+    if (! Auth::attempt(['correo' => $this->email, 'password' => $this->password], $this->boolean('remember'))) {
+        RateLimiter::hit($this->throttleKey());
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
-        }
-
-        RateLimiter::clear($this->throttleKey());
+        throw ValidationException::withMessages([
+            'email' => __('auth.failed'),
+        ]);
     }
+
+    RateLimiter::clear($this->throttleKey());
+}
 
     /**
      * Ensure the login request is not rate limited.
@@ -79,8 +80,7 @@ class LoginRequest extends FormRequest
     /**
      * Get the rate limiting throttle key for the request.
      */
-    public function throttleKey(): string
-    {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
-    }
-}
+public function throttleKey(): string
+{
+    return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
+}}

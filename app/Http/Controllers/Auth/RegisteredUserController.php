@@ -28,24 +28,29 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+public function store(Request $request): RedirectResponse
+{
+    // 1. Validamos usando los nombres de los inputs del formulario tradicional
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:usuarios,correo'], // Apunta a tu tabla 'usuarios' y columna 'correo'
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    // 2. Mapeamos las variables a las columnas reales de tu tabla 'usuarios'
+    $user = User::create([
+        'nombre_completo' => $request->name,
+        'correo'          => $request->email,
+        'password'        => Hash::make($request->password), // Encriptación correcta para Laravel
+        'rol'             => 'normal',                       // Soluciona el NOT NULL de la DB
+        'preferencia_tema'=> 'light',                        // Soluciona el NOT NULL de la DB
+        'fecha_registro'  => now(),                         // Llena el campo de fecha actual
+    ]);
 
-        event(new Registered($user));
+    event(new Registered($user));
 
-        Auth::login($user);
+    Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
-    }
+    return redirect(route('dashboard', absolute: false));
+}
 }

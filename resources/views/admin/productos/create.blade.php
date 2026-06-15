@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Producto - Panel Compured</title>
+    <title>Agregar Producto - Panel Compured</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
@@ -45,7 +45,17 @@
             min-height: 100vh;
         }
 
-        .sidebar { width: 280px; background-color: var(--bg-sidebar); color: white; padding: 30px 20px; }
+        .sidebar {
+            width: 280px; background-color: var(--bg-sidebar); color: white; padding: 30px 20px;
+            display: flex; flex-direction: column; gap: 30px;
+        }
+
+        .sidebar-brand {
+            font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px;
+        }
+        .sidebar-brand span { color: var(--light-blue); }
+
         .main-content { flex: 1; padding: 40px; overflow-y: auto; }
         .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
         .top-header h1 { font-size: 26px; font-weight: 800; }
@@ -60,20 +70,32 @@
         .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 30px; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         .form-group.full-width { grid-column: span 2; }
+        .form-group.checkbox-group { flex-direction: row; align-items: center; gap: 10px; padding-top: 10px; }
+        .form-group.checkbox-group input { width: auto; cursor: pointer; }
+
         label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 8px; font-size: 14px; }
+        input, select, textarea {
+            width: 100%; padding: 12px 15px; border: 2px solid var(--border-color);
+            background-color: var(--input-bg); color: var(--text-main); border-radius: 8px; font-size: 14px; outline: none;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-blue); }
 
         .image-upload-zone {
             border: 2px dashed var(--primary-blue); background-color: rgba(0, 82, 204, 0.02);
             border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; position: relative;
         }
+        .image-upload-zone i { font-size: 40px; color: var(--primary-blue); margin-bottom: 10px; }
         .image-upload-zone input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
         .preview-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-top: 15px; }
         .preview-item { position: relative; width: 100px; height: 100px; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; background: white; }
         .preview-item img { width: 100%; height: 100%; object-fit: contain; }
 
-        .btn-update { padding: 12px 30px; background-color: var(--primary-blue); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; }
+        .btn-submit-form {
+            padding: 12px 30px; background-color: var(--success-green); color: white; border: none;
+            border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(54, 179, 126, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -86,63 +108,71 @@
 
     <div class="main-content">
         <div class="top-header">
-            <h1>Editar Producto: {{ $producto->nombre }}</h1>
-            <a href="{{ route('admin.productos.index') }}" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Cancelar
+            <h1>Agregar Nuevo Producto</h1>
+            <a href="/admin/productos" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Volver al Panel
             </a>
         </div>
 
         <div class="form-container">
-            <form action="{{ route('admin.productos.update', $producto->id_producto ?? $producto->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="/admin/productos" method="POST" enctype="multipart/form-data">
                 @csrf
-                @method('PUT')
-
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="nombre">Nombre del Producto</label>
-                        <input type="text" id="nombre" name="nombre" value="{{ $producto->nombre }}" required>
+                        <input type="text" id="nombre" name="nombre" required placeholder="Ej. Memoria RAM Kingston 16GB">
                     </div>
 
                     <div class="form-group">
-                        <label for="categoria_filtro">Categoría / Filtro</label>
-                        <input type="text" id="categoria_filtro" name="categoria_filtro" value="{{ $producto->categoria_filtro ?? '' }}">
+                        <label for="id_categoria">Categoría</label>
+                        <select id="id_categoria" name="id_categoria" required>
+                            <option value="">Seleccione una categoría</option>
+                            @foreach($categorias as $categoria)
+                                <option value="{{ $categoria->id_categoria }}">{{ $categoria->nombre }}</option>
+                            @endforeach
+                        </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="precio">Precio Actual (S/)</label>
-                        <input type="number" id="precio" name="precio" step="0.01" value="{{ $producto->precio }}" required>
-                    </div>
+                    <div class="form-grid" style="grid-column: span 2; margin-bottom: 0; gap: 25px;">
+                        <div class="form-group">
+                            <label for="precio">Precio (S/)</label>
+                            <input type="number" id="precio" name="precio" step="0.01" required placeholder="0.00">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="stock">Stock en Almacén</label>
-                        <input type="number" id="stock" name="stock" value="{{ $producto->stock ?? 12 }}" required>
+                        <div class="form-group">
+                            <label for="stock">Stock Inicial</label>
+                            <input type="number" id="stock" name="stock" placeholder="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="marca">Marca</label>
+                            <input type="text" id="marca" name="marca" placeholder="Ej. ASUS, Kingston, Intel">
+                        </div>
                     </div>
 
                     <div class="form-group full-width">
-                        <label for="descripcion">Descripción Técnica</label>
-                        <textarea id="descripcion" name="descripcion" rows="4">{{ $producto->descripcion ?? '' }}</textarea>
+                        <label for="detalles_tecnicos">Detalles Técnicos / Descripción</label>
+                        <textarea id="detalles_tecnicos" name="detalles_tecnicos" rows="4" placeholder="Especificaciones de rendimiento..."></textarea>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="mostrar_inicio" name="mostrar_inicio" value="1">
+                        <label for="mostrar_inicio" style="text-transform: none; font-size: 14px; color: var(--text-main); cursor: pointer;">Mostrar este producto destacado en el Home</label>
                     </div>
 
                     <div class="form-group full-width">
-                        <label>Imágenes Asociadas (Puedes cargar nuevas para reemplazar)</label>
+                        <label>Imágenes del Producto</label>
                         <div class="image-upload-zone">
-                            <i class="fas fa-images"></i>
-                            <p style="font-weight:600; font-size:14px;">Haz clic aquí para sustituir o añadir fotos múltiples</p>
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p style="font-weight:600; font-size:14px; margin-bottom:5px;">Selecciona imágenes para el producto</p>
                             <input type="file" id="imagenes" name="imagenes[]" accept="image/*" multiple onchange="previewImages()">
                         </div>
-
-                        <div class="preview-gallery" id="gallery">
-                            @if(isset($producto->imagen))
-                            <div class="preview-item" title="Imagen Actual">
-                                <img src="{{ asset('img/' . $producto->imagen) }}" alt="Actual">
-                            </div>
-                            @endif
-                        </div>
+                        <div class="preview-gallery" id="gallery"></div>
                     </div>
                 </div>
 
                 <div style="display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn-update">Actualizar Cambios</button>
+                    <button type="submit" class="btn-submit-form">Crear Producto</button>
                 </div>
             </form>
         </div>
@@ -150,13 +180,13 @@
 
     <script>
         const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
         if (currentTheme === 'dark') { document.body.classList.add('dark-mode'); }
 
         function previewImages() {
             const preview = document.getElementById('gallery');
-            preview.innerHTML = ""; // Limpia la galería vieja al seleccionar nuevos archivos
+            preview.innerHTML = "";
             const files = document.getElementById('imagenes').files;
-
             if (files) { [].forEach.call(files, readAndPreview); }
 
             function readAndPreview(file) {

@@ -18,7 +18,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .register-container {
@@ -28,7 +29,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             width: 100%;
             max-width: 450px;
-            border-top: 5px solid #0052cc; /* Azul principal */
+            border-top: 5px solid #0052cc;
         }
 
         .register-header {
@@ -37,15 +38,15 @@
         }
 
         .register-header h1 {
-            color: #0052cc; /* Azul principal del logo */
-            font-size: 28px;
+            color: #0052cc;
+            font-size: 26px;
             font-weight: bold;
             letter-spacing: -0.5px;
             margin-bottom: 5px;
         }
 
         .register-header h1 span {
-            color: #00a3ff; /* Azul claro de "Peru" */
+            color: #00a3ff;
         }
 
         .register-header p {
@@ -78,20 +79,14 @@
 
         .form-group input:focus {
             outline: none;
-            border-color: #0052cc; /* Foco azul */
+            border-color: #0052cc;
             box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.15);
-        }
-
-        /* Input con enfoque verde lima inspirado en el logo */
-        .form-group input.valid-accent:focus {
-            border-color: #8cc63f;
-            box-shadow: 0 0 0 3px rgba(140, 198, 63, 0.2);
         }
 
         .btn-register {
             width: 100%;
             padding: 12px;
-            background: #0052cc; /* Azul del logo */
+            background: #0052cc;
             border: none;
             border-radius: 6px;
             color: white;
@@ -101,10 +96,11 @@
             transition: background 0.3s ease;
             margin-top: 10px;
             box-shadow: 0 2px 5px rgba(0, 82, 204, 0.2);
+            text-transform: uppercase;
         }
 
         .btn-register:hover {
-            background: #0043a4; /* Azul más oscuro al pasar el mouse */
+            background: #0043a4;
         }
 
         .register-footer {
@@ -115,7 +111,7 @@
         }
 
         .register-footer a {
-            color: #00a3ff; /* Enlace en azul claro */
+            color: #00a3ff;
             text-decoration: none;
             font-weight: 600;
         }
@@ -136,16 +132,16 @@
 
     <div class="register-container">
         <div class="register-header">
-            <h1>COMPURED<span>PERU</span></h1>
+            <h1>COMPURED <span>PERU</span></h1>
             <p>Tecnología Informática a tu Alcance</p>
         </div>
 
-        <form action="{{ route('register.store') }}" method="POST">
+        <form method="POST" action="{{ route('register') }}">
             @csrf
 
             <div class="form-group">
                 <label for="name">Nombre Completo</label>
-                <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Ingresa tu nombre" required autofocus>
+                <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Ingresa tu nombre" required autofocus autocomplete="name">
                 @error('name')
                     <p class="error-message">{{ $message }}</p>
                 @enderror
@@ -153,7 +149,7 @@
 
             <div class="form-group">
                 <label for="email">Correo Electrónico</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="ejemplo@compured.com" required>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="ejemplo@compured.com" required autocomplete="username">
                 @error('email')
                     <p class="error-message">{{ $message }}</p>
                 @enderror
@@ -161,7 +157,7 @@
 
             <div class="form-group">
                 <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required>
+                <input type="password" id="password" name="password" placeholder="Mínimo 8 caracteres" required autocomplete="new-password">
                 @error('password')
                     <p class="error-message">{{ $message }}</p>
                 @enderror
@@ -169,7 +165,7 @@
 
             <div class="form-group">
                 <label for="password_confirmation">Confirmar Contraseña</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Repite tu contraseña" required>
+                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Repite tu contraseña" required autocomplete="new-password">
             </div>
 
             <button type="submit" class="btn-register">Registrarse</button>

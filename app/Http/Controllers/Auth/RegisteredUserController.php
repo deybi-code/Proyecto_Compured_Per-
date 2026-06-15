@@ -51,6 +51,7 @@ public function store(Request $request): RedirectResponse
 
     Auth::login($user);
 
-    return redirect(route('dashboard', absolute: false));
+    // Te loguea y te manda directo al Home con el mensaje de éxito
+    return redirect('/')->with('status', '¡Registro exitoso! Bienvenido a Compured Perú.');
 }
 }

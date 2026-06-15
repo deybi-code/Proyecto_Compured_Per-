@@ -8,16 +8,28 @@
 </head>
 <body>
 
-<!-- BARRA SUPERIOR -->
+@if (session('status'))
+    <div id="success-alert" style="background-color: #d4edda; color: #155724; padding: 12px 20px; text-align: center; font-weight: 600; font-size: 14px; border-bottom: 1px solid #c3e6cb; display: flex; justify-content: center; align-items: center; gap: 15px; font-family: sans-serif;">
+        <span><i class="fas fa-check-circle"></i> {{ session('status') }}</span>
+        <button onclick="document.getElementById('success-alert').style.display='none'" style="background: none; border: none; color: #155724; font-size: 16px; cursor: pointer; font-weight: bold;">✕</button>
+    </div>
+@endif
+
 <div class="top-info">
     <div class="top-left"></div>
     <div class="top-right">
-        <a href="{{ route('register') }}">Registrarse</a>
-        <a href="{{ route('login') }}">Iniciar sesión</a>
+        @guest
+            <a href="{{ route('register') }}">Registrarse</a>
+            <a href="{{ route('login') }}">Iniciar sesión</a>
+        @endguest
+        @auth
+            <span style="color: white; font-size: 13px; font-weight: bold; padding-right: 15px;">
+                <i class="fas fa-user-check"></i> {{ Auth::user()->nombre_completo }}
+            </span>
+        @endauth
     </div>
 </div>
 
-<!-- HEADER -->
 <header class="topbar">
     <div class="logo">
         <a href="{{ route('inicio') }}">
@@ -63,20 +75,49 @@
             <span><i class="fas fa-moon"></i></span>
             <span>Oscuro</span>
         </button>
-        <a href="{{ route('login') }}" class="topbar-icon">
-            <span><i class="fas fa-user"></i></span>
-            <span>Mi cuenta</span>
-        </a>
+
+        @auth
+            @if(Auth::user()->rol === 'administrador')
+                <a href="{{ url('/admin/productos') }}" class="topbar-icon" style="color: #0052cc;">
+                    <span><i class="fas fa-user-shield"></i></span>
+                    <span>Panel Admin</span>
+                </a>
+            @endif
+        @endauth
+
+        <div style="position: relative; display: inline-block;">
+            <a href="#" onclick="toggleUserDropdown(event)" id="dropdownBtn" class="topbar-icon">
+                <span><i class="fas fa-user"></i></span>
+                <span>{{ Auth::check() ? Auth::user()->nombre_completo : 'Mi cuenta' }}</span>
+            </a>
+
+            <div id="userDropdown" style="display: none; position: absolute; right: 0; top: 50px; background-color: #ffffff; min-width: 180px; border: 1px solid #dfe1e6; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); z-index: 1000; overflow: hidden;">
+                @auth
+                    <a href="{{ route('profile.edit') }}" style="display: block; padding: 12px 16px; color: #172b4d; text-decoration: none; font-size: 13px; font-weight: 600;" onmouseover="this.style.background='#f4f5f7'" onmouseout="this.style.background='#ffffff'">
+                        <i class="fas fa-id-card" style="margin-right: 8px;"></i> Ver detalles
+                    </a>
+                    <hr style="border: 0; border-top: 1px solid #dfe1e6; margin: 0;">
+                    <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                        @csrf
+                        <button type="submit" style="display: block; width: 100%; text-align: left; padding: 12px 16px; background: none; border: none; color: #de350b; font-size: 13px; font-weight: bold; cursor: pointer;" onmouseover="this.style.background='#ffebe6'" onmouseout="this.style.background='none'">
+                            <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Cerrar sesión
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" style="display: block; padding: 12px 16px; color: #172b4d; text-decoration: none; font-size: 13px; font-weight: 600;" onmouseover="this.style.background='#f4f5f7'" onmouseout="this.style.background='#ffffff'">Inicia Sesión</a>
+                    <a href="{{ route('register') }}" style="display: block; padding: 12px 16px; color: #172b4d; text-decoration: none; font-size: 13px; font-weight: 600;" onmouseover="this.style.background='#f4f5f7'" onmouseout="this.style.background='#ffffff'">Registrarse</a>
+                @endauth
+            </div>
+        </div>
+
     </div>
 </header>
 
 
-<!-- BANNER -->
 <section class="banner">
     <img src="{{ asset('img/banner.jpg') }}" alt="Banner">
 </section>
 
-<!-- MARCAS -->
 <section class="marcas">
     <img src="{{ asset('img/marca1.jpg') }}">
     <img src="{{ asset('img/marca2.jpg') }}">
@@ -85,10 +126,8 @@
     <img src="{{ asset('img/marca5.jpg') }}">
 </section>
 
-<!-- LINEA -->
 <div class="linea"></div>
 
-<!-- CONTENIDO -->
 <section class="contenido">
 
     <div class="categorias">
@@ -151,7 +190,6 @@
         </div>
     </div>
 
-<!-- MODAL VISTA RÁPIDA -->
 <div id="modal-rapida" class="modal-overlay" onclick="cerrarModal(event)">
     <div class="modal-contenido">
         <button class="modal-cerrar" onclick="document.getElementById('modal-rapida').style.display='none'">✕</button>
@@ -174,7 +212,6 @@
 
 </section>
 
-<!-- FOOTER -->
 <footer class="footer">
     <div class="footer-grid">
         <div class="footer-col">
@@ -213,6 +250,21 @@
 <a href="https://wa.me/960900386" class="whatsapp" target="_blank">
     <i class="fab fa-whatsapp"></i>
 </a>
+
+<script>
+    function toggleUserDropdown(event) {
+        event.preventDefault();
+        const dropdown = document.getElementById('userDropdown');
+        dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'block' : 'none';
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('#dropdownBtn') && !event.target.closest('#dropdownBtn')) {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown && dropdown.style.display === 'block') { dropdown.style.display = 'none'; }
+        }
+    }
+</script>
 
 <script src="{{ asset('js/carrito.js') }}"></script>
 

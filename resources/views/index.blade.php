@@ -113,7 +113,6 @@
     </div>
 </header>
 
-
 <section class="banner">
     <img src="{{ asset('img/banner.jpg') }}" alt="Banner">
 </section>
@@ -252,18 +251,35 @@
 </a>
 
 <script>
-    function toggleUserDropdown(event) {
-        event.preventDefault();
-        const dropdown = document.getElementById('userDropdown');
-        dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'block' : 'none';
-    }
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
 
-    window.onclick = function(event) {
-        if (!event.target.matches('#dropdownBtn') && !event.target.closest('#dropdownBtn')) {
-            const dropdown = document.getElementById('userDropdown');
-            if (dropdown && dropdown.style.display === 'block') { dropdown.style.display = 'none'; }
-        }
+    if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+    } else {
+        localStorage.setItem('theme', 'light');
     }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+});
+
+function toggleUserDropdown(event) {
+    event.preventDefault();
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.style.display = dropdown.style.display === 'none' || dropdown.style.display === '' ? 'block' : 'none';
+}
+
+window.onclick = function(event) {
+    if (!event.target.matches('#dropdownBtn') && !event.target.closest('#dropdownBtn')) {
+        const dropdown = document.getElementById('userDropdown');
+        if (dropdown && dropdown.style.display === 'block') { dropdown.style.display = 'none'; }
+    }
+}
 </script>
 
 <script src="{{ asset('js/carrito.js') }}"></script>

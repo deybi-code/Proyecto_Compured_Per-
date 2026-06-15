@@ -8,7 +8,7 @@
     <style>
         :root {
             --bg-body: #f4f6f9;
-            --bg-card: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.95);
             --text-main: #172b4d;
             --text-muted: #7a869a;
             --border-color: #dfe1e6;
@@ -16,12 +16,12 @@
             --light-blue: #00a3ff;
             --hover-blue: #0043a4;
             --input-bg: #ffffff;
-            --shadow: 0 10px 25px rgba(0, 82, 204, 0.08);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
         [data-theme="dark"] {
             --bg-body: #0f172a;
-            --bg-card: #1e293b;
+            --bg-card: rgba(30, 41, 59, 0.95);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
@@ -29,19 +29,21 @@
             --light-blue: #0ea5e9;
             --hover-blue: #0284c7;
             --input-bg: #0f172a;
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            transition: background-color 0.3s, border-color 0.3s, color 0.3s;
         }
 
         body {
-            background-color: var(--bg-body);
+            /* Foto de fondo HD de servidores / computadoras de fondo */
+            background: linear-gradient(rgba(0, 82, 204, 0.15), rgba(15, 23, 42, 0.8)),
+                        url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1920') no-repeat center center/cover;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -49,79 +51,26 @@
             padding: 20px;
         }
 
-        /* Switch de Modo Oscuro */
-        .theme-switch-wrapper {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .theme-switch {
-            display: inline-block;
-            height: 26px;
-            position: relative;
-            width: 50px;
-        }
-
-        .theme-switch input { display: none; }
-
-        .slider {
-            background-color: #ccc;
-            bottom: 0;
-            cursor: pointer;
-            left: 0;
-            position: relative;
-            right: 0;
-            top: 0;
-            transition: .4s;
-            border-radius: 34px;
-            height: 26px;
-            width: 50px;
-            display: block;
-        }
-
-        .slider:before {
-            background-color: white;
-            bottom: 3px;
-            content: "";
-            height: 20px;
-            left: 4px;
-            position: absolute;
-            transition: .4s;
-            width: 20px;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider { background-color: #0052cc; }
-        input:checked + .slider:before { transform: translateX(22px); }
-
-        /* Contenedor Principal */
         .auth-container {
             background-color: var(--bg-card);
+            backdrop-filter: blur(8px);
             padding: 40px;
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             border-top: 5px solid var(--primary-blue);
-            position: relative;
+            text-align: center;
         }
 
-        /* Encabezado con Logo Corporativo */
         .auth-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
             margin-bottom: 25px;
         }
 
         .auth-header img {
-            height: 55px;
+            height: 60px;
             width: auto;
-            object-fit: contain;
+            margin-bottom: 15px;
         }
 
         .auth-title h1 {
@@ -129,7 +78,6 @@
             font-size: 24px;
             font-weight: 800;
             letter-spacing: -0.5px;
-            line-height: 1.1;
         }
 
         .auth-title h1 span { color: var(--light-blue); }
@@ -138,12 +86,12 @@
             color: var(--text-muted);
             font-size: 12px;
             font-style: italic;
-            font-weight: 500;
+            margin-top: 4px;
         }
 
-        /* Formulario */
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            text-align: left;
         }
 
         .form-group label {
@@ -160,7 +108,7 @@
             border: 2px solid var(--border-color);
             background-color: var(--input-bg);
             color: var(--text-main);
-            border-radius: 7px;
+            border-radius: 8px;
             font-size: 14px;
         }
 
@@ -170,7 +118,6 @@
             box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.15);
         }
 
-        /* Utilidades extras de Login */
         .form-options {
             display: flex;
             justify-content: space-between;
@@ -183,13 +130,9 @@
             display: flex;
             align-items: center;
             color: var(--text-muted);
-            font-weight: 500;
         }
 
-        .remember-me input {
-            margin-right: 6px;
-            accent-color: var(--primary-blue);
-        }
+        .remember-me input { margin-right: 6px; }
 
         .forgot-password {
             color: var(--light-blue);
@@ -197,70 +140,22 @@
             font-weight: 600;
         }
 
-        .forgot-password:hover { text-decoration: underline; }
-
         .btn-submit {
             width: 100%;
             padding: 12px;
             background-color: #0052cc;
             border: none;
-            border-radius: 7px;
+            border-radius: 8px;
             color: white;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 82, 204, 0.15);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .btn-submit:hover { background-color: var(--hover-blue); }
 
-        /* Separador */
-        .separator {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 20px 0;
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-
-        .separator::before, .separator::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .separator:not(:empty)::before { margin-right: .5em; }
-        .separator:not(:empty)::after { margin-left: .5em; }
-
-        /* Botón de Google Corporativo */
-        .btn-google {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            padding: 11px;
-            background-color: var(--bg-card);
-            border: 2px solid var(--border-color);
-            border-radius: 7px;
-            text-decoration: none;
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .btn-google:hover { background-color: var(--bg-body); }
-
-        .btn-google img {
-            width: 18px;
-            height: 18px;
-            margin-right: 10px;
-        }
-
         .auth-footer {
-            text-align: center;
             margin-top: 25px;
             font-size: 13px;
             color: var(--text-muted);
@@ -272,11 +167,6 @@
             font-weight: 600;
         }
 
-        .auth-footer a:hover {
-            color: var(--primary-blue);
-            text-decoration: underline;
-        }
-
         .error-message {
             color: #de350b;
             font-size: 12px;
@@ -286,16 +176,9 @@
 </head>
 <body>
 
-    <div class="theme-switch-wrapper">
-        <label class="theme-switch" for="checkbox">
-            <input type="checkbox" id="checkbox" />
-            <div class="slider"></div>
-        </label>
-    </div>
-
     <div class="auth-container">
         <div class="auth-header">
-            <img src="https://raw.githubusercontent.com/deybi-code/Proyecto_Compured_Per-/main/public/images/logo.png" onerror="this.src='https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png'; this.style.height='35px';" alt="Compured Peru Logo">
+            <img src="https://raw.githubusercontent.com/deybi-code/Proyecto_Compured_Per-/main/public/images/logo.png" onerror="this.style.display='none';" alt="Compured Peru Logo">
             <div class="auth-title">
                 <h1>COMPURED <span>PERU</span></h1>
                 <p>Tecnología Informática a tu Alcance</p>
@@ -307,60 +190,35 @@
 
             <div class="form-group">
                 <label for="email">Correo Electrónico</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="ejemplo@compured.com" required autofocus autocomplete="username">
+                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="ejemplo@compured.com" required autofocus>
                 @error('email') <p class="error-message">{{ $message }}</p> @enderror
             </div>
 
             <div class="form-group">
                 <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required autocomplete="current-password">
+                <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
                 @error('password') <p class="error-message">{{ $message }}</p> @enderror
             </div>
 
             <div class="form-options">
-                <label class="remember-me" for="remember_me">
-                    <input type="checkbox" id="remember_me" name="remember">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember">
                     <span>Recordarme</span>
                 </label>
-                @if (Route::has('password.request'))
-                    <a class="forgot-password" href="{{ route('password.request') }}">¿Olvidaste tu clave?</a>
-                @endif
+                <a class="forgot-password" href="{{ route('password.request') }}">¿Olvidaste tu clave?</a>
             </div>
 
             <button type="submit" class="btn-submit">Iniciar Sesión</button>
         </form>
 
-        <div class="separator">O ingresa con</div>
-
-        <a href="{{ url('auth/google') }}" class="btn-google">
-            <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/web-24dp/logo_googleg_color_24dp.png" alt="Google Logo">
-            Iniciar sesión con Google
-        </a>
-
         <div class="auth-footer">
-            ¿No tienes una cuenta empresarial? <a href="{{ route('register') }}">Regístrate aquí</a>
+            ¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate aquí</a>
         </div>
     </div>
 
     <script>
-        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-        const currentTheme = localStorage.getItem('theme');
-
-        if (currentTheme) {
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            if (currentTheme === 'dark') { toggleSwitch.checked = true; }
-        }
-
-        function switchTheme(e) {
-            if (e.target.checked) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            }
-        }
-        toggleSwitch.addEventListener('change', switchTheme, false);
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
     </script>
 </body>
 </html>

@@ -8,7 +8,7 @@
     <style>
         :root {
             --bg-body: #f4f6f9;
-            --bg-card: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.95);
             --text-main: #172b4d;
             --text-muted: #7a869a;
             --border-color: #dfe1e6;
@@ -16,12 +16,12 @@
             --light-blue: #00a3ff;
             --hover-blue: #0043a4;
             --input-bg: #ffffff;
-            --shadow: 0 10px 25px rgba(0, 82, 204, 0.08);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
         [data-theme="dark"] {
             --bg-body: #0f172a;
-            --bg-card: #1e293b;
+            --bg-card: rgba(30, 41, 59, 0.95);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
@@ -29,7 +29,7 @@
             --light-blue: #0ea5e9;
             --hover-blue: #0284c7;
             --input-bg: #0f172a;
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
 
         * {
@@ -41,7 +41,9 @@
         }
 
         body {
-            background-color: var(--bg-body);
+            /* Sincronizado con el fondo tecnológico premium del login */
+            background: linear-gradient(rgba(0, 82, 204, 0.15), rgba(15, 23, 42, 0.8)),
+                        url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1920') no-repeat center center/cover;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -100,6 +102,7 @@
         /* Contenedor Principal */
         .auth-container {
             background-color: var(--bg-card);
+            backdrop-filter: blur(8px);
             padding: 40px;
             border-radius: 12px;
             box-shadow: var(--shadow);
@@ -317,24 +320,23 @@
     </div>
 
     <script>
-        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-        const currentTheme = localStorage.getItem('theme');
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
 
-        if (currentTheme) {
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            if (currentTheme === 'dark') { toggleSwitch.checked = true; }
+        const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+        if (currentTheme === 'dark' && toggleSwitch) {
+            toggleSwitch.checked = true;
         }
 
         function switchTheme(e) {
-            if (e.target.checked) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            }
+            const theme = e.target.checked ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
         }
-        toggleSwitch.addEventListener('change', switchTheme, false);
+
+        if (toggleSwitch) {
+            toggleSwitch.addEventListener('change', switchTheme, false);
+        }
     </script>
 </body>
 </html>

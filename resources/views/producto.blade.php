@@ -5,21 +5,16 @@
     <title>{{ $producto->nombre }} — Compured Perú</title>
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="{{ asset('js/theme.js') }}" defer></script>
 </head>
 <body>
 
-<!-- BARRA SUPERIOR -->
-
-
-<!-- HEADER -->
-<!-- BARRA SUPERIOR -->
 <div class="top-info">
     <a href="{{ route('register') }}">Registrarse</a>
     <span style="margin: 0 5px; color: white">|</span>
     <a href="{{ route('login') }}">Iniciar sesión</a>
 </div>
 
-<!-- HEADER -->
 <header class="topbar">
     <div class="logo">
         <a href="{{ route('inicio') }}">
@@ -61,7 +56,7 @@
             <span><i class="fas fa-shopping-cart"></i></span>
             <span>Carrito</span>
         </a>
-        <button onclick="toggleDarkMode()" class="topbar-icon">
+        <button type="button" onclick="toggleDarkMode()" class="topbar-icon">
             <span><i class="fas fa-moon"></i></span>
             <span>Oscuro</span>
         </button>
@@ -72,16 +67,13 @@
     </div>
 </header>
 
-<!-- BREADCRUMB -->
 <div class="breadcrumb">
     <a href="{{ route('inicio') }}">Home</a> »
-    <a href="{{ route('categoria', $producto->categoria) }}">{{ $producto->categoria }}</a> »
+    <a href="{{ route('categoria', $producto->id_categoria) }}">{{ $producto->id_categoria }}</a> »
     <span>{{ $producto->nombre }}</span>
 </div>
 
-<!-- DETALLE PRODUCTO -->
 <section class="detalle-wrapper">
-
     <div class="detalle-izq">
         <div class="detalle-img-principal">
             <img src="{{ asset('img/' . $producto->imagen) }}" alt="{{ $producto->nombre }}">
@@ -92,7 +84,6 @@
         <h1 class="detalle-nombre">{{ $producto->nombre }}</h1>
 
         <p class="detalle-stock"><i class="fas fa-check-circle"></i> En stock</p>
-
         <p class="detalle-precio">S/ {{ $producto->precio }}</p>
 
         <div class="detalle-cantidad">
@@ -102,7 +93,11 @@
         </div>
 
         <div class="detalle-botones">
-            <button class="btn-añadir" ...>
+            <button
+                class="btn-añadir"
+                type="button"
+                onclick="agregarCarrito('{{ addslashes($producto->nombre) }}', '{{ $producto->precio }}', '{{ $producto->imagen }}', document.getElementById('cantidad').value)"
+            >
                 <i class="fas fa-cart-plus"></i> Añadir al carrito
             </button>
             <a href="https://wa.me/..." class="btn-whatsapp-producto">
@@ -111,37 +106,33 @@
         </div>
 
         <div class="detalle-meta">
-            <p><strong>Categoría:</strong> {{ $producto->categoria }}</p>
+            <p><strong>Categoría:</strong> {{ $producto->id_categoria }}</p>
         </div>
     </div>
 
-    <!-- PRODUCTOS DEL VENDEDOR -->
     <div class="detalle-sidebar">
         <h4>Productos relacionados</h4>
         @foreach($relacionados as $rel)
-        <a href="{{ route('producto', $rel->id) }}" class="rel-card">
-            <img src="{{ asset('img/' . $rel->imagen) }}" alt="{{ $rel->nombre }}">
-            <div>
-                <p class="rel-precio">S/ {{ $rel->precio }}</p>
-                <p class="rel-nombre">{{ $rel->nombre }}</p>
-            </div>
-        </a>
+            <a href="{{ route('producto', $rel->id_producto) }}" class="rel-card">
+                <img src="{{ asset('img/' . $rel->imagen) }}" alt="{{ $rel->nombre }}">
+                <div>
+                    <p class="rel-precio">S/ {{ $rel->precio }}</p>
+                    <p class="rel-nombre">{{ $rel->nombre }}</p>
+                </div>
+            </a>
         @endforeach
     </div>
-
 </section>
 
-<!-- TABS DESCRIPCIÓN -->
 <div class="detalle-tabs">
     <div class="tabs-header">
         <button class="tab-btn activo" onclick="mostrarTab('descripcion', this)">Descripción</button>
     </div>
     <div id="tab-descripcion" class="tab-contenido activo">
-        <p>{{ $producto->descripcion }}</p>
+        <p>{{ $producto->detalles_tecnicos }}</p>
     </div>
 </div>
 
-<!-- FOOTER -->
 <footer class="footer">
     <div class="footer-grid">
         <div class="footer-col">
@@ -184,17 +175,9 @@
 <script src="{{ asset('js/carrito.js') }}"></script>
 <script>
 function cambiarCantidad(valor) {
-    let input = document.getElementById('cantidad');
-    let nueva = parseInt(input.value) + valor;
+    const input = document.getElementById('cantidad');
+    const nueva = parseInt(input.value) + valor;
     if (nueva >= 1) input.value = nueva;
-}
-
-function agregarAlCarritoConCantidad(nombre, precio, imagen) {
-    let cantidad = parseInt(document.getElementById('cantidad').value);
-    for (let i = 0; i < cantidad; i++) {
-        agregarCarrito(nombre, precio, imagen);
-    }
-    alert(cantidad + ' producto(s) agregado(s) al carrito');
 }
 
 function mostrarTab(tab, btn) {
@@ -205,5 +188,21 @@ function mostrarTab(tab, btn) {
 }
 </script>
 
+<script>
+// toggleDarkMode usa theme.js como estado base (solo actualiza storage)
+function toggleDarkMode() {
+    const current = localStorage.getItem('theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    document.dispatchEvent(new Event('theme:changed'));
+    // applyTheme está en theme.js; forzamos re-lectura rápida
+    try {
+        document.body.classList.toggle('dark-mode', next === 'dark');
+        document.documentElement.setAttribute('data-theme', next);
+    } catch(e) {}
+}
+</script>
+
 </body>
 </html>
+

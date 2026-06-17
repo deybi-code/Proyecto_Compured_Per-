@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Compured Perú</title>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="{{ asset('js/theme.js') }}" defer></script>
 </head>
 <body>
 

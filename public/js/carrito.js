@@ -1,16 +1,16 @@
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-function agregarCarrito(nombre, precio, imagen) {
+function agregarCarrito(nombre, precio, imagen, cantidad = 1) {
     let existente = carrito.find(p => p.nombre === nombre);
 
     if (existente) {
-        existente.cantidad++;
+        existente.cantidad += cantidad;
     } else {
-        carrito.push({ nombre, precio, imagen, cantidad: 1 });
+        carrito.push({ nombre, precio, imagen, cantidad });
     }
 
     localStorage.setItem("carrito", JSON.stringify(carrito));
-    alert("Producto agregado al carrito");
+    alert(`${cantidad} producto(s) agregado(s) al carrito`);
 }
 
 function mostrarCarrito() {
@@ -63,37 +63,6 @@ function vaciarCarrito() {
     mostrarTotal();
 }
 
-<<<<<<< HEAD
-function toggleDarkMode() {
-    const isDark = document.body.classList.toggle("dark-mode");
-    localStorage.setItem("modo", isDark ? "oscuro" : "claro");
-    // Compatibilidad: algunas vistas usan `theme`
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-}
-
-window.onload = function() {
-    const modo = localStorage.getItem("modo");
-    const theme = localStorage.getItem("theme");
-    const shouldBeDark = modo === "oscuro" || theme === "dark";
-    if (shouldBeDark) document.body.classList.add("dark-mode");
-}
-=======
-function agregarCarrito(nombre, precio, imagen, cantidad = 1) {
-    let existente = carrito.find(p => p.nombre === nombre);
-
-    if (existente) {
-        existente.cantidad += cantidad;
-    } else {
-        carrito.push({ nombre, precio, imagen, cantidad });
-    }
-
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-    alert(cantidad + " producto(s) agregado(s) al carrito");
-}
-
->>>>>>> 9ecffb5f975301233df179d4dd125b49e90dbc26
-
-
 function vistaRapida(nombre, precio, imagen, descripcion, id) {
     document.getElementById('modal-nombre').innerText = nombre;
     document.getElementById('modal-precio').innerText = 'S/ ' + precio;
@@ -102,7 +71,8 @@ function vistaRapida(nombre, precio, imagen, descripcion, id) {
     document.getElementById('modal-ver').href = '/producto/' + id;
 
     document.getElementById('modal-carrito').onclick = function() {
-        agregarCarrito(nombre, precio, imagen);
+        const cantidad = 1;
+        agregarCarrito(nombre, precio, imagen, cantidad);
         document.getElementById('modal-rapida').classList.remove('activo');
     };
 
@@ -114,3 +84,4 @@ function cerrarModal(event) {
         document.getElementById('modal-rapida').classList.remove('activo');
     }
 }
+

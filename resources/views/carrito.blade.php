@@ -408,62 +408,114 @@
         </div>
     </div>
 
-    <div id="invoice-template">
-        <div class="invoice-header">
-            <div class="company-box">
-                <h2>COMPURED PERU S.A.C.</h2>
-                <p>Tecnología Informática a tu Alcance</p>
-                <p>Av. España 1542, Trujillo, La Libertad</p>
-                <p>Email: ventas@compured.com</p>
-            </div>
-            <div class="rnc-box">
-                <h3 style="color: #0b33a2;" id="pdf-type-title">BOLETA DE VENTA ELECTRÓNICA</h3>
-                <p><strong>RUC: 20601234567</strong></p>
-                <p id="pdf-invoice-number">N° B001-000412</p>
-            </div>
-        </div>
+<!-- PLANTILLA DE COMPROBANTE SUNAT (Oculta en pantalla, solo para PDF) -->
+    <div id="invoice-template" style="display: none; background: white; color: #000; padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 800px; box-sizing: border-box;">
 
-        <div style="margin-bottom: 20px; font-size: 14px;">
-            <p><strong>Señor(es):</strong> <span id="pdf-client-name"></span></p>
-            <p><strong><span id="pdf-doc-type">DNI</span>:</strong> <span id="pdf-client-doc"></span></p>
-            <p id="pdf-address-row" style="display:none;"><strong>Dirección Fiscal:</strong> <span id="pdf-client-address"></span></p>
-            <p><strong>Fecha de Emisión:</strong> <span id="pdf-date"></span></p>
-            <p><strong>Moneda:</strong> Soles (S/)</p>
-            <p><strong>Forma de Pago:</strong> <span id="pdf-payment-method">Tarjeta</span></p>
-        </div>
+        <!-- Cabecera del Comprobante -->
+        <table width="100%" style="border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
+            <tr>
+                <td width="60%" style="vertical-align: top;">
+                    <img src="{{ asset('img/logo.png') }}" style="max-height: 70px; margin-bottom: 10px;">
+                    <h2 style="margin: 0; font-size: 18px; color: #0b33a2; font-weight: 900;">COMPURED PERU S.A.C.</h2>
+                    <p style="margin: 3px 0; font-size: 12px; color: #333;">Tecnología Informática a tu Alcance</p>
+                    <p style="margin: 3px 0; font-size: 12px; color: #333;">Av. España 1542, Centro Histórico, Trujillo, La Libertad</p>
+                    <p style="margin: 3px 0; font-size: 12px; color: #333;">Teléfono: (044) 123456 | E-mail: ventas@compured.com</p>
+                </td>
+                <td width="40%" style="vertical-align: top;">
+                    <div style="border: 2px solid #000; border-radius: 8px; text-align: center; padding: 15px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 18px; font-weight: 900;">RUC: 20601234567</h3>
+                        <div style="background-color: #f0f0f0; padding: 8px; border-top: 1px solid #000; border-bottom: 1px solid #000;">
+                            <h3 style="margin: 0; font-size: 16px; font-weight: bold; color: #000;" id="pdf-type-title">BOLETA DE VENTA ELECTRÓNICA</h3>
+                        </div>
+                        <h3 style="margin: 10px 0 0 0; font-size: 18px; color: #c00;" id="pdf-invoice-number">B001-00000000</h3>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
-        <table class="invoice-table">
+        <!-- Datos del Cliente -->
+        <table width="100%" style="font-size: 12px; margin-bottom: 20px; border-collapse: collapse;">
+            <tr>
+                <td width="15%" style="padding: 4px 0;"><strong>Señor(es):</strong></td>
+                <td width="50%" style="padding: 4px 0;" id="pdf-client-name">---</td>
+                <td width="15%" style="padding: 4px 0;"><strong>Fecha Emisión:</strong></td>
+                <td width="20%" style="padding: 4px 0;" id="pdf-date">---</td>
+            </tr>
+            <tr>
+                <td style="padding: 4px 0;"><strong id="pdf-doc-type-label">DNI:</strong></td>
+                <td style="padding: 4px 0;" id="pdf-client-doc">---</td>
+                <td style="padding: 4px 0;"><strong>Hora Emisión:</strong></td>
+                <td style="padding: 4px 0;" id="pdf-time">---</td>
+            </tr>
+            <tr id="pdf-address-row" style="display:none;">
+                <td style="padding: 4px 0;"><strong>Dirección:</strong></td>
+                <td colspan="3" style="padding: 4px 0;" id="pdf-client-address">---</td>
+            </tr>
+            <tr>
+                <td style="padding: 4px 0;"><strong>Moneda:</strong></td>
+                <td style="padding: 4px 0;">SOLES (PEN)</td>
+                <td style="padding: 4px 0;"><strong>Condición Pago:</strong></td>
+                <td style="padding: 4px 0;" id="pdf-payment-method">---</td>
+            </tr>
+        </table>
+
+        
+        <table width="100%" style="font-size: 12px; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
-                <tr>
-                    <th>Cant.</th>
-                    <th>Descripción del Producto / Componente</th>
-                    <th>P. Unitario</th>
-                    <th>Importe</th>
+                <tr style="background-color: #f4f4f4; border-top: 1px solid #000; border-bottom: 1px solid #000;">
+                    <th style="padding: 8px; text-align: center; width: 8%;">CANT.</th>
+                    <th style="padding: 8px; text-align: center; width: 8%;">UM</th>
+                    <th style="padding: 8px; text-align: left; width: 54%;">DESCRIPCIÓN</th>
+                    <th style="padding: 8px; text-align: right; width: 15%;">V. UNIT.</th>
+                    <th style="padding: 8px; text-align: right; width: 15%;">IMPORTE</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Memoria RAM Kingston FURY Beast 16GB DDR4</td>
-                    <td>S/ 245.00</td>
-                    <td>S/ 245.00</td>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px 8px; text-align: center;">1.00</td>
+                    <td style="padding: 10px 8px; text-align: center;">NIU</td>
+                    <td style="padding: 10px 8px; text-align: left;">Memoria RAM Kingston FURY Beast 16GB DDR4</td>
+                    <td style="padding: 10px 8px; text-align: right;">245.00</td>
+                    <td style="padding: 10px 8px; text-align: right;">245.00</td>
                 </tr>
             </tbody>
         </table>
 
-        <div style="float: right; width: 250px; font-size: 14px; line-height: 1.8;">
-            <div style="display:flex; justify-content: space-between;"><span>Op. Gravada:</span><span id="pdf-subtotal">S/ 207.63</span></div>
-            <div style="display:flex; justify-content: space-between;"><span>I.G.V. (18%):</span><span id="pdf-igv">S/ 37.37</span></div>
-            <div style="display:flex; justify-content: space-between; font-weight: bold; border-top: 1px solid #000; padding-top: 5px; font-size: 16px;">
-                <span>Total:</span><span id="pdf-total">S/ 245.00</span>
-            </div>
-        </div>
 
-        <div style="margin-top: 120px; text-align: center; font-size: 12px; color: #555;">
-            <p>Representación impresa de la Boleta Electrónica.</p>
-            <p>Consulte su validez en el portal web de la SUNAT.</p>
-            <p><strong>¡Gracias por comprar en Compured Peru!</strong></p>
-        </div>
+        <table width="100%" style="font-size: 12px; margin-top: 10px;">
+            <tr>
+
+                <td width="60%" style="vertical-align: top; padding-right: 20px;">
+                    <table width="100%">
+                        <tr>
+                            <td width="110px">
+
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=20601234567|01|F001|000001|37.37|245.00|01/01/2026|1|12345678" style="width: 100px; height: 100px; border: 1px solid #ddd; padding: 2px;">
+                            </td>
+                            <td style="vertical-align: top; padding-left: 10px; font-size: 10px; color: #555;">
+                                <p style="margin: 0 0 5px 0;"><strong>SON:</strong> DOSCIENTOS CUARENTA Y CINCO CON 00/100 SOLES</p>
+                                <p style="margin: 0 0 5px 0;"><strong>Resumen Hash:</strong> wZ2+1B8Y2GqVn/R5m8T9aB=</p>
+                                <p style="margin: 15px 0 0 0;">Representación impresa de la <strong id="pdf-footer-type">BOLETA DE VENTA</strong> ELECTRÓNICA.<br>Puede verificar la validez de este documento en <strong>www.sunat.gob.pe</strong></p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td width="40%" style="vertical-align: top;">
+                    <table width="100%" style="border-collapse: collapse;">
+                        <tr><td style="padding: 4px; text-align: left;">Op. Gravadas:</td><td style="padding: 4px; text-align: right;">S/ 207.63</td></tr>
+                        <tr><td style="padding: 4px; text-align: left;">Op. Inafectas:</td><td style="padding: 4px; text-align: right;">S/ 0.00</td></tr>
+                        <tr><td style="padding: 4px; text-align: left;">Op. Exoneradas:</td><td style="padding: 4px; text-align: right;">S/ 0.00</td></tr>
+                        <tr><td style="padding: 4px; text-align: left;">Op. Gratuitas:</td><td style="padding: 4px; text-align: right;">S/ 0.00</td></tr>
+                        <tr><td style="padding: 4px; text-align: left;">I.G.V. (18%):</td><td style="padding: 4px; text-align: right;">S/ 37.37</td></tr>
+                        <tr style="font-weight: bold; font-size: 15px; border-top: 1px solid #000;">
+                            <td style="padding: 8px 4px; text-align: left;">IMPORTE TOTAL:</td>
+                            <td style="padding: 8px 4px; text-align: right;">S/ 245.00</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <script>
@@ -478,10 +530,12 @@
             if (docType === 'RUC') {
                 label.textContent = "RUC de la Empresa";
                 clientDocInput.placeholder = "Ingresa el RUC de 11 dígitos";
+                clientDocInput.maxLength = 11;
                 rucFields.style.display = 'block';
             } else {
                 label.textContent = "DNI del Cliente";
                 clientDocInput.placeholder = "Ingresa el DNI de 8 dígitos";
+                clientDocInput.maxLength = 8;
                 rucFields.style.display = 'none';
             }
         }
@@ -510,21 +564,29 @@
             const clientName = document.getElementById('client_name').value;
             const clientAddress = document.getElementById('client_address').value;
 
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('es-PE', {day: '2-digit', month: '2-digit', year: 'numeric'});
+            const timeStr = now.toLocaleTimeString('es-PE', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+
+            // Mapeo Dinámico SUNAT
             document.getElementById('pdf-client-name').textContent = clientName.toUpperCase();
             document.getElementById('pdf-client-doc').textContent = clientDoc;
-            document.getElementById('pdf-date').textContent = new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString();
-            document.getElementById('pdf-payment-method').textContent = metodoSeleccionado === 'card' ? 'TARJETA BANCARIA' : 'EFECTIVO EN CAJA';
+            document.getElementById('pdf-date').textContent = dateStr;
+            document.getElementById('pdf-time').textContent = timeStr;
+            document.getElementById('pdf-payment-method').textContent = metodoSeleccionado === 'card' ? 'TARJETA DE CRÉDITO/DÉBITO' : 'EFECTIVO (CONTADO)';
 
             if (docType === 'RUC') {
                 document.getElementById('pdf-type-title').textContent = "FACTURA ELECTRÓNICA";
-                document.getElementById('pdf-invoice-number').textContent = "N° F001-" + Math.floor(100000 + Math.random() * 900000);
-                document.getElementById('pdf-doc-type').textContent = "RUC";
-                document.getElementById('pdf-address-row').style.display = 'block';
+                document.getElementById('pdf-footer-type').textContent = "FACTURA";
+                document.getElementById('pdf-invoice-number').textContent = "F001-" + String(Math.floor(Math.random() * 999999)).padStart(8, '0');
+                document.getElementById('pdf-doc-type-label').textContent = "RUC:";
+                document.getElementById('pdf-address-row').style.display = 'table-row';
                 document.getElementById('pdf-client-address').textContent = clientAddress.toUpperCase();
             } else {
                 document.getElementById('pdf-type-title').textContent = "BOLETA DE VENTA ELECTRÓNICA";
-                document.getElementById('pdf-invoice-number').textContent = "N° B001-" + Math.floor(100000 + Math.random() * 900000);
-                document.getElementById('pdf-doc-type').textContent = "DNI";
+                document.getElementById('pdf-footer-type').textContent = "BOLETA DE VENTA";
+                document.getElementById('pdf-invoice-number').textContent = "B001-" + String(Math.floor(Math.random() * 999999)).padStart(8, '0');
+                document.getElementById('pdf-doc-type-label').textContent = "DNI:";
                 document.getElementById('pdf-address-row').style.display = 'none';
             }
 
@@ -532,16 +594,16 @@
             element.style.display = 'block';
 
             const opciones = {
-                margin:       10,
+                margin:       [15, 15, 15, 15],
                 filename:     `${docType}_COMPURED_${clientDoc}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, logging: false },
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             html2pdf().from(element).set(opciones).save().then(() => {
                 element.style.display = 'none';
-                alert('¡Transacción exitosa! El comprobante electrónico ha sido generado y descargado.');
+                alert('¡Transacción exitosa! El comprobante electrónico ha sido emitido y descargado.');
             });
         }
     </script>

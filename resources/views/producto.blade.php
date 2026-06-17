@@ -5,7 +5,7 @@
     <title>{{ $producto->nombre }} — Compured Perú</title>
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="{{ asset('js/theme.js') }}" defer></script>
+    <script src="{{ asset('js/theme.js') }}"></script>
 </head>
 <body>
 
@@ -185,21 +185,6 @@ function mostrarTab(tab, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
     document.getElementById('tab-' + tab).classList.add('activo');
     btn.classList.add('activo');
-}
-</script>
-
-<script>
-// toggleDarkMode usa theme.js como estado base (solo actualiza storage)
-function toggleDarkMode() {
-    const current = localStorage.getItem('theme') || 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', next);
-    document.dispatchEvent(new Event('theme:changed'));
-    // applyTheme está en theme.js; forzamos re-lectura rápida
-    try {
-        document.body.classList.toggle('dark-mode', next === 'dark');
-        document.documentElement.setAttribute('data-theme', next);
-    } catch(e) {}
 }
 </script>
 

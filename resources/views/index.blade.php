@@ -6,19 +6,7 @@
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <script>
-        function applyTheme() {
-            const theme = localStorage.getItem('theme') || 'light';
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-                document.body.classList.add('dark-mode');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.body.classList.remove('dark-mode');
-            }
-        }
-        applyTheme();
-    </script>
+    <script src="{{ asset('js/theme.js') }}"></script>
 
     <style>
         .cat-sidebar { background-color: #ffffff; border-radius: 8px; overflow: hidden; width: 260px; min-width: 260px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: all 0.3s ease; }
@@ -292,38 +280,17 @@
 </div>
 
 <script>
-// MODO OSCURO SIN FALLOS Y ANIMADO
-document.addEventListener('DOMContentLoaded', () => {
-    const isDark = document.body.classList.contains('dark-mode');
-    const icon = document.getElementById('theme-icon');
-    const text = document.getElementById('theme-text');
-    if(icon && text) {
-        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-        text.textContent = isDark ? 'Claro' : 'Oscuro';
-    }
-});
-
+// MODO OSCURO — la animación se queda aquí; el estado y la sincronización
+// entre páginas los maneja js/theme.js (toggleDarkMode / toggleTheme).
 function toggleDarkModeAnimation() {
     const icon = document.getElementById('theme-icon');
-    const text = document.getElementById('theme-text');
-    icon.classList.add('theme-rotating');
+    if (icon) icon.classList.add('theme-rotating');
 
     setTimeout(() => {
-        const isDark = document.body.classList.contains('dark-mode');
-        if (isDark) {
-            document.body.classList.remove('dark-mode');
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-            icon.className = 'fas fa-moon';
-            text.textContent = 'Oscuro';
-        } else {
-            document.body.classList.add('dark-mode');
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            icon.className = 'fas fa-sun';
-            text.textContent = 'Claro';
+        if (typeof window.toggleDarkMode === 'function') {
+            window.toggleDarkMode();
         }
-        icon.classList.remove('theme-rotating');
+        if (icon) icon.classList.remove('theme-rotating');
     }, 400);
 }
 

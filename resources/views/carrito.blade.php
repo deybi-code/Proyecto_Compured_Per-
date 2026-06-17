@@ -6,14 +6,7 @@
     <title>Carrito de Compras - Compured Peru</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    <script>
-    // Se ejecuta ANTES de pintar la página, así no hay parpadeo de tema claro al cargar.
-    (function() {
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
-    })();
-    </script>
+    <script src="{{ asset('js/theme.js') }}"></script>
 
     <style>
         :root {
@@ -338,30 +331,6 @@
         let metodoSeleccionado = 'card';
         const unitPrice = 245.00;
         let currentQty = 1;
-
-        // ===== MODO OSCURO (sincronizado entre todas las páginas vía localStorage) =====
-        function applyTheme(theme) {
-            const icon = document.getElementById('themeIcon');
-            if (theme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                if (icon) icon.textContent = '☀️';
-            } else {
-                document.documentElement.removeAttribute('data-theme');
-                if (icon) icon.textContent = '🌙';
-            }
-        }
-
-        function toggleDarkMode() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const newTheme = isDark ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
-            applyTheme(savedTheme);
-        });
 
         function updateQty(change) {
             let newQty = currentQty + change;

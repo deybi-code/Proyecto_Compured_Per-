@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito de Compras - Compured Peru</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Script de Sincronización Global de Modo Oscuro para el Carrito -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
+
     <style>
         :root {
             --bg-body: #f4f6f9;
@@ -12,12 +24,13 @@
             --text-main: #172b4d;
             --text-muted: #7a869a;
             --border-color: #dfe1e6;
-            --primary-blue: #0052cc;
-            --light-blue: #00a3ff;
-            --hover-blue: #0043a4;
-            --success-green: #36b37e;
+            --primary-blue: #0b33a2; /* Azul Corporativo Compured */
+            --light-blue: #27a1eb; /* Celeste Corporativo Compured */
+            --hover-blue: #08206b;
+            --success-green: #a4e613; /* Verde Corporativo Compured */
+            --btn-green: #36b37e; /* Verde oscuro para legibilidad del botón */
             --input-bg: #ffffff;
-            --shadow: 0 10px 25px rgba(0, 82, 204, 0.08);
+            --shadow: 0 10px 25px rgba(11, 51, 162, 0.08);
         }
 
         [data-theme="dark"] {
@@ -26,7 +39,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
-            --primary-blue: #38bdf8;
+            --primary-blue: #27a1eb; /* El celeste resalta mejor en modo oscuro */
             --light-blue: #0ea5e9;
             --hover-blue: #0284c7;
             --input-bg: #0f172a;
@@ -47,6 +60,16 @@
             transition: all 0.3s ease;
         }
 
+        .header-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header-logo img {
+            height: 60px;
+            width: auto;
+        }
+
         .cart-wrapper {
             max-width: 1200px;
             margin: 0 auto;
@@ -65,6 +88,7 @@
             padding: 30px;
             box-shadow: var(--shadow);
             border-top: 4px solid var(--primary-blue);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         h2 {
@@ -75,6 +99,8 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
         }
 
         /* Lista de Productos */
@@ -101,12 +127,13 @@
             padding: 5px;
         }
 
-        .product-det h4 { font-size: 15px; color: var(--text-main); }
+        .product-det h4 { font-size: 15px; color: var(--text-main); font-weight: bold; }
         .product-det p { font-size: 13px; color: var(--text-muted); }
 
         .product-price {
             font-weight: 700;
-            color: var(--text-main);
+            color: var(--light-blue);
+            font-size: 1.1rem;
         }
 
         /* Formulario de Checkout */
@@ -131,10 +158,11 @@
             border-radius: 6px;
             font-size: 14px;
             outline: none;
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
         }
 
         input:focus, select:focus {
-            border-color: var(--primary-blue);
+            border-color: var(--light-blue);
         }
 
         .row-grid {
@@ -161,9 +189,10 @@
             border: none;
             background: none;
             color: var(--text-muted);
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
             font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         .tab-btn.active {
@@ -175,10 +204,11 @@
         .payment-panel.active { display: block; }
 
         .totals-section {
-            background: rgba(0, 82, 204, 0.04);
+            background: rgba(39, 161, 235, 0.05);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
+            border: 1px solid var(--border-color);
         }
 
         .total-row {
@@ -186,11 +216,12 @@
             justify-content: space-between;
             margin-bottom: 8px;
             font-size: 14px;
+            font-weight: 600;
         }
 
         .total-row.final {
             font-size: 18px;
-            font-weight: 800;
+            font-weight: 900;
             color: var(--primary-blue);
             border-top: 1px dashed var(--border-color);
             padding-top: 8px;
@@ -200,16 +231,17 @@
         .btn-pay {
             width: 100%;
             padding: 14px;
-            background-color: var(--success-green);
+            background-color: var(--btn-green);
             color: white;
             border: none;
             border-radius: 7px;
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 900;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(54, 179, 126, 0.2);
+            box-shadow: 0 4px 12px rgba(54, 179, 126, 0.3);
+            transition: background-color 0.3s ease;
         }
 
         .btn-pay:hover { background-color: #2b9366; }
@@ -232,7 +264,7 @@
             margin-bottom: 20px;
         }
 
-        .company-box h2 { color: #0052cc; font-size: 26px; }
+        .company-box h2 { color: #0b33a2; font-size: 26px; }
         .rnc-box {
             border: 2px solid #000;
             padding: 15px;
@@ -258,13 +290,19 @@
 </head>
 <body>
 
+    <div class="header-logo">
+        <a href="{{ url('/') }}">
+            <img src="{{ asset('img/logo.png') }}" alt="Compured Peru">
+        </a>
+    </div>
+
     <div class="cart-wrapper">
         <div class="card-panel">
-            <h2>🛒 Tu Carrito de Compras</h2>
+            <h2>Tu Carrito de Compras</h2>
             <div id="cart-items-container">
                 <div class="cart-item">
                     <div class="product-info">
-                        <img src="https://raw.githubusercontent.com/deybi-code/Proyecto_Compured_Per-/main/public/images/logo.png" alt="Producto">
+                        <img src="{{ asset('img/logo.png') }}" alt="Producto">
                         <div class="product-det">
                             <h4>Memoria RAM Kingston FURY Beast 16GB DDR4</h4>
                             <p>Cantidad: 1</p>
@@ -276,7 +314,7 @@
         </div>
 
         <div class="card-panel">
-            <h2>📋 Datos del Cliente y Pago</h2>
+            <h2>Datos del Cliente y Pago</h2>
             <form id="checkout-form" onsubmit="procesarPago(event)">
 
                 <div class="form-group">
@@ -306,10 +344,11 @@
 
                 <div class="payment-methods">
                     <div class="nav-tabs">
-                        <button type="button" class="tab-btn active" onclick="cambiarMetodoPago('card')">💳 Tarjeta de Crédito/Débito</button>
+                        <button type="button" class="tab-btn active" onclick="cambiarMetodoPago('card')">Tarjeta de Crédito/Débito</button>
 
-                        @if(auth()->user() && (auth()->user()->role === 'admin' || auth()->user()->role === 'ventas'))
-                            <button type="button" class="tab-btn" onclick="cambiarMetodoPago('cash')">💵 Pago en Efectivo (Caja)</button>
+                        <!-- Lógica estricta de Roles: Solo Admin y Ventas verán este botón -->
+                        @if(auth()->check() && in_array(auth()->user()->rol, ['admin', 'ventas']))
+                            <button type="button" class="tab-btn" onclick="cambiarMetodoPago('cash')">Pago en Efectivo (Caja)</button>
                         @endif
                     </div>
 
@@ -331,7 +370,7 @@
                     </div>
 
                     <div id="panel-cash" class="payment-panel">
-                        <p style="font-size: 13px; color: var(--success-green); font-weight: 600;">
+                        <p style="font-size: 14px; color: var(--btn-green); font-weight: bold; border: 1px dashed var(--btn-green); padding: 10px; border-radius: 5px;">
                             ✓ Modo de venta física activo. El dinero se registrará directamente en el flujo de caja diario de la tienda sin validar transacciones bancarias electrónicas.
                         </p>
                     </div>
@@ -357,7 +396,7 @@
                 <p>Email: ventas@compured.com</p>
             </div>
             <div class="rnc-box">
-                <h3 style="color: #EA4335;" id="pdf-type-title">BOLETA DE VENTA ELECTRÓNICA</h3>
+                <h3 style="color: #0b33a2;" id="pdf-type-title">BOLETA DE VENTA ELECTRÓNICA</h3>
                 <p><strong>RUC: 20601234567</strong></p>
                 <p id="pdf-invoice-number">N° B001-000412</p>
             </div>
@@ -408,10 +447,6 @@
 
     <script>
         let metodoSeleccionado = 'card';
-
-        // Inicializa el Modo Oscuro global según lo guardado en las vistas de Login/Home
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
 
         function alternarCamposDocumento() {
             const docType = document.getElementById('document_type').value;
@@ -489,7 +524,6 @@
             html2pdf().from(element).set(opciones).save().then(() => {
                 element.style.display = 'none'; // Ocultar de nuevo tras la descarga
                 alert('¡Transacción exitosa! El comprobante electrónico ha sido generado y descargado.');
-                // Aquí puedes redireccionar o limpiar el carrito mediante AJAX
             });
         }
     </script>

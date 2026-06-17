@@ -63,16 +63,19 @@ function vaciarCarrito() {
     mostrarTotal();
 }
 
-function toggleDarkMode() {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("modo", document.body.classList.contains("dark-mode") ? "oscuro" : "claro");
+function agregarCarrito(nombre, precio, imagen, cantidad = 1) {
+    let existente = carrito.find(p => p.nombre === nombre);
+
+    if (existente) {
+        existente.cantidad += cantidad;
+    } else {
+        carrito.push({ nombre, precio, imagen, cantidad });
+    }
+
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    alert(cantidad + " producto(s) agregado(s) al carrito");
 }
 
-window.onload = function() {
-    if (localStorage.getItem("modo") === "oscuro") {
-        document.body.classList.add("dark-mode");
-    }
-}
 
 function vistaRapida(nombre, precio, imagen, descripcion, id) {
     document.getElementById('modal-nombre').innerText = nombre;

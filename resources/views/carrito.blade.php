@@ -6,15 +6,22 @@
     <title>Carrito de Compras - Compured Peru</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    <!-- Script de Sincronización Global de Modo Oscuro para el Carrito -->
+    <!-- Script de Sincronización Estricta de Modo Oscuro -->
     <script>
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.setAttribute('data-theme', 'light');
+        function applyTheme() {
+            // Verifica las variables más comunes que podrías estar usando en el localStorage
+            const theme = localStorage.getItem('theme') || localStorage.getItem('color-theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.documentElement.classList.remove('dark');
+            }
         }
+        applyTheme();
+        // Escucha cambios en tiempo real si apagas el interruptor en otra pestaña
+        window.addEventListener('storage', applyTheme);
     </script>
 
     <style>
@@ -24,11 +31,11 @@
             --text-main: #172b4d;
             --text-muted: #7a869a;
             --border-color: #dfe1e6;
-            --primary-blue: #0b33a2; /* Azul Corporativo Compured */
-            --light-blue: #27a1eb; /* Celeste Corporativo Compured */
+            --primary-blue: #0b33a2;
+            --light-blue: #27a1eb;
             --hover-blue: #08206b;
-            --success-green: #a4e613; /* Verde Corporativo Compured */
-            --btn-green: #36b37e; /* Verde oscuro para legibilidad del botón */
+            --success-green: #a4e613;
+            --btn-green: #36b37e;
             --input-bg: #ffffff;
             --shadow: 0 10px 25px rgba(11, 51, 162, 0.08);
         }
@@ -39,7 +46,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
-            --primary-blue: #27a1eb; /* El celeste resalta mejor en modo oscuro */
+            --primary-blue: #27a1eb;
             --light-blue: #0ea5e9;
             --hover-blue: #0284c7;
             --input-bg: #0f172a;
@@ -57,7 +64,7 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             padding: 40px 20px;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .header-logo {
@@ -103,7 +110,6 @@
             padding-bottom: 10px;
         }
 
-        /* Lista de Productos */
         .cart-item {
             display: flex;
             align-items: center;
@@ -136,10 +142,7 @@
             font-size: 1.1rem;
         }
 
-        /* Formulario de Checkout */
-        .form-group {
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 15px; }
 
         label {
             display: block;
@@ -171,10 +174,7 @@
             gap: 15px;
         }
 
-        /* Pasarela de Pago */
-        .payment-methods {
-            margin: 20px 0;
-        }
+        .payment-methods { margin: 20px 0; }
 
         .nav-tabs {
             display: flex;
@@ -246,7 +246,6 @@
 
         .btn-pay:hover { background-color: #2b9366; }
 
-        /* Estilos del Comprobante (Oculto en pantalla para renderizado PDF) */
         #invoice-template {
             display: none;
             background: white;
@@ -346,10 +345,12 @@
                     <div class="nav-tabs">
                         <button type="button" class="tab-btn active" onclick="cambiarMetodoPago('card')">Tarjeta de Crédito/Débito</button>
 
-                        <!-- Lógica estricta de Roles: Solo Admin y Ventas verán este botón -->
-                        @if(auth()->check() && in_array(auth()->user()->rol, ['admin', 'ventas']))
-                            <button type="button" class="tab-btn" onclick="cambiarMetodoPago('cash')">Pago en Efectivo (Caja)</button>
-                        @endif
+                        <!-- Lógica ampliada para asegurar que detecte la columna rol o role -->
+                        @auth
+                            @if(auth()->user()->rol === 'admin' || auth()->user()->role === 'admin' || auth()->user()->rol === 'ventas' || auth()->user()->role === 'ventas')
+                                <button type="button" class="tab-btn" onclick="cambiarMetodoPago('cash')">Pago en Efectivo (Caja)</button>
+                            @endif
+                        @endauth
                     </div>
 
                     <div id="panel-card" class="payment-panel active">
@@ -484,13 +485,11 @@
         function procesarPago(e) {
             e.preventDefault();
 
-            // Captura de datos del formulario
             const docType = document.getElementById('document_type').value;
             const clientDoc = document.getElementById('client_doc').value;
             const clientName = document.getElementById('client_name').value;
             const clientAddress = document.getElementById('client_address').value;
 
-            // Mapeo al Comprobante PDF
             document.getElementById('pdf-client-name').textContent = clientName.toUpperCase();
             document.getElementById('pdf-client-doc').textContent = clientDoc;
             document.getElementById('pdf-date').textContent = new Date().toLocaleDateString('es-PE') + ' ' + new Date().toLocaleTimeString();
@@ -509,9 +508,8 @@
                 document.getElementById('pdf-address-row').style.display = 'none';
             }
 
-            // Generación y descarga directa del comprobante electrónico en PDF
             const element = document.getElementById('invoice-template');
-            element.style.display = 'block'; // Mostrar temporalmente para html2pdf
+            element.style.display = 'block';
 
             const opciones = {
                 margin:       10,
@@ -522,7 +520,7 @@
             };
 
             html2pdf().from(element).set(opciones).save().then(() => {
-                element.style.display = 'none'; // Ocultar de nuevo tras la descarga
+                element.style.display = 'none';
                 alert('¡Transacción exitosa! El comprobante electrónico ha sido generado y descargado.');
             });
         }

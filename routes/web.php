@@ -101,3 +101,7 @@ require __DIR__.'/auth.php';
 Route::get('/prueba-panel', function () {
     return "Si ves este mensaje, el servidor y Laravel funcionan correctamente. El problema es solo el sistema de Login.";
 });
+Route::get('/nosotros', function () { return view('nosotros'); })->name('nosotros');
+Route::get('/terminos', function () { return view('terminos'); })->name('terminos');
+Route::get('/pedidos/seguimiento', function () { return view('seguimiento'); })->name('seguimiento');
+Route::get('/admin/anuncios', function () { return view('admin.anuncios'); })->name('admin.anuncios');

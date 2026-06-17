@@ -3,9 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <title>Compured Perú</title>
-<link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="{{ asset('js/theme.js') }}" defer></script>
+
+    <!-- El script principal que maneja el modo oscuro global -->
+    <script src="{{ asset('js/theme.js') }}"></script>
+
+    <style>
+        /* ESTILOS EXACTOS DEL MENÚ LATERAL */
+        .cat-sidebar {
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 260px;
+            min-width: 260px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .cat-sidebar-titulo {
+            background-color: #0b33a2;
+            color: #ffffff;
+            text-align: center;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .cat-sidebar-lista {
+            list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column;
+        }
+        .cat-sidebar-lista li {
+            border-bottom: 1px solid #e2e8f0;
+            transition: border-color 0.3s ease;
+        }
+        .cat-sidebar-lista li:last-child { border-bottom: none; }
+        .cat-sidebar-lista a {
+            display: flex; align-items: center; padding: 12px 20px; color: #4b5563; text-decoration: none; font-size: 14px; transition: background 0.3s, color 0.3s;
+        }
+        .cat-sidebar-lista a::before {
+            content: '»'; color: #27a1eb; font-weight: 900; font-size: 18px; margin-right: 12px;
+        }
+        .cat-sidebar-lista a:hover {
+            background-color: #f3f4f6; color: #0b33a2; font-weight: 600;
+        }
+        .cat-sidebar-lista a.activo {
+            background-color: #f4f6f9; color: #0b33a2; font-weight: bold;
+        }
+
+        /* COMPORTAMIENTO MODO OSCURO PARA EL MENÚ */
+        body.dark-mode .cat-sidebar {
+            background-color: #1a1a1a; border-color: #2d2d2d; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        body.dark-mode .cat-sidebar-lista li { border-bottom: 1px solid #2d2d2d; }
+        body.dark-mode .cat-sidebar-lista a { color: #d1d5db; }
+        body.dark-mode .cat-sidebar-lista a:hover { background-color: #252525; color: #ffffff; }
+        body.dark-mode .cat-sidebar-lista a.activo { background-color: #f4f6f9; color: #0b33a2; }
+    </style>
 </head>
 <body>
 
@@ -130,16 +184,17 @@
 
 <section class="contenido">
 
-    <div class="categorias">
-        <h3>Categorías</h3>
-        <ul>
+    <!-- NUEVO DISEÑO DEL FILTRO (HOME) -->
+    <aside class="cat-sidebar" style="margin-top: 40px;">
+        <div class="cat-sidebar-titulo">Filtrar resultados por</div>
+        <ul class="cat-sidebar-lista">
             <li><a href="{{ route('categoria', ['id' => 'Accesorio']) }}">Accesorios</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Computadora']) }}">Computadoras</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Laptop']) }}">Laptops</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Redes']) }}">Redes / Conectividad</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Case']) }}">Case</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Fuente']) }}">Fuentes para Case</a></li>
-            <li><a href="{{ route('categoria', ['id' => 'Cooler']) }}">Coolers/CPU - Refrigeración Líq.</a></li>
+            <li><a href="{{ route('categoria', ['id' => 'Cooler']) }}">Coolers/CPU</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Procesador']) }}">CPU - Procesadores</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Disco Duro Externo']) }}">Discos Duros Externos</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Disco Duro Interno']) }}">Discos Duros Internos</a></li>
@@ -150,14 +205,11 @@
             <li><a href="{{ route('categoria', ['id' => 'Monitor']) }}">Monitores</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Placa Madre']) }}">Motherboards / Placas Madre</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Mouse']) }}">Mouse</a></li>
-            <li><a href="{{ route('categoria', ['id' => 'Mutigrabador']) }}">Mutigrabadores DVD/Blu Ray</a></li>
-            <li><a href="{{ route('categoria', ['id' => 'Suministro Impresora']) }}">Suministros para Impresoras</a></li>
-            <li><a href="{{ route('categoria', ['id' => 'Tablet']) }}">Tablets</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Tarjeta Video']) }}">Tarjetas de Video</a></li>
             <li><a href="{{ route('categoria', ['id' => 'Teclado']) }}">Teclados</a></li>
             <li><a href="{{ route('categoria', ['id' => 'UPS']) }}">UPS, Estabilizadores</a></li>
         </ul>
-    </div>
+    </aside>
 
     <div class="contenido-derecha">
         <h3 class="seccion-titulo">Los más valorados</h3>
@@ -172,15 +224,9 @@
                     <a href="{{ route('producto', ['id' => $producto->id_producto]) }}" class="nombre-valorado">{{ $producto->nombre }}</a>
                     <p class="precio-valorado">S/ {{ $producto->precio }}</p>
                     <div class="card-iconos">
-                        <button class="icono-btn" title="Agregar al carrito">
-                            <i class="fas fa-cart-plus"></i>
-                        </button>
-                        <button class="icono-btn" title="Vista rápida">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <a href="https://wa.me/960900386" class="icono-btn">
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
+                        <button class="icono-btn" title="Agregar al carrito"><i class="fas fa-cart-plus"></i></button>
+                        <button class="icono-btn" title="Vista rápida"><i class="fas fa-eye"></i></button>
+                        <a href="https://wa.me/960900386" class="icono-btn"><i class="fab fa-whatsapp"></i></a>
                     </div>
                 </div>
             </div>
@@ -190,6 +236,7 @@
         </div>
     </div>
 
+<!-- MODAL VISTA RÁPIDA -->
 <div id="modal-rapida" class="modal-overlay" onclick="cerrarModal(event)">
     <div class="modal-contenido">
         <button class="modal-cerrar" onclick="document.getElementById('modal-rapida').style.display='none'">✕</button>
@@ -267,15 +314,6 @@ window.onclick = function(event) {
 </script>
 
 <script src="{{ asset('js/carrito.js') }}"></script>
-
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        const modo = localStorage.getItem('modo');
-        const theme = localStorage.getItem('theme');
-        const shouldBeDark = modo === 'oscuro' || theme === 'dark';
-        if (shouldBeDark) document.body.classList.add('dark-mode');
-    });
-</script>
 
 </body>
 </html>

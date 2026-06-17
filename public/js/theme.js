@@ -1,38 +1,35 @@
-(function () {
-  function applyTheme(theme) {
-    if (!theme) theme = 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-    document.body.classList.toggle('dark-mode', theme === 'dark');
-  }
+// public/js/theme.js
 
-  // Función global para botones existentes (sin duplicar lógica en cada vista)
-  window.toggleDarkMode = function () {
-    const current = localStorage.getItem('theme') || 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', next);
-    applyTheme(next);
-  };
+// 1. Función que aplica los colores inmediatamente
+function applyTheme() {
+    const theme = localStorage.getItem('theme') || 'light';
 
-
-  function loadTheme() {
-    let theme = localStorage.getItem('theme');
-
-    // Compatibilidad con el sistema anterior
-    if (!theme) {
-      const modo = localStorage.getItem('modo');
-      if (modo === 'oscuro') theme = 'dark';
-      if (modo === 'claro') theme = 'light';
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.body.classList.add('dark-mode'); // Para tu CSS nativo
+    } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.body.classList.remove('dark-mode'); // Para tu CSS nativo
     }
+}
 
-    if (!theme) theme = 'light';
+// 2. Ejecutar de inmediato (evita el parpadeo blanco al cargar la página)
+applyTheme();
 
-    applyTheme(theme);
-  }
+// 3. Función vinculada al botón del sol/luna
+function toggleDarkMode() {
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadTheme, { once: true });
-  } else {
-    loadTheme();
-  }
-})();
+    localStorage.setItem('theme', newTheme);
+    applyTheme(); // Aplica el cambio en la pestaña actual
+}
 
+// 4. EL TRUCO DE MAGIA: Escuchar cambios en otras pestañas abiertas
+window.addEventListener('storage', (e) => {
+    if (e.key === 'theme') {
+        applyTheme(); // Si apagas la luz en otra pestaña, se apaga aquí también
+    }
+});

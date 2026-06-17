@@ -68,7 +68,6 @@
         .product-info img { width: 60px; height: 60px; object-fit: contain; background: #fff; border-radius: 8px; padding: 5px; border: 1px solid var(--border-color); }
         .product-det h4 { font-size: 15px; color: var(--text-main); font-weight: bold; }
 
-        /* Controles de Cantidad */
         .qty-controls { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
         .qty-btn { background: var(--border-color); border: none; color: var(--primary-blue); width: 28px; height: 28px; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.2s; }
         .qty-btn:hover { background: var(--light-blue); color: white; }
@@ -99,7 +98,8 @@
         .btn-pay { width: 100%; padding: 14px; background-color: var(--btn-green); color: var(--btn-text); border: none; border-radius: 8px; font-size: 16px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(164, 230, 19, 0.4); transition: transform 0.2s ease, background-color 0.3s ease; }
         .btn-pay:hover { background-color: #93ce11; transform: translateY(-2px); }
 
-        #invoice-template { display: none; background: white; color: #000; padding: 40px; font-family: Arial, sans-serif; width: 800px; box-sizing: border-box; }
+        /* Ajuste estricto para evitar cortes en el PDF */
+        #invoice-template { display: none; background: white; color: #000; padding: 20px; font-family: Arial, sans-serif; width: 700px; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -116,7 +116,6 @@
         <div class="card-panel">
             <h2>Tu Carrito de Compras</h2>
             <div id="cart-items-container">
-                <!-- Item dinámico -->
                 <div class="cart-item" id="item-ram">
                     <div class="product-info">
                         <img src="{{ asset('img/logo.png') }}" alt="Producto">
@@ -214,20 +213,19 @@
         </div>
     </div>
 
-    <!-- PLANTILLA DE COMPROBANTE SUNAT (Oculta, optimizada para no superponer textos) -->
     <div id="invoice-template">
-        <table width="100%" style="border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
+        <table width="100%" style="border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 15px;">
             <tr>
                 <td width="55%" style="vertical-align: top;">
                     <img src="{{ asset('img/logo.png') }}" style="max-height: 50px; margin-bottom: 10px;">
-                    <h2 style="margin: 0; font-size: 16px; color: #0b33a2; font-weight: 900;">COMPURED PERU S.A.C.</h2>
+                    <h2 style="margin: 0; font-size: 15px; color: #0b33a2; font-weight: 900;">COMPURED PERU S.A.C.</h2>
                     <p style="margin: 2px 0; font-size: 10px; color: #333;">Tecnología Informática a tu Alcance</p>
                     <p style="margin: 2px 0; font-size: 10px; color: #333;">Av. España 1542, Trujillo, La Libertad</p>
                     <p style="margin: 2px 0; font-size: 10px; color: #333;">Tel: (044) 123456 | ventas@compured.com</p>
                 </td>
                 <td width="45%" style="vertical-align: top;">
                     <div style="border: 2px solid #000; border-radius: 8px; text-align: center; padding: 10px;">
-                        <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: 900;">RUC: 20601234567</h3>
+                        <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 900;">RUC: 20601234567</h3>
                         <div style="background-color: #f0f0f0; padding: 6px; border-top: 1px solid #000; border-bottom: 1px solid #000;">
                             <h3 style="margin: 0; font-size: 13px; font-weight: bold;" id="pdf-type-title">BOLETA DE VENTA ELECTRÓNICA</h3>
                         </div>
@@ -237,7 +235,7 @@
             </tr>
         </table>
 
-        <table width="100%" style="font-size: 11px; margin-bottom: 20px; border-collapse: collapse;">
+        <table width="100%" style="font-size: 11px; margin-bottom: 15px; border-collapse: collapse;">
             <tr>
                 <td width="15%" style="padding: 3px 0;"><strong>Señor(es):</strong></td>
                 <td width="50%" style="padding: 3px 0;" id="pdf-client-name">---</td>
@@ -262,7 +260,7 @@
             </tr>
         </table>
 
-        <table width="100%" style="font-size: 11px; border-collapse: collapse; margin-bottom: 20px;">
+        <table width="100%" style="font-size: 11px; border-collapse: collapse; margin-bottom: 15px;">
             <thead>
                 <tr style="background-color: #f4f4f4; border-top: 1px solid #000; border-bottom: 1px solid #000;">
                     <th style="padding: 6px; text-align: center; width: 8%;">CANT.</th>
@@ -320,7 +318,6 @@
         const unitPrice = 245.00;
         let currentQty = 1;
 
-        // Lógica de Cantidades
         function updateQty(change) {
             let newQty = currentQty + change;
             if (newQty < 1) return;
@@ -346,13 +343,11 @@
             let subtotal = total / 1.18;
             let igv = total - subtotal;
 
-            // Actualizar vista web
             if(currentQty > 0) document.getElementById('display-price').textContent = `S/ ${total.toFixed(2)}`;
             document.getElementById('subtotal-val').textContent = `S/ ${subtotal.toFixed(2)}`;
             document.getElementById('igv-val').textContent = `S/ ${igv.toFixed(2)}`;
             document.getElementById('total-val').textContent = `S/ ${total.toFixed(2)}`;
 
-            // Actualizar vista oculta PDF
             if(currentQty > 0) {
                 document.getElementById('pdf-item-qty').textContent = currentQty.toFixed(2);
                 document.getElementById('pdf-item-total').textContent = total.toFixed(2);
@@ -364,7 +359,6 @@
             document.getElementById('pdf-total-val').textContent = `S/ ${total.toFixed(2)}`;
         }
 
-        // Formularios y Vistas
         function alternarCamposDocumento() {
             const docType = document.getElementById('document_type').value;
             const clientDocInput = document.getElementById('client_doc');
@@ -441,10 +435,10 @@
             element.style.display = 'block';
 
             const opciones = {
-                margin:       15,
+                margin:       [10, 10, 10, 10], // Márgenes más cerrados para que entre todo el ancho
                 filename:     `${docType}_COMPURED_${clientDoc}.pdf`,
                 image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { scale: 2, logging: false },
+                html2canvas:  { scale: 2, windowWidth: 700, logging: false }, // Forza la medida del contenedor a 700px para que no recorte las palabras
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 

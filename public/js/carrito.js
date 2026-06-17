@@ -63,6 +63,7 @@ function vaciarCarrito() {
     mostrarTotal();
 }
 
+<<<<<<< HEAD
 function toggleDarkMode() {
     const isDark = document.body.classList.toggle("dark-mode");
     localStorage.setItem("modo", isDark ? "oscuro" : "claro");
@@ -76,6 +77,21 @@ window.onload = function() {
     const shouldBeDark = modo === "oscuro" || theme === "dark";
     if (shouldBeDark) document.body.classList.add("dark-mode");
 }
+=======
+function agregarCarrito(nombre, precio, imagen, cantidad = 1) {
+    let existente = carrito.find(p => p.nombre === nombre);
+
+    if (existente) {
+        existente.cantidad += cantidad;
+    } else {
+        carrito.push({ nombre, precio, imagen, cantidad });
+    }
+
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    alert(cantidad + " producto(s) agregado(s) al carrito");
+}
+
+>>>>>>> 9ecffb5f975301233df179d4dd125b49e90dbc26
 
 
 function vistaRapida(nombre, precio, imagen, descripcion, id) {

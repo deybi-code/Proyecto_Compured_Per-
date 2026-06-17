@@ -5,6 +5,15 @@
     document.body.classList.toggle('dark-mode', theme === 'dark');
   }
 
+  // Función global para botones existentes (sin duplicar lógica en cada vista)
+  window.toggleDarkMode = function () {
+    const current = localStorage.getItem('theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  };
+
+
   function loadTheme() {
     let theme = localStorage.getItem('theme');
 

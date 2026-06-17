@@ -64,15 +64,19 @@ function vaciarCarrito() {
 }
 
 function toggleDarkMode() {
-    document.body.classList.toggle("dark-mode");
-    localStorage.setItem("modo", document.body.classList.contains("dark-mode") ? "oscuro" : "claro");
+    const isDark = document.body.classList.toggle("dark-mode");
+    localStorage.setItem("modo", isDark ? "oscuro" : "claro");
+    // Compatibilidad: algunas vistas usan `theme`
+    localStorage.setItem("theme", isDark ? "dark" : "light");
 }
 
 window.onload = function() {
-    if (localStorage.getItem("modo") === "oscuro") {
-        document.body.classList.add("dark-mode");
-    }
+    const modo = localStorage.getItem("modo");
+    const theme = localStorage.getItem("theme");
+    const shouldBeDark = modo === "oscuro" || theme === "dark";
+    if (shouldBeDark) document.body.classList.add("dark-mode");
 }
+
 
 function vistaRapida(nombre, precio, imagen, descripcion, id) {
     document.getElementById('modal-nombre').innerText = nombre;

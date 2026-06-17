@@ -284,5 +284,14 @@ window.onclick = function(event) {
 
 <script src="{{ asset('js/carrito.js') }}"></script>
 
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const modo = localStorage.getItem('modo');
+        const theme = localStorage.getItem('theme');
+        const shouldBeDark = modo === 'oscuro' || theme === 'dark';
+        if (shouldBeDark) document.body.classList.add('dark-mode');
+    });
+</script>
+
 </body>
 </html>

@@ -9,7 +9,6 @@
     <!-- Script de Sincronización Estricta de Modo Oscuro -->
     <script>
         function applyTheme() {
-            // Verifica las variables más comunes que podrías estar usando en el localStorage
             const theme = localStorage.getItem('theme') || localStorage.getItem('color-theme') || 'light';
             if (theme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
@@ -20,37 +19,35 @@
             }
         }
         applyTheme();
-        // Escucha cambios en tiempo real si apagas el interruptor en otra pestaña
         window.addEventListener('storage', applyTheme);
     </script>
 
     <style>
         :root {
-            --bg-body: #f4f6f9;
+            /* Colores principales de Compured Peru */
+            --bg-body: linear-gradient(135deg, #0b33a2 0%, #27a1eb 100%);
             --bg-card: #ffffff;
-            --text-main: #172b4d;
-            --text-muted: #7a869a;
-            --border-color: #dfe1e6;
+            --text-main: #0b33a2; /* Azul para el texto dentro de las tarjetas */
+            --text-muted: #5c728e;
+            --border-color: #cce5ff;
             --primary-blue: #0b33a2;
             --light-blue: #27a1eb;
-            --hover-blue: #08206b;
-            --success-green: #a4e613;
-            --btn-green: #36b37e;
-            --input-bg: #ffffff;
-            --shadow: 0 10px 25px rgba(11, 51, 162, 0.08);
+            --btn-green: #a4e613; /* El verde clarito exacto de tu logo */
+            --btn-text: #081a45; /* Azul muy oscuro para que el texto resalte en el verde claro */
+            --shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
 
         [data-theme="dark"] {
-            --bg-body: #0f172a;
-            --bg-card: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
+            --bg-body: linear-gradient(135deg, #040d21 0%, #0b33a2 100%);
+            --bg-card: #0f1c3f;
+            --text-main: #e0e8f5;
+            --text-muted: #8a9bb3;
+            --border-color: #1e3a70;
             --primary-blue: #27a1eb;
-            --light-blue: #0ea5e9;
-            --hover-blue: #0284c7;
-            --input-bg: #0f172a;
-            --shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            --light-blue: #a4e613;
+            --btn-green: #a4e613;
+            --btn-text: #040d21;
+            --shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
 
         * {
@@ -61,20 +58,37 @@
         }
 
         body {
-            background-color: var(--bg-body);
+            /* Se aplica el gradiente azul intenso de fondo */
+            background: var(--bg-body);
+            background-attachment: fixed;
             color: var(--text-main);
             padding: 40px 20px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .header-logo {
             text-align: center;
             margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .header-wrapper {
+            display: flex;
+            justify-content: center;
         }
 
         .header-logo img {
             height: 60px;
             width: auto;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
         }
 
         .cart-wrapper {
@@ -91,16 +105,16 @@
 
         .card-panel {
             background-color: var(--bg-card);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 30px;
             box-shadow: var(--shadow);
-            border-top: 4px solid var(--primary-blue);
+            border-top: 5px solid var(--btn-green); /* Borde superior con el verde del logo */
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         h2 {
             font-size: 20px;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 20px;
             color: var(--primary-blue);
             display: flex;
@@ -131,15 +145,16 @@
             background: #fff;
             border-radius: 8px;
             padding: 5px;
+            border: 1px solid var(--border-color);
         }
 
         .product-det h4 { font-size: 15px; color: var(--text-main); font-weight: bold; }
         .product-det p { font-size: 13px; color: var(--text-muted); }
 
         .product-price {
-            font-weight: 700;
+            font-weight: 800;
             color: var(--light-blue);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
 
         .form-group { margin-bottom: 15px; }
@@ -147,25 +162,26 @@
         label {
             display: block;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 6px;
-            color: var(--text-main);
+            color: var(--primary-blue);
         }
 
         input, select {
             width: 100%;
             padding: 10px 12px;
             border: 2px solid var(--border-color);
-            background-color: var(--input-bg);
+            background-color: var(--bg-card);
             color: var(--text-main);
             border-radius: 6px;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         input:focus, select:focus {
             border-color: var(--light-blue);
+            box-shadow: 0 0 0 3px rgba(39, 161, 235, 0.2);
         }
 
         .row-grid {
@@ -196,15 +212,15 @@
         }
 
         .tab-btn.active {
-            color: var(--primary-blue);
-            border-bottom: 3px solid var(--primary-blue);
+            color: var(--light-blue);
+            border-bottom: 3px solid var(--light-blue);
         }
 
         .payment-panel { display: none; }
         .payment-panel.active { display: block; }
 
         .totals-section {
-            background: rgba(39, 161, 235, 0.05);
+            background: rgba(39, 161, 235, 0.08);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -217,13 +233,14 @@
             margin-bottom: 8px;
             font-size: 14px;
             font-weight: 600;
+            color: var(--text-main);
         }
 
         .total-row.final {
             font-size: 18px;
             font-weight: 900;
             color: var(--primary-blue);
-            border-top: 1px dashed var(--border-color);
+            border-top: 2px dashed var(--light-blue);
             padding-top: 8px;
             margin-top: 8px;
         }
@@ -231,20 +248,23 @@
         .btn-pay {
             width: 100%;
             padding: 14px;
-            background-color: var(--btn-green);
-            color: white;
+            background-color: var(--btn-green); /* Verde clarito del logo */
+            color: var(--btn-text); /* Texto oscuro para contraste */
             border: none;
-            border-radius: 7px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 900;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(54, 179, 126, 0.3);
-            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 15px rgba(164, 230, 19, 0.4);
+            transition: transform 0.2s ease, background-color 0.3s ease;
         }
 
-        .btn-pay:hover { background-color: #2b9366; }
+        .btn-pay:hover {
+            background-color: #93ce11;
+            transform: translateY(-2px);
+        }
 
         #invoice-template {
             display: none;
@@ -289,10 +309,12 @@
 </head>
 <body>
 
-    <div class="header-logo">
-        <a href="{{ url('/') }}">
-            <img src="{{ asset('img/logo.png') }}" alt="Compured Peru">
-        </a>
+    <div class="header-wrapper">
+        <div class="header-logo">
+            <a href="{{ url('/') }}">
+                <img src="{{ asset('img/logo.png') }}" alt="Compured Peru">
+            </a>
+        </div>
     </div>
 
     <div class="cart-wrapper">
@@ -345,12 +367,10 @@
                     <div class="nav-tabs">
                         <button type="button" class="tab-btn active" onclick="cambiarMetodoPago('card')">Tarjeta de Crédito/Débito</button>
 
-                        <!-- Lógica ampliada para asegurar que detecte la columna rol o role -->
-                        @auth
-                            @if(auth()->user()->rol === 'admin' || auth()->user()->role === 'admin' || auth()->user()->rol === 'ventas' || auth()->user()->role === 'ventas')
-                                <button type="button" class="tab-btn" onclick="cambiarMetodoPago('cash')">Pago en Efectivo (Caja)</button>
-                            @endif
-                        @endauth
+                        <!-- Lógica a prueba de fallos: Convierte a minúsculas y busca en múltiples campos de BD -->
+                        @if(auth()->check() && in_array(strtolower(auth()->user()->rol ?? auth()->user()->role ?? auth()->user()->tipo_usuario ?? ''), ['admin', 'ventas', 'administrador', '1', '2']))
+                            <button type="button" class="tab-btn" onclick="cambiarMetodoPago('cash')">Pago en Efectivo (Caja)</button>
+                        @endif
                     </div>
 
                     <div id="panel-card" class="payment-panel active">
@@ -371,7 +391,7 @@
                     </div>
 
                     <div id="panel-cash" class="payment-panel">
-                        <p style="font-size: 14px; color: var(--btn-green); font-weight: bold; border: 1px dashed var(--btn-green); padding: 10px; border-radius: 5px;">
+                        <p style="font-size: 14px; color: var(--primary-blue); font-weight: bold; border: 2px dashed var(--light-blue); background: var(--border-color); padding: 15px; border-radius: 8px;">
                             ✓ Modo de venta física activo. El dinero se registrará directamente en el flujo de caja diario de la tienda sin validar transacciones bancarias electrónicas.
                         </p>
                     </div>
@@ -383,7 +403,7 @@
                     <div class="total-row final"><span>Total a Pagar:</span><span id="total-val">S/ 245.00</span></div>
                 </div>
 
-                <button type="submit" class="btn-pay">Finalizar Compra y Emitir</button>
+                <button type="submit" class="btn-pay">FINALIZAR COMPRA Y EMITIR</button>
             </form>
         </div>
     </div>

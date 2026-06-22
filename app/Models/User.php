@@ -32,13 +32,13 @@ class User extends Authenticatable
      * Los atributos que se pueden asignar masivamente.
      */
     protected $fillable = [
-        'nombre_completo',
-        'correo',
-        'password',
-        'rol',
-        'preferencia_tema',
-        'fecha_registro',
-    ];
+    'nombre_completo',
+    'correo',
+    'password',
+    'rol',
+    'preferencia_tema',
+    'fecha_registro',
+];
 
     /**
      * Los atributos que deben ocultarse para la serialización.

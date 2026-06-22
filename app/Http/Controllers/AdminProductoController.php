@@ -24,12 +24,13 @@ class AdminProductoController extends Controller
     {
         $nombreImagen = null;
         if ($request->hasFile('imagenes')) {
-            $files = $request->file('imagenes');
-            if (count($files) > 0) {
-                $mainImage = $files[0];
-                $nombreImagen = time() . '_' . $mainImage->getClientOriginalName();
-                $mainImage->move(public_path('img'), $nombreImagen);
-            }
+            $archivo = $request->file('imagenes');
+
+            // Detecta si es un arreglo o un archivo único para evitar el Error 500
+            $mainImage = is_array($archivo) ? $archivo[0] : $archivo;
+
+            $nombreImagen = time() . '_' . $mainImage->getClientOriginalName();
+            $mainImage->move(public_path('img'), $nombreImagen);
         }
 
         Producto::create([
@@ -46,7 +47,7 @@ class AdminProductoController extends Controller
         return redirect('/admin/productos')->with('success', 'Producto creado');
     }
 
-    // SOLUCIÓN AL ERROR 500 DEL VIDEO: Método para la vista de detalle pública
+    // Método para la vista de detalle pública
     public function show(string $id)
     {
         $producto = Producto::where('id_producto', $id)->firstOrFail();
@@ -67,12 +68,13 @@ class AdminProductoController extends Controller
         $nombreImagen = $producto->imagen;
 
         if ($request->hasFile('imagenes')) {
-            $files = $request->file('imagenes');
-            if (count($files) > 0) {
-                $mainImage = $files[0];
-                $nombreImagen = time() . '_' . $mainImage->getClientOriginalName();
-                $mainImage->move(public_path('img'), $nombreImagen);
-            }
+            $archivo = $request->file('imagenes');
+
+            // Detecta si es un arreglo o un archivo único para evitar el Error 500
+            $mainImage = is_array($archivo) ? $archivo[0] : $archivo;
+
+            $nombreImagen = time() . '_' . $mainImage->getClientOriginalName();
+            $mainImage->move(public_path('img'), $nombreImagen);
         }
 
         $producto->update([

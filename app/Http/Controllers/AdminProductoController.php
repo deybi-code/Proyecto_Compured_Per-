@@ -23,14 +23,23 @@ class AdminProductoController extends Controller
     public function store(Request $request)
     {
         $nombreImagen = null;
+
         if ($request->hasFile('imagenes')) {
             $archivo = $request->file('imagenes');
+            // Obtiene el archivo sea un array o un archivo único
+            $mainImage = is_array($archivo) ? current($archivo) : $archivo;
 
-            // Detecta si es un arreglo o un archivo único para evitar el Error 500
-            $mainImage = is_array($archivo) ? $archivo[0] : $archivo;
+            if ($mainImage && $mainImage->isValid()) {
+                $nombreImagen = time() . '_' . $mainImage->getClientOriginalName();
+                $rutaDestino = public_path('img');
 
-            $nombreImagen = time() . '_' . $mainImage->getClientOriginalName();
-            $mainImage->move(public_path('img'), $nombreImagen);
+                // CRUCIAL: Crea la carpeta en Render si no existe
+                if (!file_exists($rutaDestino)) {
+                    mkdir($rutaDestino, 0777, true);
+                }
+
+                $mainImage->move($rutaDestino, $nombreImagen);
+            }
         }
 
         Producto::create([
@@ -47,7 +56,6 @@ class AdminProductoController extends Controller
         return redirect('/admin/productos')->with('success', 'Producto creado');
     }
 
-    // Método para la vista de detalle pública
     public function show(string $id)
     {
         $producto = Producto::where('id_producto', $id)->firstOrFail();
@@ -56,7 +64,6 @@ class AdminProductoController extends Controller
 
     public function edit(string $id)
     {
-        // Busca usando la clave primaria correcta de tu tabla
         $producto = Producto::where('id_producto', $id)->firstOrFail();
         $categorias = Categoria::all();
         return view('admin.productos.edit', compact('producto', 'categorias'));
@@ -69,12 +76,20 @@ class AdminProductoController extends Controller
 
         if ($request->hasFile('imagenes')) {
             $archivo = $request->file('imagenes');
+            // Obtiene el archivo sea un array o un archivo único
+            $mainImage = is_array($archivo) ? current($archivo) : $archivo;
 
-            // Detecta si es un arreglo o un archivo único para evitar el Error 500
-            $mainImage = is_array($archivo) ? $archivo[0] : $archivo;
+            if ($mainImage && $mainImage->isValid()) {
+                $nombreImagen = time() . '_' . $mainImage->getClientOriginalName();
+                $rutaDestino = public_path('img');
 
-            $nombreImagen = time() . '_' . $mainImage->getClientOriginalName();
-            $mainImage->move(public_path('img'), $nombreImagen);
+                // CRUCIAL: Crea la carpeta en Render si no existe
+                if (!file_exists($rutaDestino)) {
+                    mkdir($rutaDestino, 0777, true);
+                }
+
+                $mainImage->move($rutaDestino, $nombreImagen);
+            }
         }
 
         $producto->update([

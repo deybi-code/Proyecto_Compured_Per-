@@ -293,12 +293,10 @@
             <i class="fas fa-laptop-code"></i> COMPURED <span>PRO</span>
         </div>
         <ul class="sidebar-menu">
-            <!-- FIX #5: href corregido para rutas reales -->
             <li><a href="{{ route('admin.productos.index') }}" class="sidebar-link active"><i class="fas fa-box"></i> Productos</a></li>
-            <li><a href="#" class="sidebar-link" onclick="abrirModalAnuncios()"><i class="fas fa-ad"></i> Anuncios del Home</a></li>
+            <li><a href="{{ route('admin.anuncios') }}" class="sidebar-link"><i class="fas fa-ad"></i> Anuncios del Home</a></li>
             <li><a href="{{ route('inicio') }}" class="sidebar-link"><i class="fas fa-home"></i> Volver a Tienda</a></li>
         </ul>
-        <!-- FIX #6: Botón logout en sidebar -->
         <div style="margin-top: auto;">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -345,10 +343,8 @@
                     @forelse($productos ?? $destacados ?? [] as $producto)
                     <tr>
                         <td>
-                            <!-- Muestra la foto actual del producto -->
                             <img src="{{ asset('img/' . $producto->imagen) }}" class="img-preview-table" alt="Product Image" onerror="this.src='{{ asset('img/logo.png') }}'">
                         </td>
-                        <!-- Corregido para que use el campo exacto de tu tabla: id_producto -->
                         <td style="font-weight: 600;">{{ $producto->nombre }}</td>
                         <td><span class="badge badge-success">{{ $producto->categoria_filtro ?? 'Compured' }}</span></td>
                         <td style="font-weight: 700; color: var(--primary-blue);">S/ {{ $producto->precio }}</td>
@@ -359,7 +355,6 @@
                         </td>
                         <td>
                             <div class="actions-cell">
-                                <!-- Enlace dinámico para ir a la vista de edición (donde cambias fotos, nombres, etc.) -->
                                 <a href="{{ route('admin.productos.edit', $producto->id_producto ?? $producto->id) }}" class="btn-icon btn-edit" title="Editar Producto y Fotos">
                                     <i class="fas fa-edit"></i>
                                 </a>

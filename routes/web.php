@@ -45,9 +45,7 @@ Route::get('/categoria/{id}', function ($id) {
 // ==========================================
 // RUTA DE DETALLE DE PRODUCTO (CORREGIDA)
 // ==========================================
-// Soporta tanto /products/id como /producto/id para sincronizar con tus enlaces del Home
 Route::get('/products/{id}', function ($id) {
-    // CORRECCIÓN CRÍTICA: Buscar usando la clave id_producto para evitar el Error 500
     $producto = Producto::where('id_producto', $id)->firstOrFail();
 
     $relacionados = Producto::query()
@@ -59,7 +57,6 @@ Route::get('/products/{id}', function ($id) {
     return view('producto', compact('producto', 'relacionados'));
 })->name('producto');
 
-// Clon de compatibilidad por si alguna vista aún llama a /producto/{id}
 Route::get('/producto/{id}', function ($id) {
     $producto = Producto::where('id_producto', $id)->firstOrFail();
     $relacionados = Producto::query()
@@ -104,4 +101,6 @@ Route::get('/prueba-panel', function () {
 Route::get('/nosotros', function () { return view('nosotros'); })->name('nosotros');
 Route::get('/terminos', function () { return view('terminos'); })->name('terminos');
 Route::get('/pedidos/seguimiento', function () { return view('seguimiento'); })->name('seguimiento');
-Route::get('/admin/anuncios', function () { return view('admin.anuncios'); })->name('admin.anuncios');
+
+// CORRECCIÓN AQUÍ
+Route::get('/admin/anuncios', function () { return view('admin.productos.anuncios'); })->name('admin.anuncios');

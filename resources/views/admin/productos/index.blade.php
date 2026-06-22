@@ -293,10 +293,20 @@
             <i class="fas fa-laptop-code"></i> COMPURED <span>PRO</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="#" class="sidebar-link active"><i class="fas fa-box"></i> Productos</a></li>
+            <!-- FIX #5: href corregido para rutas reales -->
+            <li><a href="{{ route('admin.productos.index') }}" class="sidebar-link active"><i class="fas fa-box"></i> Productos</a></li>
             <li><a href="#" class="sidebar-link" onclick="abrirModalAnuncios()"><i class="fas fa-ad"></i> Anuncios del Home</a></li>
             <li><a href="{{ route('inicio') }}" class="sidebar-link"><i class="fas fa-home"></i> Volver a Tienda</a></li>
         </ul>
+        <!-- FIX #6: Botón logout en sidebar -->
+        <div style="margin-top: auto;">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="sidebar-link" style="width:100%; background:none; border:none; cursor:pointer; color:rgba(255,255,255,0.75); font-weight:600; font-size:14px; display:flex; align-items:center; gap:12px; padding:12px 15px; border-radius:8px;">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </form>
+        </div>
     </div>
 
     <div class="main-content">

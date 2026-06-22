@@ -26,6 +26,7 @@ class Producto extends Model
         'id_categoria',
         'fecha_registro',
         'mostrar_inicio',
+        'imagen',  // FIX: imagen faltaba en fillable
     ];
 
     /**

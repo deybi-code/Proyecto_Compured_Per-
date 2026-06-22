@@ -10,18 +10,26 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // 1. Definir el nombre de la tabla personalizada
+    // 1. Tabla personalizada
     protected $table = 'usuarios';
 
-    // 2. Definir tu llave primaria personalizada
+    // 2. Llave primaria personalizada
     protected $primaryKey = 'id_usuario';
 
-    // 3. Desactivar las columnas automáticas de tiempo de Laravel (created_at y updated_at)
+    // 3. Sin timestamps automáticos de Laravel
     public $timestamps = false;
 
     /**
+     * FIX CRÍTICO #3: Declarar el identificador de autenticación.
+     * Sin esto, Laravel busca 'id' en vez de 'id_usuario' y el login falla.
+     */
+    public function getAuthIdentifierName(): string
+    {
+        return 'id_usuario';
+    }
+
+    /**
      * Los atributos que se pueden asignar masivamente.
-     * Ajustados a las columnas reales de tu tabla 'usuarios'.
      */
     protected $fillable = [
         'nombre_completo',
@@ -40,28 +48,30 @@ class User extends Authenticatable
     ];
 
     /**
-     * Atributos que deben ser casteados (mutados).
+     * Atributos que deben ser casteados.
      */
     protected function casts(): array
     {
         return [
             'fecha_registro' => 'datetime',
-            'password' => 'hashed',
+            'password'       => 'hashed',
+            'rol'            => 'string',
         ];
     }
 
     /**
-        * Sobrescribir el método getAuthPassword para que Laravel sepa qué campo usar para la autenticación.
-        */
+     * FIX: Laravel debe saber qué campo usar como contraseña.
+     */
     public function getAuthPassword()
     {
         return $this->password;
     }
+
     /**
-     * Anular el manejo del remember token ya que no existe en la base de datos.
+     * FIX: Sin columna remember_token en la tabla 'usuarios'.
      */
     public function getRememberTokenName()
     {
-        return ''; // Retorna vacío para que Laravel no busque ninguna columna
+        return '';
     }
 }

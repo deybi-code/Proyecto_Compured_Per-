@@ -3,48 +3,33 @@
         <h2 class="text-xl font-bold text-gray-900 dark:text-white border-l-4 border-blue-500 pl-2 transition-colors">
             {{ __('Información del Perfil') }}
         </h2>
-
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400 transition-colors">
-            {{ __("Actualiza la información del perfil de tu cuenta y tu dirección de correo electrónico.") }}
+            {{ __("Actualiza el nombre y correo de tu cuenta.") }}
         </p>
     </header>
-
-    <form id="send-verification" method="post" action="{{ route('verification.send') }}">
-        @csrf
-    </form>
 
     <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
         <div>
-            <x-input-label for="name" :value="__('Nombre')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            {{-- CORREGIDO: campo 'nombre_completo' (columna real), antes era 'name' que no existe en la BD --}}
+            <x-input-label for="nombre_completo" :value="__('Nombre Completo')" />
+            <x-text-input id="nombre_completo" name="nombre_completo" type="text"
+                class="mt-1 block w-full"
+                :value="old('nombre_completo', $user->nombre_completo)"
+                required autofocus autocomplete="name" />
+            <x-input-error class="mt-2" :messages="$errors->get('nombre_completo')" />
         </div>
 
         <div>
-            <x-input-label for="email" :value="__('Correo Electrónico')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
-
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
-                        {{ __('Tu dirección de correo electrónico no está verificada.') }}
-
-                        <button form="send-verification" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-md focus:outline-none transition-colors">
-                            {{ __('Haz clic aquí para reenviar el correo de verificación.') }}
-                        </button>
-                    </p>
-
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-green-600 dark:text-green-400">
-                            {{ __('Se ha enviado un nuevo enlace de verificación a tu correo.') }}
-                        </p>
-                    @endif
-                </div>
-            @endif
+            {{-- CORREGIDO: campo 'correo' (columna real), antes era 'email' que no existe en la BD --}}
+            <x-input-label for="correo" :value="__('Correo Electrónico')" />
+            <x-text-input id="correo" name="correo" type="email"
+                class="mt-1 block w-full"
+                :value="old('correo', $user->correo)"
+                required autocomplete="username" />
+            <x-input-error class="mt-2" :messages="$errors->get('correo')" />
         </div>
 
         <div class="flex items-center gap-4">

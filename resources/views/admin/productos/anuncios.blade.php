@@ -80,7 +80,7 @@
         </div>
         <ul class="sidebar-menu">
             <li><a href="{{ route('admin.productos.index') }}" class="sidebar-link"><i class="fas fa-box"></i> Productos</a></li>
-            <li><a href="{{ route('admin.anuncios') }}" class="sidebar-link active"><i class="fas fa-ad"></i> Anuncios del Home</a></li>
+            <li><a href="{{ route('anuncios.index') }}" class="sidebar-link active"><i class="fas fa-ad"></i> Anuncios del Home</a></li>
             <li><a href="{{ route('home') }}" class="sidebar-link"><i class="fas fa-home"></i> Volver a Tienda</a></li>
         </ul>
         <div style="margin-top: auto;">

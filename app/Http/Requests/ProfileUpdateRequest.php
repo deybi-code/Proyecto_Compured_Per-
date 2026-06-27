@@ -9,22 +9,20 @@ use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
+            // CORREGIDO: el campo del formulario es 'nombre_completo' y la columna única es 'correo'
+            // El original validaba 'name' y 'email' que no coinciden con las columnas del modelo User.
+            'nombre_completo' => ['required', 'string', 'max:255'],
+            'correo' => [
                 'required',
                 'string',
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                // CORREGIDO: ignore usa id_usuario (PK real), no ->id (que devolvería lo mismo pero es más explícito)
+                Rule::unique('usuarios', 'correo')->ignore($this->user()->id_usuario, 'id_usuario'),
             ],
         ];
     }

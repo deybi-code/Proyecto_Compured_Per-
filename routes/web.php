@@ -8,7 +8,8 @@ use App\Http\Controllers\{
     AdminProductoController,
     VentasController,
     AdminAnuncioController,
-    BoletaController
+    BoletaController,
+    ProfileController
 };
 
 /*
@@ -29,7 +30,6 @@ Route::get('/terminos', function () { return view('terminos'); })->name('termino
 */
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
 Route::post('/carrito', [CarritoController::class, 'store'])->name('carrito.store');
-// AÑADIDO: ruta para eliminar ítem del carrito
 Route::delete('/carrito/{id}', [CarritoController::class, 'destroy'])->name('carrito.destroy');
 Route::get('/checkout', function () { return view('pago'); })->name('checkout');
 Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
@@ -41,19 +41,25 @@ Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar'
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Dashboard y Perfil
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/pedidos', [DashboardController::class, 'pedidos'])->name('pedidos');
-    // CORREGIDO: los métodos editProfile y updateProfile ahora existen en el controlador
     Route::get('/dashboard/perfil', [DashboardController::class, 'editProfile'])->name('perfil');
     Route::post('/dashboard/perfil', [DashboardController::class, 'updateProfile'])->name('perfil.update');
 
+    // CORREGIDO: rutas profile.* que estaban ausentes y son usadas en navigation y vistas de perfil
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     /*
     |----------------------------------------------------------------------
-    | 4. PANEL ADMINISTRATIVO Y VENTAS
+    | 4. PANEL ADMINISTRATIVO (protegido con es_admin)
     |----------------------------------------------------------------------
     */
-    Route::prefix('admin')->group(function () {
+    // CORREGIDO: las rutas admin ahora requieren el middleware 'es_admin' además de 'auth'
+    // Antes cualquier usuario autenticado podía acceder al panel admin.
+    Route::middleware(['es_admin'])->prefix('admin')->group(function () {
 
         // GESTIÓN DE PRODUCTOS (CRUD completo)
         Route::resource('productos', AdminProductoController::class)->names('admin.productos');

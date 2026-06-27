@@ -4,40 +4,42 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class AdminProductoController extends Controller
 {
-    public function store(Request $request)
-    {
-        // 1. Validamos los datos según los campos de tu tabla
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+    public function index() {
+        $productos = Producto::all();
+        return view('admin.productos.index', compact('productos'));
+    }
+
+    public function create() {
+        return view('admin.productos.create');
+    }
+
+    public function store(Request $request) {
+        $data = $request->validate([
+            'nombre' => 'required',
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
-            'marca' => 'required|string',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'marca' => 'required',
         ]);
+        Producto::create($data);
+        return redirect()->route('admin.productos')->with('success', 'Producto creado.');
+    }
 
-        // 2. Manejo de imagen (sin modificar BD, solo guardamos el nombre del archivo)
-        $nombreImagen = null;
-        if ($request->hasFile('imagen')) {
-            $file = $request->file('imagen');
-            $nombreImagen = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('img'), $nombreImagen);
-        }
+    public function edit($id) {
+        $producto = Producto::findOrFail($id);
+        return view('admin.productos.edit', compact('producto'));
+    }
 
-        // 3. Guardamos respetando los nombres de tu tabla 'productos'
-        Producto::create([
-            'nombre' => $validated['nombre'],
-            'precio' => $validated['precio'],
-            'stock' => $validated['stock'],
-            'marca' => $validated['marca'],
-            'id_categoria' => 1, // Valor temporal, luego lo dinamizamos
-            'fecha_registro' => now(),
-            'mostrar_inicio' => 1,
-        ]);
+    public function update(Request $request, $id) {
+        $producto = Producto::findOrFail($id);
+        $producto->update($request->all());
+        return redirect()->route('admin.productos')->with('success', 'Producto actualizado.');
+    }
 
-        return redirect()->route('admin.productos')->with('success', 'Producto registrado correctamente.');
+    public function destroy($id) {
+        Producto::findOrFail($id)->delete();
+        return redirect()->route('admin.productos')->with('success', 'Producto eliminado.');
     }
 }

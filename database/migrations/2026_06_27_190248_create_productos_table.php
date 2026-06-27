@@ -12,15 +12,16 @@ return new class extends Migration
             $table->id('id_producto');
             $table->string('nombre');
             $table->decimal('precio', 10, 2);
-            $table->integer('stock');
+            $table->integer('stock')->default(0);
             $table->string('marca');
             $table->text('detalles_tecnicos')->nullable();
-            $table->unsignedBigInteger('id_categoria');
+            $table->unsignedBigInteger('id_categoria')->nullable();
+            $table->string('imagen')->nullable(); // AÑADIDO: campo para la imagen del producto
             $table->timestamp('fecha_registro')->useCurrent();
             $table->boolean('mostrar_inicio')->default(false);
 
-            // Relación (asumimos que existe tabla categorias)
-            // $table->foreign('id_categoria')->references('id_categoria')->on('categorias');
+            // CORREGIDO: la FK estaba comentada; se activa correctamente
+            $table->foreign('id_categoria')->references('id_categoria')->on('categorias')->nullOnDelete();
         });
     }
 

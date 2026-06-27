@@ -6,24 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void {
-    Schema::create('pagos_online', function (Blueprint $table) {
-        $table->id('id_pago');
-        $table->unsignedBigInteger('id_boleta');
-        $table->decimal('monto', 10, 2);
-        $table->string('metodo_pago');
-        $table->string('estado'); // 'aprobado', 'pendiente'
-        $table->timestamps();
+    // CORREGIDO: la indentación del método up() estaba rota (el cierre de Schema::create
+    // quedaba fuera del método), lo que causaría un error de sintaxis.
+    public function up(): void
+    {
+        Schema::create('pagos_online', function (Blueprint $table) {
+            $table->id('id_pago');
+            $table->unsignedBigInteger('id_boleta');
+            $table->decimal('monto', 10, 2);
+            $table->string('metodo_pago');
+            $table->string('estado'); // 'aprobado', 'pendiente', 'rechazado'
+            $table->timestamps();
 
-        $table->foreign('id_boleta')->references('id_boleta')->on('boletas');
-    });
-}
-    /**
-     * Reverse the migrations.
-     */
+            $table->foreign('id_boleta')->references('id_boleta')->on('boletas')->onDelete('cascade');
+        });
+    }
+
     public function down(): void
     {
         Schema::dropIfExists('pagos_online');

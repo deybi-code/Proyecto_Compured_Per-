@@ -19,6 +19,8 @@ use App\Http\Controllers\{
 Route::get('/', function () { return view('index'); })->name('home');
 Route::get('/categoria/{slug?}', function () { return view('categoria'); })->name('categoria');
 Route::get('/producto/{id?}', function () { return view('producto'); })->name('producto');
+Route::get('/nosotros', function () { return view('nosotros'); })->name('nosotros');
+Route::get('/terminos', function () { return view('terminos'); })->name('terminos');
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +29,8 @@ Route::get('/producto/{id?}', function () { return view('producto'); })->name('p
 */
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
 Route::post('/carrito', [CarritoController::class, 'store'])->name('carrito.store');
+// AÑADIDO: ruta para eliminar ítem del carrito
+Route::delete('/carrito/{id}', [CarritoController::class, 'destroy'])->name('carrito.destroy');
 Route::get('/checkout', function () { return view('pago'); })->name('checkout');
 Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
 
@@ -40,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard y Perfil
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/pedidos', [DashboardController::class, 'pedidos'])->name('pedidos');
+    // CORREGIDO: los métodos editProfile y updateProfile ahora existen en el controlador
     Route::get('/dashboard/perfil', [DashboardController::class, 'editProfile'])->name('perfil');
     Route::post('/dashboard/perfil', [DashboardController::class, 'updateProfile'])->name('perfil.update');
 
@@ -50,8 +55,7 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::prefix('admin')->group(function () {
 
-        // GESTIÓN DE PRODUCTOS (CRUD completo resuelto)
-        // Esto genera automáticamente: index, create, store, edit, update, destroy
+        // GESTIÓN DE PRODUCTOS (CRUD completo)
         Route::resource('productos', AdminProductoController::class)->names('admin.productos');
 
         // PUNTO DE VENTA (POS)

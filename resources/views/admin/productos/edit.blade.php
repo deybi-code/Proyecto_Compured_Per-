@@ -1,218 +1,101 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Producto - Panel Compured</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-sidebar: #002b80;
-            --bg-main: #f4f6f9;
-            --bg-card: #ffffff;
-            --text-main: #172b4d;
-            --text-muted: #7a869a;
-            --border-color: #dfe1e6;
-            --primary-blue: #0052cc;
-            --light-blue: #00a3ff;
-            --success-green: #36b37e;
-            --input-bg: #ffffff;
-            --shadow: 0 4px 20px rgba(0, 82, 204, 0.05);
-        }
+@extends('layouts.admin')
 
-        [data-theme="dark"], body.dark-mode {
-            --bg-sidebar: #0f172a;
-            --bg-main: #0b0f19;
-            --bg-card: #141b2d;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #222f46;
-            --primary-blue: #38bdf8;
-            --input-bg: #1f293d;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            display: flex;
-            min-height: 100vh;
-        }
-
-
-        .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-        .sidebar-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: rgba(255,255,255,0.75); text-decoration: none; font-weight: 600; font-size: 14px; border-radius: 8px; }
-        .sidebar-link:hover, .sidebar-link.active { background-color: rgba(255,255,255,0.1); color: white; }
-        .sidebar { width: 280px; background-color: var(--bg-sidebar); color: white; padding: 30px 20px; display: flex; flex-direction: column; gap: 30px; }
-        .sidebar-brand { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
-        .sidebar-brand span { color: var(--light-blue); }
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
-        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
-        .top-header h1 { font-size: 26px; font-weight: 800; }
-
-        .btn-back {
-            padding: 10px 18px; background: none; border: 2px solid var(--border-color);
-            color: var(--text-main); border-radius: 8px; text-decoration: none;
-            font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px;
-        }
-
-        .form-container { background-color: var(--bg-card); border-radius: 12px; box-shadow: var(--shadow); padding: 30px; }
-        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 30px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group.full-width { grid-column: span 2; }
-        .form-group.checkbox-group { flex-direction: row; align-items: center; gap: 10px; padding-top: 10px; }
-        .form-group.checkbox-group input { width: auto; cursor: pointer; }
-
-        label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 12px 15px; border: 2px solid var(--border-color); background-color: var(--input-bg); color: var(--text-main); border-radius: 8px; font-size: 14px; }
-
-        .image-upload-zone {
-            border: 2px dashed var(--primary-blue); background-color: rgba(0, 82, 204, 0.02);
-            border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; position: relative;
-        }
-        .image-upload-zone input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-
-        .preview-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; margin-top: 15px; }
-        .preview-item { position: relative; width: 100px; height: 100px; border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; background: white; }
-        .preview-item img { width: 100%; height: 100%; object-fit: contain; }
-
-        .btn-update { padding: 12px 30px; background-color: var(--primary-blue); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; }
-    </style>
-</head>
-<body>
-
-    <div class="sidebar">
-        <div class="sidebar-brand">
-            <i class="fas fa-laptop-code"></i> COMPURED <span>PRO</span>
-        </div>
-        <!-- FIX #6: Navegación completa con logout en sidebar de edit -->
-        <ul class="sidebar-menu">
-            <li><a href="{{ route('admin.productos.index') }}" class="sidebar-link active"><i class="fas fa-box"></i> Productos</a></li>
-            <li><a href="{{ route('home') }}" class="sidebar-link"><i class="fas fa-home"></i> Volver a Tienda</a></li>
-        </ul>
-        <div style="margin-top: auto;">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="sidebar-link" style="width:100%; background:none; border:none; cursor:pointer; color:rgba(255,255,255,0.75); font-weight:600; font-size:14px; display:flex; align-items:center; gap:12px; padding:12px 15px; border-radius:8px;">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
-            </form>
-        </div>
+@section('content')
+<div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+            Editar Producto: {{ $producto->nombre }}
+        </h2>
+        <a href="{{ route('admin.productos.index') }}"
+           class="text-gray-500 hover:text-gray-700 dark:text-gray-400 font-semibold text-sm">
+            ← Cancelar
+        </a>
     </div>
 
-    <div class="main-content">
-        <div class="top-header">
-            <h1>Editar Producto: {{ $producto->nombre }}</h1>
-            <a href="/admin/productos" class="btn-back">
-                <i class="fas fa-arrow-left"></i> Cancelar
-            </a>
+    @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <ul class="list-disc list-inside text-sm">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- CORREGIDO: action usa route() con la clave primaria correcta (id_producto) --}}
+    <form action="{{ route('admin.productos.update', $producto->id_producto) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div>
+                <label class="block text-sm font-bold mb-2 dark:text-gray-300">Nombre del Producto *</label>
+                <input type="text" name="nombre" value="{{ old('nombre', $producto->nombre) }}" required
+                    class="w-full p-3 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-2 dark:text-gray-300">Categoría *</label>
+                <select name="id_categoria" required
+                    class="w-full p-3 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+                    @foreach($categorias as $categoria)
+                        <option value="{{ $categoria->id_categoria }}"
+                            {{ old('id_categoria', $producto->id_categoria) == $categoria->id_categoria ? 'selected' : '' }}>
+                            {{ $categoria->nombre_categoria }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-2 dark:text-gray-300">Precio (S/) *</label>
+                <input type="number" step="0.01" name="precio" value="{{ old('precio', $producto->precio) }}" required min="0"
+                    class="w-full p-3 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-2 dark:text-gray-300">Stock</label>
+                <input type="number" name="stock" value="{{ old('stock', $producto->stock ?? 0) }}" min="0"
+                    class="w-full p-3 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-2 dark:text-gray-300">Marca</label>
+                <input type="text" name="marca" value="{{ old('marca', $producto->marca ?? '') }}"
+                    class="w-full p-3 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold mb-2 dark:text-gray-300">Imagen del Producto</label>
+                <input type="file" name="imagen" accept="image/*"
+                    class="w-full p-2 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm dark:text-white">
+                @if(isset($producto->imagen))
+                    <p class="text-xs text-gray-500 mt-1">Imagen actual: {{ $producto->imagen }}</p>
+                @endif
+            </div>
+
+            <div class="md:col-span-2">
+                <label class="block text-sm font-bold mb-2 dark:text-gray-300">Detalles Técnicos</label>
+                <textarea name="detalles_tecnicos" rows="4"
+                    class="w-full p-3 rounded bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500">{{ old('detalles_tecnicos', $producto->detalles_tecnicos ?? '') }}</textarea>
+            </div>
+
+            <div class="md:col-span-2 flex items-center gap-3">
+                <input type="checkbox" name="mostrar_inicio" value="1" id="mostrar_inicio"
+                    {{ old('mostrar_inicio', $producto->mostrar_inicio ?? 0) == 1 ? 'checked' : '' }}
+                    class="rounded border-gray-300 text-blue-600">
+                <label for="mostrar_inicio" class="text-sm font-semibold dark:text-gray-300 cursor-pointer">
+                    Mostrar este producto destacado en el Home
+                </label>
+            </div>
         </div>
 
-        <div class="form-container">
-            <form action="/admin/productos/{{ $producto->id_producto ?? $producto->id }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="nombre">Nombre del Producto</label>
-                        <input type="text" id="nombre" name="nombre" value="{{ $producto->nombre }}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="id_categoria">Categoría</label>
-                        <select id="id_categoria" name="id_categoria" required>
-                            @foreach($categorias as $categoria)
-                                <option value="{{ $categoria->id_categoria }}" {{ $producto->id_categoria == $categoria->id_categoria ? 'selected' : '' }}>
-                                    {{ $categoria->nombre_categoria }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-grid" style="grid-column: span 2; margin-bottom: 0; gap: 25px;">
-                        <div class="form-group">
-                            <label for="precio">Precio (S/)</label>
-                            <input type="number" id="precio" name="precio" step="0.01" value="{{ $producto->precio }}" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="stock">Stock</label>
-                            <input type="number" id="stock" name="stock" value="{{ $producto->stock ?? 0 }}">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="marca">Marca</label>
-                            <input type="text" id="marca" name="marca" value="{{ $producto->marca ?? '' }}">
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="detalles_tecnicos">Detalles Técnicos / Descripción</label>
-                        <textarea id="detalles_tecnicos" name="detalles_tecnicos" rows="4">{{ $producto->detalles_tecnicos ?? '' }}</textarea>
-                    </div>
-
-                    <div class="form-group checkbox-group">
-                        <input type="checkbox" id="mostrar_inicio" name="mostrar_inicio" value="1" {{ ($producto->mostrar_inicio ?? 0) == 1 ? 'checked' : '' }}>
-                        <label for="mostrar_inicio" style="text-transform: none; font-size: 14px; color: var(--text-main); cursor: pointer;">Mostrar este producto destacado en el Home</label>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Imágenes Asociadas</label>
-                        <div class="image-upload-zone">
-                            <i class="fas fa-images"></i>
-                            <p style="font-weight:600; font-size:14px;">Haz clic aquí para cambiar las fotos</p>
-                            <input type="file" id="imagenes" name="imagenes[]" accept="image/*" multiple onchange="previewImages()">
-                        </div>
-
-                        <div class="preview-gallery" id="gallery">
-                            @if(isset($producto->imagen))
-                            <div class="preview-item">
-                                <img src="{{ asset('img/' . $producto->imagen) }}" alt="Actual">
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn-update">Actualizar Cambios</button>
-                </div>
-            </form>
+        <div class="mt-8 flex justify-end">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition">
+                Actualizar Cambios
+            </button>
         </div>
-    </div>
-
-    <script>
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', currentTheme);
-        if (currentTheme === 'dark') { document.body.classList.add('dark-mode'); }
-
-        function previewImages() {
-            const preview = document.getElementById('gallery');
-            preview.innerHTML = "";
-            const files = document.getElementById('imagenes').files;
-            if (files) { [].forEach.call(files, readAndPreview); }
-
-            function readAndPreview(file) {
-                if (!/\.(jpe?g|png|gif|webp)$/i.test(file.name)) return;
-                const reader = new FileReader();
-                reader.addEventListener("load", function() {
-                    const div = document.createElement('div');
-                    div.className = 'preview-item';
-                    const image = new Image();
-                    image.src = this.result;
-                    div.appendChild(image);
-                    preview.appendChild(div);
-                });
-                reader.readAsDataURL(file);
-            }
-        }
-    </script>
-</body>
-</html>
+    </form>
+</div>
+@endsection

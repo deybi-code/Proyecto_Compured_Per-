@@ -6,13 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model
 {
-    // Forzamos a Eloquent a usar TU tabla, no la estándar
-    protected $table = 'productos';
+    protected $table      = 'productos';
     protected $primaryKey = 'id_producto';
-    public $timestamps = false; // No usamos created_at/updated_at por defecto
+    public    $timestamps = false;
 
     protected $fillable = [
         'nombre', 'precio', 'stock', 'marca', 'detalles_tecnicos',
-        'id_categoria', 'fecha_registro', 'mostrar_inicio'
+        'id_categoria', 'imagen', 'fecha_registro', 'mostrar_inicio',
     ];
+
+    // AÑADIDO: relación con categoría
+    public function categoria() {
+        return $this->belongsTo(Categoria::class, 'id_categoria', 'id_categoria');
+    }
+
+    // AÑADIDO: relación con detalles de boleta
+    public function detallesBoleta() {
+        return $this->hasMany(DetalleBoleta::class, 'id_producto', 'id_producto');
+    }
 }

@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Models\Boleta;
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class DashboardController extends Controller
 {
     public function index(): View
     {
-        $user = Auth::user();
-
-        // CORREGIDO: los usuarios usan 'id' (Auth::id()) como clave foránea en boletas,
-        // ya que Auth::id() devuelve el valor de la clave primaria del modelo (id_usuario).
-        $pedidos = Boleta::where('id_usuario', $user->id_usuario)->get();
+        $user    = Auth::user();
+        $pedidos = Boleta::where('id_usuario', $user->id_usuario)
+                         ->orderByDesc('fecha_venta')
+                         ->get();
 
         return view('dashboard', compact('user', 'pedidos'));
     }
@@ -22,18 +23,20 @@ class DashboardController extends Controller
     public function pedidos(): View
     {
         $user    = Auth::user();
-        $pedidos = Boleta::where('id_usuario', $user->id_usuario)->latest('fecha_venta')->get();
+        $pedidos = Boleta::where('id_usuario', $user->id_usuario)
+                         ->orderByDesc('fecha_venta')
+                         ->get();
+
         return view('dashboard', compact('user', 'pedidos'));
     }
 
-    // AÑADIDO: métodos de perfil que están en las rutas pero no en el controlador original
     public function editProfile(): View
     {
         $user = Auth::user();
         return view('profile.edit', compact('user'));
     }
 
-    public function updateProfile(\Illuminate\Http\Request $request): \Illuminate\Http\RedirectResponse
+    public function updateProfile(Request $request): RedirectResponse
     {
         $user = Auth::user();
 

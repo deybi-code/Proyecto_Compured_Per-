@@ -10,14 +10,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-   ->withMiddleware(function (Middleware $middleware): void {
-    // ESTA LÍNEA ES CLAVE PARA QUE RENDER Y LARAVEL SE ENTIENDAN
-    $middleware->trustProxies(at: '*'); 
-
-    $middleware->alias([
-        'es_admin' => \App\Http\Middleware\EsAdmin::class,
-    ]);
-})
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withMiddleware(function (Middleware $middleware) {
+        // CORREGIDO: registrar los middlewares personalizados con alias
+        $middleware->alias([
+            'es_admin'    => \App\Http\Middleware\EsAdmin::class,
+            'es_vendedor' => \App\Http\Middleware\EsVendedor::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

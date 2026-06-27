@@ -22,9 +22,10 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        // CORREGIDO: el modelo User usa 'correo' y 'nombre_completo', no 'email'/'name'.
-        // fill() con los datos validados por ProfileUpdateRequest (ya corregido).
-        $user->fill($request->validated());
+        // CORREGIDO: usar los campos reales del modelo (correo, nombre_completo)
+        $validated = $request->validated();
+        $user->nombre_completo = $validated['nombre_completo'];
+        $user->correo          = $validated['correo'];
         $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');

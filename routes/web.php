@@ -32,49 +32,51 @@ Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index
 Route::post('/carrito', [CarritoController::class, 'store'])->name('carrito.store');
 Route::delete('/carrito/{id}', [CarritoController::class, 'destroy'])->name('carrito.destroy');
 Route::get('/checkout', function () { return view('pago'); })->name('checkout');
-Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
 
-/*
-|--------------------------------------------------------------------------
-| 3. RUTAS PROTEGIDAS (Requieren Autenticación)
-|--------------------------------------------------------------------------
-*/
+// CORREGIDO: el checkout y pago requieren login (no puede pagar sin estar autenticado)
 Route::middleware(['auth'])->group(function () {
 
-    // Dashboard
+    Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 3. DASHBOARD Y PERFIL (cualquier usuario autenticado)
+    |--------------------------------------------------------------------------
+    */
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/pedidos', [DashboardController::class, 'pedidos'])->name('pedidos');
     Route::get('/dashboard/perfil', [DashboardController::class, 'editProfile'])->name('perfil');
     Route::post('/dashboard/perfil', [DashboardController::class, 'updateProfile'])->name('perfil.update');
 
-    // CORREGIDO: rutas profile.* que estaban ausentes y son usadas en navigation y vistas de perfil
+    // Rutas de perfil de Breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     /*
-    |----------------------------------------------------------------------
-    | 4. PANEL ADMINISTRATIVO (protegido con es_admin)
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | 4. PANEL DE VENTAS (vendedor y administrador)
+    |--------------------------------------------------------------------------
     */
-    // CORREGIDO: las rutas admin ahora requieren el middleware 'es_admin' además de 'auth'
-    // Antes cualquier usuario autenticado podía acceder al panel admin.
-    Route::middleware(['es_admin'])->prefix('admin')->group(function () {
-
-        // GESTIÓN DE PRODUCTOS (CRUD completo)
-        Route::resource('productos', AdminProductoController::class)->names('admin.productos');
-
-        // PUNTO DE VENTA (POS)
+    Route::middleware(['es_vendedor'])->prefix('admin')->group(function () {
         Route::get('/ventas', [VentasController::class, 'index'])->name('ventas.index');
         Route::post('/ventas', [VentasController::class, 'store'])->name('ventas.store');
+        Route::get('/boletas/{id}', [BoletaController::class, 'show'])->name('boletas.show');
+    });
 
-        // GESTIÓN DE ANUNCIOS
+    /*
+    |--------------------------------------------------------------------------
+    | 5. PANEL ADMINISTRATIVO (solo administrador)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['es_admin'])->prefix('admin')->group(function () {
+        // CRUD de productos
+        Route::resource('productos', AdminProductoController::class)->names('admin.productos');
+
+        // Gestión de anuncios
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');
         Route::post('/anuncios', [AdminAnuncioController::class, 'store'])->name('anuncios.store');
         Route::delete('/anuncios/{id}', [AdminAnuncioController::class, 'destroy'])->name('anuncios.destroy');
-
-        // BOLETAS (Impresión)
-        Route::get('/boletas/{id}', [BoletaController::class, 'show'])->name('boletas.show');
     });
 });
 

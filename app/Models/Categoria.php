@@ -6,14 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Categoria extends Model
 {
-    protected $table = 'categorias';
+    protected $table      = 'categorias';
     protected $primaryKey = 'id_categoria';
-    public $timestamps = false;
+    public    $timestamps = false;
 
-    protected $fillable = ['nombre_categoria'];
+    protected $fillable = [
+        'nombre_categoria',
+    ];
 
-    // Relación con Productos
-    public function productos() {
+    public function productos()
+    {
         return $this->hasMany(Producto::class, 'id_categoria', 'id_categoria');
     }
 }

@@ -4,41 +4,42 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AdminAnuncioController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $anuncios = DB::table('anuncios')->get();
         return view('admin.anuncios.index', compact('anuncios'));
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
-            'titulo' => 'required|string|max:255',
+            'titulo' => 'required|string|max:100',
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        // CORREGIDO: verificar que se subió el archivo antes de acceder a él
         $path = $request->file('imagen')->store('anuncios', 'public');
 
         DB::table('anuncios')->insert([
             'titulo'     => $request->titulo,
-            'imagen_url' => $path, // columna correcta en la BD
+            'imagen_url' => $path,
+            'posicion'   => $request->posicion ?? 'principal',
             'activo'     => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
         return back()->with('success', 'Anuncio publicado correctamente.');
     }
 
-    public function destroy($id) {
-        // AÑADIDO: método destroy que estaba en rutas pero faltaba la implementación completa
+    public function destroy($id)
+    {
         $anuncio = DB::table('anuncios')->where('id_anuncio', $id)->first();
 
         if ($anuncio) {
-            // Eliminar el archivo de imagen del storage
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($anuncio->imagen_url);
+            // Eliminar imagen del storage
+            Storage::disk('public')->delete($anuncio->imagen_url);
             DB::table('anuncios')->where('id_anuncio', $id)->delete();
         }
 

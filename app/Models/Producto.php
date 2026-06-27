@@ -11,17 +11,30 @@ class Producto extends Model
     public    $timestamps = false;
 
     protected $fillable = [
-        'nombre', 'precio', 'stock', 'marca', 'detalles_tecnicos',
-        'id_categoria', 'imagen', 'fecha_registro', 'mostrar_inicio',
+        'nombre',
+        'precio',
+        'stock',
+        'marca',
+        'detalles_tecnicos',
+        'id_categoria',
+        'imagen',
+        'fecha_registro',
+        'mostrar_inicio',
     ];
 
-    // AÑADIDO: relación con categoría
-    public function categoria() {
+    // Relaciones
+    public function categoria()
+    {
         return $this->belongsTo(Categoria::class, 'id_categoria', 'id_categoria');
     }
 
-    // AÑADIDO: relación con detalles de boleta
-    public function detallesBoleta() {
+    public function detallesBoleta()
+    {
         return $this->hasMany(DetalleBoleta::class, 'id_producto', 'id_producto');
+    }
+
+    public function fotos()
+    {
+        return $this->hasMany(FotoProducto::class, 'id_producto', 'id_producto');
     }
 }

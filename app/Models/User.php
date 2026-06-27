@@ -27,17 +27,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // CORREGIDO: Laravel usa 'email' y 'password' para autenticación por defecto.
-    // Al tener columnas distintas, hay que sobrescribir getAuthIdentifierName y getAuthPassword.
-    public function getEmailForPasswordReset() {
-        return $this->correo;
-    }
-
-    // CORREGIDO: decirle a Laravel qué campo es el "email" para autenticación
-    public function getAuthIdentifierName() {
-        return 'id_usuario';
-    }
-
     protected function casts(): array
     {
         return [
@@ -45,8 +34,38 @@ class User extends Authenticatable
         ];
     }
 
-    // Relación: un usuario tiene muchas boletas
-    public function boletas() {
+    // CORREGIDO: Laravel necesita saber qué campo usar como "email" en autenticación
+    public function getEmailForPasswordReset(): string
+    {
+        return $this->correo;
+    }
+
+    // CORREGIDO: Laravel usa este método para saber el campo del identificador único
+    public function getAuthIdentifierName(): string
+    {
+        return 'id_usuario';
+    }
+
+    // CORREGIDO: decirle a Breeze/Auth qué campo es el "email" para login
+    public function getAuthPassword(): string
+    {
+        return $this->password;
+    }
+
+    // Helpers de rol
+    public function esAdmin(): bool
+    {
+        return $this->rol === 'administrador';
+    }
+
+    public function esVendedor(): bool
+    {
+        return in_array($this->rol, ['vendedor', 'administrador']);
+    }
+
+    // Relaciones
+    public function boletas()
+    {
         return $this->hasMany(Boleta::class, 'id_usuario', 'id_usuario');
     }
 }

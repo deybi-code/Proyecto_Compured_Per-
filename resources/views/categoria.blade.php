@@ -1,159 +1,91 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ $categoria }} — Compured Perú</title>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+@extends('layouts.main')
 
-    <!-- El script principal que maneja el modo oscuro global -->
-    <script src="{{ asset('js/theme.js') }}"></script>
+@section('title', 'Categorías - Compured Perú')
 
-    <style>
-        /* ESTILOS EXACTOS DE TU IMAGEN PARA EL MENÚ LATERAL */
-        .cat-sidebar {
-            background-color: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            width: 260px;
-            min-width: 260px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-        .cat-sidebar-titulo {
-            background-color: #0b33a2; color: #ffffff; text-align: center; padding: 16px; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;
-        }
-        .cat-sidebar-lista {
-            list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column;
-        }
-        .cat-sidebar-lista li {
-            border-bottom: 1px solid #e2e8f0; transition: border-color 0.3s ease;
-        }
-        .cat-sidebar-lista li:last-child { border-bottom: none; }
-        .cat-sidebar-lista a {
-            display: flex; align-items: center; padding: 12px 20px; color: #4b5563; text-decoration: none; font-size: 14px; transition: background 0.3s, color 0.3s;
-        }
-        .cat-sidebar-lista a::before {
-            content: '»'; color: #27a1eb; font-weight: 900; font-size: 18px; margin-right: 12px;
-        }
-        .cat-sidebar-lista a:hover {
-            background-color: #f3f4f6; color: #0b33a2; font-weight: 600;
-        }
+@section('content')
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400">Home</a> &raquo;
+        <span class="text-gray-700 dark:text-gray-200 capitalize">Categoría seleccionada</span>
+    </nav>
 
-        /* LA CLASE ACTIVA (Fondo blanco, letra azul oscura como tu imagen) */
-        .cat-sidebar-lista a.activo {
-            background-color: #f4f6f9; color: #0b33a2; font-weight: bold;
-        }
+    <div class="flex flex-col md:flex-row gap-8">
 
-        /* COMPORTAMIENTO MODO OSCURO PARA EL MENÚ */
-        body.dark-mode .cat-sidebar {
-            background-color: #1a1a1a; border-color: #2d2d2d; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
-        body.dark-mode .cat-sidebar-lista li { border-bottom: 1px solid #2d2d2d; }
-        body.dark-mode .cat-sidebar-lista a { color: #d1d5db; }
-        body.dark-mode .cat-sidebar-lista a:hover { background-color: #252525; color: #ffffff; }
+        <!-- Sidebar de Filtros -->
+        <aside class="w-full md:w-1/4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+                <h2 class="bg-blue-600 dark:bg-blue-800 font-bold text-white p-4 text-sm">Filtrar resultados por</h2>
+                <ul class="divide-y divide-gray-100 dark:divide-gray-700 text-sm p-2">
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Accesorios</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Computadoras</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Laptops</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Redes / Conectividad</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Case</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Fuentes para Case</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Coolers/CPU - Refrigeracion Liq.</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» CPU - Procesadores</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Discos Duros Externos</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Discos Duros Internos</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-blue-600 dark:text-blue-400 font-bold">» Discos Sólidos Internos</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Impresoras</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Memorias Flash</a></li>
+                    <li><a href="#" class="block px-4 py-2 hover:text-blue-600 dark:hover:text-blue-400 font-medium">» Memorias RAM</a></li>
+                </ul>
+            </div>
 
-        /* ACTIVO EN MODO OSCURO (Mantiene la fidelidad de tu imagen) */
-        body.dark-mode .cat-sidebar-lista a.activo {
-            background-color: #f4f6f9; color: #0b33a2; font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+            <!-- Filtro de Precio -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden p-6 text-center" x-data="{ min: 0, max: 10000 }">
+                <input type="range" min="0" max="10000" x-model="max" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-600 mb-4">
+                <div class="flex items-center justify-between gap-4 mb-4">
+                    <input type="number" x-model="min" class="w-full border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white p-2 text-center text-sm focus:ring-blue-500">
+                    <span class="text-gray-500 font-bold">A</span>
+                    <input type="number" x-model="max" class="w-full border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white p-2 text-center text-sm focus:ring-blue-500">
+                </div>
+                <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded transition shadow-sm w-full">
+                    BUSCAR <svg class="w-4 h-4 inline-block ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </button>
+            </div>
+        </aside>
 
-<!-- BARRA SUPERIOR -->
-<div class="top-info">
-    <a href="{{ route('register') }}">Registrarse</a>
-    <span style="margin: 0 5px; color: white">|</span>
-    <a href="{{ route('login') }}">Iniciar sesión</a>
-</div>
+        <!-- Resultados -->
+        <section class="w-full md:w-3/4">
 
-<!-- HEADER -->
-<header class="topbar">
-    <div class="logo">
-        <a href="{{ route('inicio') }}">
-            <img src="{{ asset('img/logo.png') }}" alt="Logo Compured">
-        </a>
-    </div>
-
-    <!-- Buscador ... (Mismo que tenías) -->
-
-    <div class="topbar-icons">
-        <a href="{{ route('carrito') }}" class="topbar-icon">
-            <span><i class="fas fa-shopping-cart"></i></span>
-            <span>Carrito</span>
-        </a>
-        <button onclick="toggleDarkMode()" class="topbar-icon">
-            <span><i class="fas fa-moon"></i></span>
-            <span>Oscuro</span>
-        </button>
-        <a href="{{ route('login') }}" class="topbar-icon">
-            <span><i class="fas fa-user"></i></span>
-            <span>Mi cuenta</span>
-        </a>
-    </div>
-</header>
-
-<div class="breadcrumb">
-    <a href="{{ route('inicio') }}">Home</a> »
-    <span>{{ $categoria }}</span>
-</div>
-
-<!-- CONTENIDO CATEGORÍA -->
-<div class="cat-wrapper" style="display: flex; gap: 30px; margin-top: 20px;">
-
-    <!-- NUEVO DISEÑO DEL FILTRO -->
-    <aside class="cat-sidebar">
-        <div class="cat-sidebar-titulo">Filtrar resultados por</div>
-        <ul class="cat-sidebar-lista">
-            <li><a href="{{ route('categoria', 'Accesorio') }}" class="{{ $categoria == 'Accesorio' ? 'activo' : '' }}">Accesorios</a></li>
-            <li><a href="{{ route('categoria', 'Computadora') }}" class="{{ $categoria == 'Computadora' ? 'activo' : '' }}">Computadoras</a></li>
-            <li><a href="{{ route('categoria', 'Laptop') }}" class="{{ $categoria == 'Laptop' ? 'activo' : '' }}">Laptops</a></li>
-            <li><a href="{{ route('categoria', 'Redes') }}" class="{{ $categoria == 'Redes' ? 'activo' : '' }}">Redes / Conectividad</a></li>
-            <li><a href="{{ route('categoria', 'Case') }}" class="{{ $categoria == 'Case' ? 'activo' : '' }}">Case</a></li>
-            <li><a href="{{ route('categoria', 'Fuente') }}" class="{{ $categoria == 'Fuente' ? 'activo' : '' }}">Fuentes para Case</a></li>
-            <li><a href="{{ route('categoria', 'Cooler') }}" class="{{ $categoria == 'Cooler' ? 'activo' : '' }}">Coolers/CPU</a></li>
-            <li><a href="{{ route('categoria', 'Procesador') }}" class="{{ $categoria == 'Procesador' ? 'activo' : '' }}">CPU - Procesadores</a></li>
-            <li><a href="{{ route('categoria', 'Disco Duro Externo') }}" class="{{ $categoria == 'Disco Duro Externo' ? 'activo' : '' }}">Discos Duros Externos</a></li>
-            <li><a href="{{ route('categoria', 'Disco Duro Interno') }}" class="{{ $categoria == 'Disco Duro Interno' ? 'activo' : '' }}">Discos Duros Internos</a></li>
-            <li><a href="{{ route('categoria', 'Disco Solido') }}" class="{{ $categoria == 'Disco Solido' ? 'activo' : '' }}">Discos Sólidos Internos</a></li>
-            <li><a href="{{ route('categoria', 'Impresora') }}" class="{{ $categoria == 'Impresora' ? 'activo' : '' }}">Impresoras</a></li>
-            <li><a href="{{ route('categoria', 'Memoria Flash') }}" class="{{ $categoria == 'Memoria Flash' ? 'activo' : '' }}">Memorias Flash</a></li>
-            <li><a href="{{ route('categoria', 'Memoria RAM') }}" class="{{ $categoria == 'Memoria RAM' ? 'activo' : '' }}">Memorias RAM</a></li>
-            <li><a href="{{ route('categoria', 'Monitor') }}" class="{{ $categoria == 'Monitor' ? 'activo' : '' }}">Monitores</a></li>
-            <li><a href="{{ route('categoria', 'Placa Madre') }}" class="{{ $categoria == 'Placa Madre' ? 'activo' : '' }}">Motherboards / Placas Madre</a></li>
-            <li><a href="{{ route('categoria', 'Mouse') }}" class="{{ $categoria == 'Mouse' ? 'activo' : '' }}">Mouse</a></li>
-            <li><a href="{{ route('categoria', 'Tarjeta Video') }}" class="{{ $categoria == 'Tarjeta Video' ? 'activo' : '' }}">Tarjetas de Video</a></li>
-            <li><a href="{{ route('categoria', 'Teclado') }}" class="{{ $categoria == 'Teclado' ? 'activo' : '' }}">Teclados</a></li>
-            <li><a href="{{ route('categoria', 'UPS') }}" class="{{ $categoria == 'UPS' ? 'activo' : '' }}">UPS, Estabilizadores</a></li>
-        </ul>
-    </aside>
-
-    <!-- PRODUCTOS -->
-    <div class="cat-contenido" style="flex: 1;">
-        <div class="cat-header">
-            <h1 class="cat-titulo">{{ $categoria }}</h1>
-            <div class="cat-ordenar">
-                <label>Ordenar por:</label>
-                <select onchange="ordenar(this.value)">
-                    <option value="precio_asc">El precio más bajo</option>
-                    <option value="precio_desc">El precio más alto</option>
-                    <option value="nombre">Nombre</option>
+            <div class="flex justify-end items-center mb-6 text-sm text-gray-700 dark:text-gray-300">
+                <label class="mr-2 font-medium">Ordenar por :</label>
+                <select class="border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 p-2 focus:ring-blue-500 outline-none">
+                    <option>El precio más bajo</option>
+                    <option>El precio más alto</option>
+                    <option>Más recientes</option>
                 </select>
             </div>
-        </div>
 
-        <div class="cat-grid">
-            @forelse($productos as $producto)
-            <!-- ... Tu bucle de productos intacto ... -->
-            @empty
-                <p class="cat-vacio">No hay productos en esta categoría.</p>
-            @endforelse
-        </div>
+            <!-- Mostrar si no hay productos (como se ve en partes del video) -->
+            <!-- <div class="text-center text-xl text-gray-600 dark:text-gray-400 py-10">No se ha encontrado ningún producto.</div> -->
+
+            <!-- Grid de productos (Similar al index pero adaptado) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Tarjeta Producto -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition flex flex-col relative group">
+                    <button class="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition opacity-0 group-hover:opacity-100 z-10" title="Agregar a favoritos">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </button>
+                    <div class="relative w-full h-48 bg-white p-4 flex items-center justify-center border-b border-gray-100 dark:border-gray-700">
+                        <img src="{{ asset('img/producto.webp') }}" alt="Producto" class="max-h-full object-contain">
+                    </div>
+                    <div class="p-4 flex flex-col flex-grow">
+                        <div class="flex items-center gap-1 text-xs text-yellow-400 mb-1">
+                            ★★★★★ <span class="text-gray-400 ml-1">0 Reseñas</span>
+                        </div>
+                        <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2 leading-tight">Unidad de estado solido Western Digital Green, WD S240G3G0A...</h3>
+                        <div class="text-sm text-green-600 dark:text-green-400 font-semibold mb-2">En stock</div>
+                        <div class="text-xl font-bold text-blue-600 dark:text-blue-400 mb-4 mt-auto">S/ 108</div>
+                    </div>
+                </div>
+                <!-- Fin Tarjeta Producto -->
+            </div>
+
+        </section>
     </div>
 </div>
-
-<script src="{{ asset('js/carrito.js') }}"></script>
-</body>
-</html>
+@endsection

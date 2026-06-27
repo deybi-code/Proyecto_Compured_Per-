@@ -1,193 +1,98 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ $producto->nombre }} — Compured Perú</title>
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="{{ asset('js/theme.js') }}"></script>
-</head>
-<body>
+@extends('layouts.main')
 
-<div class="top-info">
-    <a href="{{ route('register') }}">Registrarse</a>
-    <span style="margin: 0 5px; color: white">|</span>
-    <a href="{{ route('login') }}">Iniciar sesión</a>
-</div>
+@section('title', 'Detalle del Producto - Compured Perú')
 
-<header class="topbar">
-    <div class="logo">
-        <a href="{{ route('inicio') }}">
-            <img src="{{ asset('img/logo.png') }}" alt="Logo Compured">
-        </a>
-    </div>
+@section('content')
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400">Home</a> &raquo;
+        <a href="/categoria/almacenamiento" class="hover:text-blue-600 dark:hover:text-blue-400">Discos Sólidos Internos</a> &raquo;
+        <span class="text-gray-700 dark:text-gray-200">Unidad de Estado Solido Western Digital...</span>
+    </nav>
 
-    <form action="{{ route('buscar') }}" method="GET" class="topbar-search">
-        <select name="categoria_filtro">
-            <option value="">Categorías</option>
-            <option value="Accesorio">Accesorios</option>
-            <option value="Computadora">Computadoras</option>
-            <option value="Laptop">Laptops</option>
-            <option value="Redes">Redes / Conectividad</option>
-            <option value="Case">Case</option>
-            <option value="Fuente">Fuentes para Case</option>
-            <option value="Cooler">Coolers/CPU</option>
-            <option value="Procesador">CPU - Procesadores</option>
-            <option value="Disco Duro Externo">Discos Duros Externos</option>
-            <option value="Disco Duro Interno">Discos Duros Internos</option>
-            <option value="Disco Solido">Discos Sólidos</option>
-            <option value="Impresora">Impresoras</option>
-            <option value="Memoria Flash">Memorias Flash</option>
-            <option value="Memoria RAM">Memorias RAM</option>
-            <option value="Monitor">Monitores</option>
-            <option value="Placa Madre">Placas Madre</option>
-            <option value="Mouse">Mouse</option>
-            <option value="Tablet">Tablets</option>
-            <option value="Tarjeta Video">Tarjetas de Video</option>
-            <option value="Teclado">Teclados</option>
-            <option value="UPS">UPS</option>
-        </select>
-        <input type="text" name="buscar" placeholder="Buscar productos...">
-        <button type="submit"><i class="fas fa-search"></i></button>
-    </form>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6 flex flex-col md:flex-row gap-8" x-data="{ cantidad: 1 }">
 
-    <div class="topbar-icons">
-        <a href="{{ route('carrito') }}" class="topbar-icon">
-            <span><i class="fas fa-shopping-cart"></i></span>
-            <span>Carrito</span>
-        </a>
-        <button type="button" onclick="toggleDarkMode()" class="topbar-icon">
-            <span><i class="fas fa-moon"></i></span>
-            <span>Oscuro</span>
-        </button>
-        <a href="{{ route('login') }}" class="topbar-icon">
-            <span><i class="fas fa-user"></i></span>
-            <span>Mi cuenta</span>
-        </a>
-    </div>
-</header>
-
-<div class="breadcrumb">
-    <a href="{{ route('inicio') }}">Home</a> »
-    <a href="{{ route('categoria', $producto->id_categoria) }}">{{ $producto->id_categoria }}</a> »
-    <span>{{ $producto->nombre }}</span>
-</div>
-
-<section class="detalle-wrapper">
-    <div class="detalle-izq">
-        <div class="detalle-img-principal">
-            <img src="{{ asset('img/' . $producto->imagen) }}" alt="{{ $producto->nombre }}">
-        </div>
-    </div>
-
-    <div class="detalle-der">
-        <h1 class="detalle-nombre">{{ $producto->nombre }}</h1>
-
-        <p class="detalle-stock"><i class="fas fa-check-circle"></i> En stock</p>
-        <p class="detalle-precio">S/ {{ $producto->precio }}</p>
-
-        <div class="detalle-cantidad">
-            <button type="button" onclick="cambiarCantidad(-1)">−</button>
-            <input type="number" id="cantidad" value="1" min="1">
-            <button type="button" onclick="cambiarCantidad(1)">+</button>
+        <!-- Imagen del Producto -->
+        <div class="w-full md:w-1/2 flex items-center justify-center p-4 bg-white rounded-lg border border-gray-100 dark:border-gray-600">
+            <img src="{{ asset('img/producto.webp') }}" alt="Producto" class="max-w-full h-auto object-contain">
         </div>
 
-        <div class="detalle-botones">
-            <button
-                class="btn-añadir"
-                type="button"
-                onclick="agregarCarrito('{{ addslashes($producto->nombre) }}', '{{ $producto->precio }}', '{{ $producto->imagen }}', document.getElementById('cantidad').value)"
-            >
-                <i class="fas fa-cart-plus"></i> Añadir al carrito
-            </button>
-            <a href="https://wa.me/..." class="btn-whatsapp-producto">
-                <i class="fab fa-whatsapp"></i> Atención por WhatsApp
-            </a>
-        </div>
+        <!-- Detalles del Producto -->
+        <div class="w-full md:w-1/2 flex flex-col">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">Unidad de estado solido Western Digital Green, WD S240G3G0A, 240GB, SATA 6Gb/s, 2.5", 7mm.</h1>
 
-        <div class="detalle-meta">
-            <p><strong>Categoría:</strong> {{ $producto->id_categoria }}</p>
-        </div>
-    </div>
+            <div class="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 mb-4 font-semibold">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                En stock
+                <span class="text-gray-400 dark:text-gray-500 font-normal ml-2">0 Reseñas</span>
+            </div>
 
-    <div class="detalle-sidebar">
-        <h4>Productos relacionados</h4>
-        @foreach($relacionados as $rel)
-            <a href="{{ route('producto', $rel->id_producto) }}" class="rel-card">
-                <img src="{{ asset('img/' . $rel->imagen) }}" alt="{{ $rel->nombre }}">
-                <div>
-                    <p class="rel-precio">S/ {{ $rel->precio }}</p>
-                    <p class="rel-nombre">{{ $rel->nombre }}</p>
+            <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-6">S/ 108</div>
+
+            <!-- Selector de cantidad y botones -->
+            <div class="flex flex-wrap items-center gap-4 mb-6">
+                <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded overflow-hidden">
+                    <button @click="if(cantidad > 1) cantidad--" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition font-bold text-lg">-</button>
+                    <input type="text" x-model="cantidad" class="w-12 text-center border-none focus:ring-0 dark:bg-gray-800 dark:text-white font-semibold" readonly>
+                    <button @click="cantidad++" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 transition font-bold text-lg">+</button>
                 </div>
+
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold flex items-center gap-2 transition shadow">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Añadir al carrito
+                </button>
+
+                <button class="bg-gray-800 hover:bg-black dark:bg-gray-600 dark:hover:bg-gray-500 text-white px-6 py-3 rounded font-semibold flex items-center gap-2 transition shadow">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    Compra ahora
+                </button>
+            </div>
+
+            <a href="https://wa.me/51999999999" target="_blank" class="inline-flex w-max items-center gap-2 text-green-600 dark:text-green-400 border-2 border-green-600 dark:border-green-400 px-4 py-2 rounded hover:bg-green-50 dark:hover:bg-gray-700 transition mb-4 font-semibold">
+                Atención por whatsapp
             </a>
-        @endforeach
-    </div>
-</section>
 
-<div class="detalle-tabs">
-    <div class="tabs-header">
-        <button class="tab-btn activo" onclick="mostrarTab('descripcion', this)">Descripción</button>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-auto">Stock del producto: 392594_cp</p>
+        </div>
     </div>
-    <div id="tab-descripcion" class="tab-contenido activo">
-        <p>{{ $producto->detalles_tecnicos }}</p>
-    </div>
-</div>
 
-<footer class="footer">
-    <div class="footer-grid">
-        <div class="footer-col">
-            <h4>Compured Perú</h4>
-            <p>eCommerce que vende y promociona productos tecnológicos para toda persona, respaldados por una empresa.</p>
-            <div class="footer-redes">
-                <a href="https://www.facebook.com/" target="_blank">Facebook</a>
-                <a href="https://twitter.com/" target="_blank">Twitter</a>
-                <a href="https://wa.me/960900386" target="_blank">WhatsApp</a>
+    <!-- Pestañas de información -->
+    <div class="mt-8" x-data="{ tab: 'descripcion' }">
+        <div class="flex flex-wrap border-b border-gray-200 dark:border-gray-700">
+            <button @click="tab = 'descripcion'" :class="tab === 'descripcion' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'" class="px-6 py-3 border-b-2 font-bold text-sm uppercase transition">DESCRIPCIÓN</button>
+            <button @click="tab = 'politica'" :class="tab === 'politica' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'" class="px-6 py-3 border-b-2 font-bold text-sm uppercase transition">POLÍTICA DE COMPRA Y DEVOLUCIÓN</button>
+            <button @click="tab = 'resenas'" :class="tab === 'resenas' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'" class="px-6 py-3 border-b-2 font-bold text-sm uppercase transition">RESEÑAS (0)</button>
+            <button @click="tab = 'comentarios'" :class="tab === 'comentarios' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'" class="px-6 py-3 border-b-2 font-bold text-sm uppercase transition">COMENTARIO(0)</button>
+        </div>
+
+        <div class="p-6 bg-white dark:bg-gray-800 border border-t-0 border-gray-200 dark:border-gray-700 rounded-b-lg text-sm text-gray-700 dark:text-gray-300">
+            <div x-show="tab === 'descripcion'">
+                <p class="mb-6 leading-relaxed">Unidad de estado solido Western Digital Green, WD S240G3G0A, 240GB, SATA 6Gb/s, 2.5", 7mm.<br>Capacidad: 240GB. Interfaz: SATA 6.0 Gb/s. Velocidad de Transferencia: 6 Gb/s. Velocidad de Lectura: 540 MB/s. Velocidad de Escritura: 430 MB/s.</p>
+                <div class="w-full md:w-2/3">
+                    <span class="bg-blue-600 text-white px-2 py-1 text-xs font-bold uppercase rounded mb-3 inline-block">Características :</span>
+                    <table class="w-full border-collapse border border-gray-300 dark:border-gray-600 text-xs">
+                        <tbody>
+                            <tr><td class="border border-gray-300 dark:border-gray-600 p-2 font-bold bg-gray-50 dark:bg-gray-700 w-1/3">MARCA</td><td class="border border-gray-300 dark:border-gray-600 p-2">WESTERN DIGITAL</td></tr>
+                            <tr><td class="border border-gray-300 dark:border-gray-600 p-2 font-bold bg-gray-50 dark:bg-gray-700 w-1/3">MODELO</td><td class="border border-gray-300 dark:border-gray-600 p-2">WD GREEN</td></tr>
+                            <tr><td class="border border-gray-300 dark:border-gray-600 p-2 font-bold bg-gray-50 dark:bg-gray-700 w-1/3">CAPACIDAD</td><td class="border border-gray-300 dark:border-gray-600 p-2">240 GB</td></tr>
+                            <tr><td class="border border-gray-300 dark:border-gray-600 p-2 font-bold bg-gray-50 dark:bg-gray-700 w-1/3">INTERFAZ</td><td class="border border-gray-300 dark:border-gray-600 p-2">SATA 6.0 Gb/s</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div x-cloak x-show="tab === 'politica'">
+                <p>Nuestra política de compra y devolución asegura tu satisfacción total. Tienes 7 días para devoluciones por fallos de fábrica presentando el comprobante original.</p>
+            </div>
+            <div x-cloak x-show="tab === 'resenas'">
+                <p>No se ha encontrado ninguna reseña.</p>
+            </div>
+            <div x-cloak x-show="tab === 'comentarios'">
+                <h3 class="font-bold text-lg mb-2">Escribir comentario</h3>
+                <textarea class="w-full md:w-1/2 border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 dark:text-white p-3 focus:ring-blue-500 focus:border-blue-500" rows="4" placeholder="Escriba sus comentarios aquí ..."></textarea>
+                <button class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold transition">Publicar comentario</button>
             </div>
         </div>
-        <div class="footer-col">
-            <h4>Enlaces</h4>
-            <ul>
-                <li><a href="{{ route('inicio') }}">Home</a></li>
-                <li><a href="#">Sobre nosotros</a></li>
-                <li><a href="#">Términos y condiciones</a></li>
-                <li><a href="#">Contacto</a></li>
-            </ul>
-        </div>
-        <div class="footer-col">
-            <h4>Últimas categorías</h4>
-            <ul>
-                <li><a href="{{ route('categoria', 'Accesorio') }}">Accesorios</a></li>
-                <li><a href="{{ route('categoria', 'Computadora') }}">Computadoras</a></li>
-                <li><a href="{{ route('categoria', 'Laptop') }}">Laptops</a></li>
-                <li><a href="{{ route('categoria', 'Redes') }}">Redes / Conectividad</a></li>
-            </ul>
-        </div>
     </div>
-    <div class="footer-bottom">
-        <p>© 2026 Compured Perú — Todos los derechos reservados</p>
-    </div>
-</footer>
-
-<a href="https://wa.me/960900386" class="whatsapp" target="_blank">
-    <i class="fab fa-whatsapp"></i>
-</a>
-
-<script src="{{ asset('js/carrito.js') }}"></script>
-<script>
-function cambiarCantidad(valor) {
-    const input = document.getElementById('cantidad');
-    const nueva = parseInt(input.value) + valor;
-    if (nueva >= 1) input.value = nueva;
-}
-
-function mostrarTab(tab, btn) {
-    document.querySelectorAll('.tab-contenido').forEach(t => t.classList.remove('activo'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('activo'));
-    document.getElementById('tab-' + tab).classList.add('activo');
-    btn.classList.add('activo');
-}
-</script>
-
-</body>
-</html>
-
+</div>
+@endsection

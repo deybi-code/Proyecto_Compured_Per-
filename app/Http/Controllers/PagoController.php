@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Boleta;
-use App\Models\PagoOnline;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,22 +9,30 @@ class PagoController extends Controller
 {
     public function procesar(Request $request)
     {
-        // 1. Crear la Boleta
-        $boleta = Boleta::create([
-            'id_usuario' => Auth::id(),
-            'fecha_venta' => now(),
-            'total_pago' => $request->total,
-            'estado_pedido' => 'pendiente'
+        $request->validate([
+            'metodo_envio' => 'nullable|string',
+            'numero_documento' => 'nullable|string',
+            'telefono' => 'nullable|string',
+            'direccion' => 'nullable|string',
+            'ciudad' => 'nullable|string',
         ]);
 
-        // 2. Registrar el Pago Online
-        PagoOnline::create([
-            'id_boleta' => $boleta->id_boleta,
-            'metodo_pago' => $request->metodo,
-            'estado_pago' => 'pendiente',
-            'fecha_pago' => now()
-        ]);
+        if (Auth::check()) {
+            // Aquí irá la lógica para guardar en la tabla 'boletas' y 'detalle_boleta' según el diagrama
+            /*
+            $boleta = Boleta::create([
+                'id_usuario' => Auth::id(),
+                'fecha_venta' => now(),
+                'total_pago' => 1140, // Monto estático temporal
+                'metodo_pago' => 'Transferencia/Efectivo',
+                'estado_pedido' => 'Pendiente',
+            ]);
+            */
 
-        return redirect()->route('dashboard')->with('success', 'Pedido realizado con éxito');
+            // Limpiar carrito
+            // Carrito::where('id_usuario', Auth::id())->delete();
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Pedido realizado con éxito.');
     }
 }

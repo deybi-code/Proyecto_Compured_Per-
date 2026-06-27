@@ -94,7 +94,7 @@
         <!-- FIX #6: Navegación completa con logout en sidebar de edit -->
         <ul class="sidebar-menu">
             <li><a href="{{ route('admin.productos.index') }}" class="sidebar-link active"><i class="fas fa-box"></i> Productos</a></li>
-            <li><a href="{{ route('inicio') }}" class="sidebar-link"><i class="fas fa-home"></i> Volver a Tienda</a></li>
+            <li><a href="{{ route('home') }}" class="sidebar-link"><i class="fas fa-home"></i> Volver a Tienda</a></li>
         </ul>
         <div style="margin-top: auto;">
             <form method="POST" action="{{ route('logout') }}">

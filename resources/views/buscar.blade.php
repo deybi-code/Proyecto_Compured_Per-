@@ -25,7 +25,7 @@
 
 <h1>Resultados para: {{ $texto }}</h1>
 
-<a href="{{ route('inicio') }}">
+<a href="{{ route('home') }}">
     ← Volver al inicio
 </a>
 

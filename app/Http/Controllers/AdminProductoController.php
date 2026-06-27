@@ -24,7 +24,7 @@ class AdminProductoController extends Controller
             'marca' => 'required',
         ]);
         Producto::create($data);
-        return redirect()->route('admin.productos')->with('success', 'Producto creado.');
+        return redirect()->route('admin.productos.index')->with('success', 'Producto creado.');
     }
 
     public function edit($id) {
@@ -35,11 +35,11 @@ class AdminProductoController extends Controller
     public function update(Request $request, $id) {
         $producto = Producto::findOrFail($id);
         $producto->update($request->all());
-        return redirect()->route('admin.productos')->with('success', 'Producto actualizado.');
+        return redirect()->route('admin.productos.index')->with('success', 'Producto actualizado.');
     }
 
     public function destroy($id) {
         Producto::findOrFail($id)->delete();
-        return redirect()->route('admin.productos')->with('success', 'Producto eliminado.');
+        return redirect()->route('admin.productos.index')->with('success', 'Producto eliminado.');
     }
 }

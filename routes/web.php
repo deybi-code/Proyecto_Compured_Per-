@@ -27,6 +27,7 @@ Route::get('/producto/{id?}', function () { return view('producto'); })->name('p
 */
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
 Route::post('/carrito', [CarritoController::class, 'store'])->name('carrito.store');
+Route::get('/checkout', function () { return view('pago'); })->name('checkout');
 Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
 
 /*

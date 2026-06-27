@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-// Importación de todos los controladores necesarios
 use App\Http\Controllers\{
     DashboardController,
     CarritoController,
@@ -15,7 +13,7 @@ use App\Http\Controllers\{
 
 /*
 |--------------------------------------------------------------------------
-| 1. RUTAS PÚBLICAS (Catálogo y Navegación)
+| 1. RUTAS PÚBLICAS
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () { return view('index'); })->name('home');
@@ -29,13 +27,11 @@ Route::get('/producto/{id?}', function () { return view('producto'); })->name('p
 */
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
 Route::post('/carrito', [CarritoController::class, 'store'])->name('carrito.store');
-
-Route::get('/checkout', function () { return view('pago'); })->name('checkout');
 Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
 
 /*
 |--------------------------------------------------------------------------
-| 3. RUTAS PROTEGIDAS (Requieren Login)
+| 3. RUTAS PROTEGIDAS (Requieren Autenticación)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
@@ -43,41 +39,32 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard y Perfil
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/pedidos', [DashboardController::class, 'pedidos'])->name('pedidos');
-    Route::get('/dashboard/depositos', [DashboardController::class, 'depositos'])->name('depositos');
-    Route::get('/dashboard/tickets', [DashboardController::class, 'tickets'])->name('tickets');
     Route::get('/dashboard/perfil', [DashboardController::class, 'editProfile'])->name('perfil');
     Route::post('/dashboard/perfil', [DashboardController::class, 'updateProfile'])->name('perfil.update');
 
     /*
     |----------------------------------------------------------------------
-    | 4. PANEL ADMINISTRATIVO Y VENTAS (Gestión interna)
+    | 4. PANEL ADMINISTRATIVO Y VENTAS
     |----------------------------------------------------------------------
     */
     Route::prefix('admin')->group(function () {
 
-        // Gestión de Productos (CRUD completo)
-        Route::get('/productos', [AdminProductoController::class, 'index'])->name('admin.productos');
-        Route::get('/productos/create', [AdminProductoController::class, 'create'])->name('admin.productos.create');
-        Route::post('/productos', [AdminProductoController::class, 'store'])->name('admin.productos.store');
+        // GESTIÓN DE PRODUCTOS (CRUD completo resuelto)
+        // Esto genera automáticamente: index, create, store, edit, update, destroy
+        Route::resource('productos', AdminProductoController::class)->names('admin.productos');
 
-        // Punto de Venta (POS)
+        // PUNTO DE VENTA (POS)
         Route::get('/ventas', [VentasController::class, 'index'])->name('ventas.index');
         Route::post('/ventas', [VentasController::class, 'store'])->name('ventas.store');
 
-        // Gestión de Anuncios (Banner)
+        // GESTIÓN DE ANUNCIOS
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');
         Route::post('/anuncios', [AdminAnuncioController::class, 'store'])->name('anuncios.store');
         Route::delete('/anuncios/{id}', [AdminAnuncioController::class, 'destroy'])->name('anuncios.destroy');
 
-        // Impresión de Boletas
+        // BOLETAS (Impresión)
         Route::get('/boletas/{id}', [BoletaController::class, 'show'])->name('boletas.show');
     });
 });
 
-/*
-|--------------------------------------------------------------------------
-| 5. RUTAS DE AUTENTICACIÓN (Breeze/Jetstream)
-|--------------------------------------------------------------------------
-*/
-// Este archivo es vital para que login/register funcionen
 require __DIR__.'/auth.php';

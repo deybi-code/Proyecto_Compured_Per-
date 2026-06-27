@@ -3,38 +3,27 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Carrito;
 use App\Models\Producto;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CarritoController extends Controller
 {
-    public function index()
-    {
-        // En el futuro aquí se recuperarán los items de la base de datos
-        // $items = Carrito::where('id_usuario', Auth::id())->get();
-        return view('carrito');
+    public function index() {
+        $carrito = Session::get('carrito', []);
+        return view('carrito.index', compact('carrito'));
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'id_producto' => 'required|exists:productos,id_producto',
-            'cantidad' => 'required|integer|min:1'
-        ]);
+    public function store(Request $request) {
+        $producto = Producto::findOrFail($request->id_producto);
+        $carrito = Session::get('carrito', []);
 
-        if (Auth::check()) {
-            // Lógica real de base de datos según tu diagrama
-            /*
-            Carrito::create([
-                'id_usuario' => Auth::id(),
-                'id_producto' => $request->id_producto,
-                'cantidad' => $request->cantidad,
-                'fecha_agregado' => now(),
-            ]);
-            */
-        }
+        $carrito[$producto->id_producto] = [
+            'nombre' => $producto->nombre,
+            'precio' => $producto->precio,
+            'cantidad' => $request->cantidad
+        ];
 
-        return redirect()->route('carrito.index')->with('success', 'Producto añadido exitosamente al carrito');
+        Session::put('carrito', $carrito);
+        return back()->with('success', 'Producto añadido al carrito');
     }
 }

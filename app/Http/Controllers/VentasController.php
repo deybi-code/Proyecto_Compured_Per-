@@ -26,7 +26,7 @@ class VentasController extends Controller
 
         $producto = Producto::findOrFail($request->id_producto);
 
-        // CORREGIDO: validar stock ANTES de iniciar la transacción
+        // Validar stock ANTES de la transacción
         if ($producto->stock < $request->cantidad) {
             return back()
                 ->withInput()
@@ -37,11 +37,9 @@ class VentasController extends Controller
             $idBoleta = DB::transaction(function () use ($request, $producto) {
                 $total = $producto->precio * $request->cantidad;
 
-                // Descontar stock
                 $producto->stock -= $request->cantidad;
                 $producto->save();
 
-                // Crear boleta
                 $idBoleta = DB::table('boletas')->insertGetId([
                     'id_usuario'       => Auth::user()->id_usuario,
                     'fecha_venta'      => now(),
@@ -52,7 +50,6 @@ class VentasController extends Controller
                     'tipo_comprobante' => 'Boleta',
                 ]);
 
-                // Registrar detalle
                 DB::table('detalle_boleta')->insert([
                     'id_boleta'       => $idBoleta,
                     'id_producto'     => $producto->id_producto,
@@ -67,9 +64,7 @@ class VentasController extends Controller
                 ->with('success', 'Venta realizada exitosamente.');
 
         } catch (\Exception $e) {
-            return back()
-                ->withInput()
-                ->with('error', 'Error al registrar la venta: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Error al registrar la venta: ' . $e->getMessage());
         }
     }
 }

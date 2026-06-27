@@ -12,13 +12,12 @@ class PagoController extends Controller
 {
     public function procesar(Request $request)
     {
-        // Verificar que el carrito no está vacío
         $carrito = Session::get('carrito', []);
+
         if (empty($carrito)) {
             return redirect()->route('carrito.index')->with('error', 'El carrito está vacío.');
         }
 
-        // Verificar que el usuario está autenticado (por seguridad extra)
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Debes iniciar sesión para pagar.');
         }
@@ -31,7 +30,7 @@ class PagoController extends Controller
                 foreach ($carrito as $id => $item) {
                     $producto = Producto::find($id);
                     if (!$producto) {
-                        throw new \Exception("Producto no encontrado: {$id}");
+                        throw new \Exception("Producto no encontrado.");
                     }
                     if ($producto->stock < $item['cantidad']) {
                         throw new \Exception("Stock insuficiente para: {$producto->nombre}");
@@ -39,7 +38,7 @@ class PagoController extends Controller
                     $total += $item['precio'] * $item['cantidad'];
                 }
 
-                // Crear la boleta
+                // Crear boleta
                 $idBoleta = DB::table('boletas')->insertGetId([
                     'id_usuario'       => Auth::user()->id_usuario,
                     'fecha_venta'      => now(),
@@ -50,7 +49,7 @@ class PagoController extends Controller
                     'tipo_comprobante' => 'Boleta',
                 ]);
 
-                // Registrar detalle y descontar stock
+                // Insertar detalles y descontar stock
                 foreach ($carrito as $id => $item) {
                     $producto = Producto::find($id);
 
@@ -67,11 +66,11 @@ class PagoController extends Controller
 
                 // Registrar en pagos_online
                 DB::table('pagos_online')->insert([
-                    'id_boleta'    => $idBoleta,
-                    'monto'        => $total,
-                    'metodo_pago'  => 'tarjeta',
-                    'estado_pago'  => 'aprobado',
-                    'fecha_pago'   => now(),
+                    'id_boleta'   => $idBoleta,
+                    'monto'       => $total,
+                    'metodo_pago' => 'tarjeta',
+                    'estado_pago' => 'aprobado',
+                    'fecha_pago'  => now(),
                 ]);
 
                 return $idBoleta;
@@ -79,7 +78,7 @@ class PagoController extends Controller
 
             Session::forget('carrito');
             return redirect()->route('dashboard')
-                ->with('success', '¡Pago procesado con éxito! Tu boleta N° ' . $idBoleta . ' fue generada.');
+                ->with('success', '¡Pago procesado! Tu boleta N° ' . $idBoleta . ' fue generada.');
 
         } catch (\Exception $e) {
             return back()->with('error', 'Error al procesar el pago: ' . $e->getMessage());

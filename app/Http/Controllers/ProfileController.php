@@ -20,10 +20,10 @@ class ProfileController extends Controller
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user();
-
-        // CORREGIDO: usar los campos reales del modelo (correo, nombre_completo)
+        $user      = $request->user();
         $validated = $request->validated();
+
+        // CORREGIDO: usar campos reales del modelo (correo, nombre_completo)
         $user->nombre_completo = $validated['nombre_completo'];
         $user->correo          = $validated['correo'];
         $user->save();

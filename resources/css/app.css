@@ -1,3 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+    --bg-body: #f4f6f9;
+    --text-main: #172b4d;
+    --navbar-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+    --bg-body: #0f172a;
+    --text-main: #f8fafc;
+    --navbar-bg: #1e293b;
+}
+
+body { background-color: var(--bg-body); color: var(--text-main); transition: 0.3s; }
+.navbar { background-color:
+    var(--navbar-bg);
+    padding: 20px;
+    display: flex;
+    justify-content:
+    space-between; }

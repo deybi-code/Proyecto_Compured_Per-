@@ -1,47 +1,23 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<nav class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
 
-        <title>{{ config('app.name', 'Compured Peru') }}</title>
+            <div class="flex-shrink-0">
+                <img src="{{ asset('images/logo.png') }}" alt="Compured" class="h-10">
+            </div>
 
-        <!-- Script de Sincronización Global de Modo Oscuro -->
-        <script>
-            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                document.documentElement.setAttribute('data-theme', 'dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.documentElement.setAttribute('data-theme', 'light');
-            }
-        </script>
+            <div class="flex-1 mx-8">
+                <input type="text" placeholder="Buscar producto..."
+                    class="w-full bg-gray-100 dark:bg-slate-800 border-none rounded-lg py-2 px-4 focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white">
+            </div>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="font-sans antialiased text-gray-900 dark:text-gray-100 transition-colors duration-300">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow transition-colors duration-300">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 border-b-4 border-[#27a1eb]">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700">
+                    <span class="dark:hidden">🌙</span>
+                    <span class="hidden dark:inline">☀️</span>
+                </button>
+                <a href="{{ route('login') }}" class="text-gray-700 dark:text-gray-200 font-medium">Entrar</a>
+            </div>
         </div>
-    </body>
-</html>
+    </div>
+</nav>

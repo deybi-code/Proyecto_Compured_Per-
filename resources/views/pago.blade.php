@@ -1,126 +1,75 @@
 @extends('layouts.main')
-
-@section('title', 'Proceso de Pago - Compured Perú')
-
+@section('title', 'Checkout – Compured Perú')
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <nav class="text-sm text-gray-500 dark:text-gray-400 mb-6">
-        <a href="/" class="hover:text-blue-600 dark:hover:text-blue-400">Home</a> &raquo;
-        <span class="text-gray-700 dark:text-gray-200">Pagos</span>
-    </nav>
+<div class="max-w-5xl mx-auto px-4 py-8">
+    <nav class="breadcrumb mb-6"><a href="/">Inicio</a><span>›</span><a href="/carrito">Carrito</a><span>›</span><span>Checkout</span></nav>
+    <h1 style="font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:800;color:#172B4D;margin-bottom:24px" class="dark:text-white">Finalizar compra</h1>
 
-    <div class="flex justify-center mb-10">
-        <div class="flex items-center w-full max-w-3xl">
-            <div class="flex-1 flex flex-col items-center">
-                <div class="w-full flex items-center">
-                    <div class="bg-blue-600 text-white font-bold h-10 w-full flex items-center justify-center rounded-l-md relative clip-path-step">
-                        <span class="mr-2">1</span> Dirección
-                        <div class="absolute right-0 top-0 h-full w-4 bg-blue-600 transform translate-x-2 rotate-45 origin-top-left z-10" style="clip-path: polygon(0 0, 100% 0, 0 100%);"></div>
+    <div class="flex flex-col lg:flex-row gap-6">
+        <div style="flex:1">
+            <div class="cp-card" style="padding:28px;margin-bottom:16px">
+                <h2 style="font-weight:700;font-size:1rem;color:#172B4D;margin-bottom:20px;display:flex;align-items:center;gap:8px" class="dark:text-white">
+                    <svg width="18" height="18" fill="none" stroke="#0052CC" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Datos de envío
+                </h2>
+                <form method="POST" action="{{ route('pago.procesar') ?? '#' }}">
+                    @csrf
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                        <div style="grid-column:1/-1">
+                            <label class="cp-label">Nombre completo *</label>
+                            <input type="text" name="nombre" class="cp-input" value="{{ auth()->user()->nombre_completo ?? '' }}" required>
+                        </div>
+                        <div>
+                            <label class="cp-label">Correo *</label>
+                            <input type="email" name="email" class="cp-input" value="{{ auth()->user()->correo ?? auth()->user()->email ?? '' }}" required>
+                        </div>
+                        <div>
+                            <label class="cp-label">Teléfono</label>
+                            <input type="text" name="telefono" class="cp-input" placeholder="999 999 999">
+                        </div>
+                        <div style="grid-column:1/-1">
+                            <label class="cp-label">Dirección de entrega *</label>
+                            <input type="text" name="direccion" class="cp-input" placeholder="Av. Ejemplo 123, Lima" required>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="flex-1 flex flex-col items-center -ml-2 z-0">
-                <div class="w-full flex items-center">
-                    <div class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold h-10 w-full flex items-center justify-center relative">
-                        <span class="mr-2">2</span> Pedidos
+
+                    <div style="margin-top:24px;padding-top:20px;border-top:1px solid #DFE1E6" class="dark:border-gray-700">
+                        <h3 style="font-weight:700;font-size:0.92rem;color:#172B4D;margin-bottom:14px" class="dark:text-white">Método de pago</h3>
+                        <div style="display:flex;flex-direction:column;gap:10px">
+                            @foreach(['Transferencia bancaria' => '🏦', 'Yape / Plin' => '📱', 'Tarjeta de crédito/débito' => '💳', 'Pago contra entrega' => '🤝'] as $method => $icon)
+                            <label style="display:flex;align-items:center;gap:12px;padding:14px;border:2px solid #DFE1E6;border-radius:8px;cursor:pointer;transition:border-color 0.2s" class="dark:border-gray-700 hover:border-blue-400">
+                                <input type="radio" name="metodo_pago" value="{{ $method }}" style="accent-color:#0052CC" {{ $loop->first ? 'checked' : '' }}>
+                                <span style="font-size:1.1rem">{{ $icon }}</span>
+                                <span style="font-weight:600;font-size:0.88rem;color:#172B4D" class="dark:text-gray-200">{{ $method }}</span>
+                            </label>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="flex-1 flex flex-col items-center -ml-2 z-0">
-                <div class="w-full flex items-center">
-                    <div class="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold h-10 w-full flex items-center justify-center rounded-r-md">
-                        <span class="mr-2">3</span> Pago
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="flex flex-col lg:flex-row gap-8">
-        <div class="w-full lg:w-2/3 space-y-8">
-
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 class="font-bold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Información personal :</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" value="Deybi Gavidia Perez" class="w-full border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" readonly>
-                    <input type="email" value="deybipro2006@gmail.com" class="w-full border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500" readonly>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-                <h3 class="font-bold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Detalles de facturación</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <select class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                        <option>Recoger</option>
-                        <option>Enviar a la dirección</option>
-                    </select>
-                    <select class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                        <option>DNI</option>
-                        <option>RUC</option>
-                    </select>
-                    <input type="text" placeholder="Número documento" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                    <input type="text" value="Deybi Gavidia Perez" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                    <input type="text" value="960900386" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                    <input type="text" value="dfsdf" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                    <input type="text" value="Perú" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                    <input type="text" value="trujillo" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                    <input type="text" value="13002" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                </div>
-
-                <div class="mt-4 flex items-center">
-                    <input type="checkbox" id="direccion_diferente" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                    <label for="direccion_diferente" class="ml-2 text-sm text-gray-600 dark:text-gray-300">¿Enviar a una dirección diferente?</label>
-                </div>
-
-                <div class="mt-4">
-                    <input type="text" placeholder="Nota de pedido (Opcional)" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white p-2 focus:ring-blue-500">
-                </div>
-            </div>
-
-            <div class="mt-6">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded transition shadow">
-                    CONTINUAR
-                </button>
-            </div>
-        </div>
-
-        <div class="w-full lg:w-1/3">
-            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-md sticky top-24">
-                <h3 class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-4 uppercase tracking-wide">Detalles de Precio</h3>
-
-                <div class="space-y-3 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
-                    <div class="flex justify-between">
-                        <span>SubTotal</span>
-                        <span class="font-bold text-gray-900 dark:text-white">S/ 1140</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Total</span>
-                        <span class="font-bold text-gray-900 dark:text-white">S/ 1140</span>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <button class="text-blue-600 dark:text-blue-400 text-sm hover:underline font-semibold flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                        ¿TIENE UN CÓDIGO DE PROMOCIÓN?
+                    <button type="submit" class="btn-primary w-full justify-center py-3 mt-6">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Confirmar pedido
                     </button>
-                    <div class="mt-2 flex gap-2">
-                        <input type="text" placeholder="Código promocional" class="w-full border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 p-2 text-sm focus:ring-blue-500">
-                        <button class="bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 px-4 py-2 rounded text-sm transition">SOLICITAR</button>
+                </form>
+            </div>
+        </div>
+
+        <div style="width:100%;max-width:300px">
+            <div class="cp-card" style="border-top:3px solid #0052CC">
+                <div style="padding:16px 20px;border-bottom:1px solid #DFE1E6;font-weight:700;font-size:0.9rem" class="dark:border-gray-700 dark:text-white">Resumen del pedido</div>
+                <div style="padding:16px 20px">
+                    @if(isset($carrito))
+                    @foreach($carrito as $item)
+                    <div style="display:flex;justify-content:space-between;font-size:0.83rem;margin-bottom:8px;color:#5E6C84" class="dark:text-gray-400">
+                        <span>{{ Str::limit($item['nombre'],30) }} ×{{ $item['cantidad'] }}</span>
+                        <span style="font-weight:600">S/ {{ number_format($item['precio']*$item['cantidad'],2) }}</span>
                     </div>
-                </div>
-
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mb-4">
-                    <h3 class="text-sm font-bold text-gray-800 dark:text-gray-100 mb-2 uppercase">MÉTODO DE ENVÍO</h3>
-                    <label class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer">
-                        <input type="radio" name="envio" checked class="text-blue-600 focus:ring-blue-500 border-gray-300">
-                        <span>Envío gratis <br><span class="text-xs text-gray-500 dark:text-gray-400">(4-7 días)</span></span>
-                    </label>
-                </div>
-
-                <div class="flex justify-between text-lg font-bold text-gray-900 dark:text-white mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <span>Precio Total :</span>
-                    <span>S/ 1140</span>
+                    @endforeach
+                    <div style="border-top:1px solid #DFE1E6;margin:12px 0;padding-top:12px;display:flex;justify-content:space-between;font-family:'Rajdhani',sans-serif;font-size:1.3rem;font-weight:800;color:#0052CC" class="dark:border-gray-700 dark:text-blue-400">
+                        <span>TOTAL</span><span>S/ {{ number_format(collect($carrito)->sum(fn($i)=>$i['precio']*$i['cantidad']),2) }}</span>
+                    </div>
+                    @endif
+                    <div style="font-size:0.72rem;color:#97A0AF;text-align:center;margin-top:8px">🔒 Pago seguro y cifrado</div>
                 </div>
             </div>
         </div>

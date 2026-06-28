@@ -1,72 +1,48 @@
 @extends('layouts.admin')
-
+@section('title', 'Ventas – Admin Compured Perú')
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-8">
-
-    @if(session('success'))
-        <div class="bg-green-600 text-white p-4 rounded mb-6 font-bold shadow-lg">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="bg-red-600 text-white p-4 rounded mb-6 font-bold shadow-lg">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Punto de Venta (POS)</h1>
-
-        <form action="{{ route('ventas.store') }}" method="POST">
-            @csrf
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Seleccionar Producto</label>
-                        <select name="id_producto" class="w-full p-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" required>
-                            @foreach($productos as $producto)
-                                <option value="{{ $producto->id_producto }}">
-                                    {{ $producto->nombre }} - Stock: {{ $producto->stock }} | S/ {{ $producto->precio }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Cantidad</label>
-                        <input type="number" name="cantidad" value="1" min="1" class="w-full p-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                </div>
-
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nombre del Cliente</label>
-                        <input type="text" name="nombre_cliente" class="w-full p-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white" required placeholder="Ej: Juan Perez">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">DNI / RUC</label>
-                        <input type="text" name="dni_cliente" class="w-full p-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white" required placeholder="Ej: 71234567">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Método de Pago</label>
-                        <select name="metodo_pago" class="w-full p-4 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white">
-                            <option value="efectivo">Pago en Efectivo</option>
-                            <option value="tarjeta">Pago con Tarjeta</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-10 flex justify-end">
-                <button type="submit" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-black py-4 px-12 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105">
-                    PROCESAR VENTA
-                </button>
-            </div>
-        </form>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:800;color:#172B4D" class="dark:text-white">Ventas / Boletas</h1>
+        <p style="font-size:0.82rem;color:#97A0AF;margin-top:2px">Historial de todas las transacciones</p>
     </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px">
+    <div class="cp-card" style="padding:16px;border-left:4px solid #0052CC">
+        <div style="font-size:0.72rem;color:#97A0AF;text-transform:uppercase">Total boletas</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:1.8rem;font-weight:800;color:#0052CC">{{ isset($boletas) ? $boletas->count() : 0 }}</div>
+    </div>
+    <div class="cp-card" style="padding:16px;border-left:4px solid #22C55E">
+        <div style="font-size:0.72rem;color:#97A0AF;text-transform:uppercase">Ingresos totales</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:800;color:#22C55E">S/ {{ isset($boletas) ? number_format($boletas->sum('total_pago'),2) : '0.00' }}</div>
+    </div>
+    <div class="cp-card" style="padding:16px;border-left:4px solid #F59E0B">
+        <div style="font-size:0.72rem;color:#97A0AF;text-transform:uppercase">Pendientes</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:1.8rem;font-weight:800;color:#F59E0B">{{ isset($boletas) ? $boletas->where('estado_pedido','Pendiente')->count() : 0 }}</div>
+    </div>
+</div>
+
+<div class="cp-card overflow-hidden">
+    <table class="cp-table">
+        <thead><tr><th>#Boleta</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Método pago</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+        @forelse($boletas ?? [] as $b)
+        <tr>
+            <td style="font-weight:700;color:#0052CC" class="dark:text-blue-400">#{{ $b->id_boleta }}</td>
+            <td style="font-size:0.87rem">{{ $b->usuario->nombre_completo ?? $b->id_usuario }}</td>
+            <td style="font-size:0.82rem;color:#97A0AF">{{ \Carbon\Carbon::parse($b->fecha_venta)->format('d/m/Y H:i') }}</td>
+            <td style="font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:700;color:#0052CC" class="dark:text-blue-400">S/ {{ number_format($b->total_pago,2) }}</td>
+            <td style="font-size:0.82rem;color:#5E6C84" class="dark:text-gray-400">{{ $b->metodo_pago ?? '—' }}</td>
+            <td><span class="status-badge {{ $b->estado_pedido === 'Pagado' ? 'status-green' : ($b->estado_pedido === 'Enviado' ? 'status-blue' : 'status-yellow') }}">{{ $b->estado_pedido }}</span></td>
+            <td>
+                <a href="{{ route('boletas.show',$b->id_boleta) }}" style="font-size:0.78rem;color:#0052CC;font-weight:600;text-decoration:none" class="hover:underline">Ver detalle</a>
+            </td>
+        </tr>
+        @empty
+        <tr><td colspan="7" style="text-align:center;padding:40px;color:#97A0AF">No hay ventas registradas aún.</td></tr>
+        @endforelse
+        </tbody>
+    </table>
 </div>
 @endsection

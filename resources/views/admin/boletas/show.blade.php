@@ -1,87 +1,45 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    {{-- CORREGIDO: se usaba $boleta->id, la clave correcta es id_boleta --}}
-    <title>Boleta N° {{ $boleta->id_boleta }} - Compured Perú</title>
-    <style>
-        body { font-family: monospace; padding: 20px; background: #fff; }
-        .ticket { width: 320px; margin: 0 auto; border: 1px solid #000; padding: 15px; }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h2 { font-size: 18px; margin: 0 0 4px; }
-        .info { margin-bottom: 15px; font-size: 12px; line-height: 1.6; }
-        .items { font-size: 12px; border-top: 1px dashed #000; border-bottom: 1px dashed #000; padding: 8px 0; margin-bottom: 10px; }
-        .items tr td:last-child { text-align: right; }
-        .total { font-weight: bold; font-size: 16px; border-top: 1px solid #000; padding-top: 8px; display: flex; justify-content: space-between; }
-        .footer { text-align: center; font-size: 10px; margin-top: 20px; }
-        @media print {
-            .no-print { display: none; }
-            body { padding: 0; }
-        }
-    </style>
-</head>
-<body>
+@extends('layouts.admin')
+@section('title', 'Boleta #{{ $boleta->id_boleta ?? "" }} – Admin')
+@section('content')
+<div style="max-width:700px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+        <a href="{{ route('ventas.index') }}" style="color:#97A0AF;text-decoration:none;font-size:0.82rem" class="hover:text-blue-500">← Volver</a>
+        <h1 style="font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:800;color:#172B4D" class="dark:text-white">Boleta #{{ $boleta->id_boleta ?? '' }}</h1>
+        @if(isset($boleta))<span class="status-badge {{ $boleta->estado_pedido === 'Pagado' ? 'status-green' : 'status-yellow' }}" style="font-size:0.85rem;padding:6px 14px">{{ $boleta->estado_pedido }}</span>@endif
+    </div>
 
-    <div class="ticket">
-        <div class="header">
-            <h2>COMPURED PERÚ</h2>
-            <p>RUC: 20600000000</p>
-            <p>El Porvenir, La Libertad</p>
+    <div class="cp-card" style="padding:28px;margin-bottom:16px">
+        <h2 style="font-weight:700;font-size:0.92rem;color:#172B4D;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;color:#97A0AF">Información del pedido</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:0.88rem">
+            <div><span style="color:#97A0AF">Cliente:</span><br><strong class="dark:text-white">{{ $boleta->usuario->nombre_completo ?? '—' }}</strong></div>
+            <div><span style="color:#97A0AF">Correo:</span><br><strong class="dark:text-white">{{ $boleta->usuario->correo ?? '—' }}</strong></div>
+            <div><span style="color:#97A0AF">Fecha:</span><br><strong class="dark:text-white">{{ isset($boleta) ? \Carbon\Carbon::parse($boleta->fecha_venta)->format('d/m/Y H:i') : '—' }}</strong></div>
+            <div><span style="color:#97A0AF">Método de pago:</span><br><strong class="dark:text-white">{{ $boleta->metodo_pago ?? '—' }}</strong></div>
+            <div><span style="color:#97A0AF">Canal de venta:</span><br><strong class="dark:text-white">{{ $boleta->canal_venta ?? '—' }}</strong></div>
+            <div><span style="color:#97A0AF">RUC empresa:</span><br><strong class="dark:text-white">{{ $boleta->ruc_empresa ?? '—' }}</strong></div>
         </div>
+    </div>
 
-        <div class="info">
-            {{-- CORREGIDO: se usaba $boleta->id (incorrecto), ahora usa id_boleta --}}
-            <p><strong>BOLETA N°:</strong> {{ str_pad($boleta->id_boleta, 8, '0', STR_PAD_LEFT) }}</p>
-            <p><strong>FECHA:</strong> {{ \Carbon\Carbon::parse($boleta->fecha_venta)->format('d/m/Y H:i') }}</p>
-            <p><strong>TIPO:</strong> {{ strtoupper($boleta->tipo_comprobante ?? 'Boleta') }}</p>
-            <p><strong>MÉTODO:</strong> {{ strtoupper($boleta->metodo_pago) }}</p>
-            <p><strong>CANAL:</strong> {{ $boleta->canal_venta ?? 'Tienda' }}</p>
-        </div>
-
-        {{-- AÑADIDO: detalle de productos en la boleta --}}
-        @if(isset($detalles) && count($detalles) > 0)
-        <table class="items" style="width:100%;">
-            <thead>
-                <tr>
-                    <td><strong>Producto</strong></td>
-                    <td style="text-align:center"><strong>Cant</strong></td>
-                    <td style="text-align:right"><strong>Subtotal</strong></td>
-                </tr>
-            </thead>
+    <div class="cp-card overflow-hidden" style="margin-bottom:16px">
+        <div style="padding:14px 20px;border-bottom:1px solid #DFE1E6;font-weight:700;font-size:0.88rem;color:#172B4D" class="dark:text-white dark:border-gray-700">Productos</div>
+        <table class="cp-table">
+            <thead><tr><th>Producto</th><th>Cantidad</th><th>Precio unit.</th><th>Subtotal</th></tr></thead>
             <tbody>
-                @foreach($detalles as $detalle)
-                <tr>
-                    <td>{{ Str::limit($detalle->nombre, 20) }}</td>
-                    <td style="text-align:center">{{ $detalle->cantidad }}</td>
-                    <td>S/ {{ number_format($detalle->precio_unitario * $detalle->cantidad, 2) }}</td>
-                </tr>
-                @endforeach
+            @forelse($boleta->detalles ?? [] as $d)
+            <tr>
+                <td style="font-weight:600;font-size:0.87rem">{{ $d->producto->nombre ?? 'Producto' }}</td>
+                <td style="text-align:center">{{ $d->cantidad }}</td>
+                <td>S/ {{ number_format($d->precio_unitario,2) }}</td>
+                <td style="font-weight:700;color:#0052CC;font-family:'Rajdhani',sans-serif" class="dark:text-blue-400">S/ {{ number_format($d->precio_unitario * $d->cantidad,2) }}</td>
+            </tr>
+            @empty
+            <tr><td colspan="4" style="text-align:center;color:#97A0AF;padding:20px">Sin detalles</td></tr>
+            @endforelse
             </tbody>
         </table>
-        @endif
-
-        <div class="total">
-            <span>TOTAL:</span>
-            <span>S/ {{ number_format($boleta->total_pago, 2) }}</span>
-        </div>
-
-        <div class="footer">
-            <p>Estado: {{ $boleta->estado_pedido }}</p>
-            <br>
-            <p>Gracias por su compra en Compured Perú.</p>
+        <div style="padding:16px 20px;text-align:right;border-top:2px solid #0052CC">
+            <span style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:800;color:#0052CC" class="dark:text-blue-400">TOTAL: S/ {{ isset($boleta) ? number_format($boleta->total_pago,2) : '0.00' }}</span>
         </div>
     </div>
-
-    <div class="no-print" style="text-align: center; margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
-        <button onclick="window.print()"
-            style="padding: 10px 24px; cursor: pointer; background: #2563eb; color: white; border: none; border-radius: 6px; font-weight: bold;">
-            🖨️ IMPRIMIR BOLETA
-        </button>
-        <a href="{{ route('ventas.index') }}"
-            style="padding: 10px 24px; cursor: pointer; background: #6b7280; color: white; border: none; border-radius: 6px; font-weight: bold; text-decoration: none;">
-            ← Nueva Venta
-        </a>
-    </div>
-
-</body>
-</html>
+</div>
+@endsection

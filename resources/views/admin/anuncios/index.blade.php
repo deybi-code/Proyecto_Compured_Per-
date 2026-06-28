@@ -1,57 +1,40 @@
 @extends('layouts.admin')
-
+@section('title', 'Anuncios – Admin Compured Perú')
 @section('content')
-<div class="max-w-5xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-white mb-8">Gestión de Anuncios (Banners)</h1>
-
-    @if(session('success'))
-        <div class="bg-green-600 text-white p-4 rounded mb-6 font-bold">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="bg-red-600 text-white p-4 rounded mb-6 font-bold">{{ session('error') }}</div>
-    @endif
-
-    <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-xl mb-10">
-        <form action="{{ route('anuncios.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                <input type="text" name="titulo" placeholder="Título del anuncio"
-                    class="p-3 bg-gray-700 border border-gray-600 rounded text-white w-full @error('titulo') border-red-500 @enderror"
-                    value="{{ old('titulo') }}" required>
-                @error('titulo')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
-
-                <input type="file" name="imagen" accept="image/*"
-                    class="p-2 bg-gray-700 border border-gray-600 rounded text-white w-full @error('imagen') border-red-500 @enderror"
-                    required>
-                @error('imagen')<p class="text-red-400 text-xs mt-1">{{ $message }}</p>@enderror
-
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded transition">
-                    SUBIR ANUNCIO
-                </button>
-            </div>
-        </form>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+        <h1 style="font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:800;color:#172B4D" class="dark:text-white">Anuncios / Banners</h1>
+        <p style="font-size:0.82rem;color:#97A0AF">Gestión de banners del home</p>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        @forelse($anuncios as $anuncio)
-        <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 shadow-lg">
-            {{-- CORREGIDO: se usa imagen_url en lugar de ruta_imagen (nombre real en BD) --}}
-            <img src="{{ asset('storage/' . $anuncio->imagen_url) }}" class="w-full h-48 object-cover"
-                 alt="{{ $anuncio->titulo }}">
-            <div class="p-4">
-                <p class="text-white font-bold text-lg mb-4">{{ $anuncio->titulo }}</p>
-                <form action="{{ route('anuncios.destroy', $anuncio->id_anuncio) }}" method="POST">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="text-red-400 hover:text-red-600 font-bold text-sm"
-                        onclick="return confirm('¿Eliminar este anuncio?')">
-                        Eliminar Anuncio
-                    </button>
-                </form>
-            </div>
-        </div>
+    <a href="{{ route('anuncios.create') }}" class="btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Nuevo anuncio
+    </a>
+</div>
+<div class="cp-card overflow-hidden">
+    <table class="cp-table">
+        <thead><tr><th>ID</th><th>Título</th><th>Posición</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+        @forelse($anuncios ?? [] as $a)
+        <tr>
+            <td style="color:#97A0AF;font-family:monospace">#{{ $a->id_anuncio }}</td>
+            <td style="font-weight:600">{{ $a->titulo }}</td>
+            <td><span class="status-badge status-blue">{{ $a->posicion ?? 'home' }}</span></td>
+            <td><span class="status-badge {{ $a->activo ? 'status-green' : 'status-red' }}">{{ $a->activo ? 'Activo' : 'Inactivo' }}</span></td>
+            <td>
+                <div style="display:flex;gap:8px">
+                    <a href="{{ route('anuncios.edit',$a->id_anuncio) }}" style="font-size:0.78rem;color:#0052CC;font-weight:600;text-decoration:none" class="hover:underline">Editar</a>
+                    <form action="{{ route('anuncios.destroy',$a->id_anuncio) }}" method="POST" onsubmit="return confirm('¿Eliminar?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn-danger" style="font-size:0.78rem;padding:0">Eliminar</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
         @empty
-        <p class="text-gray-400 col-span-3 text-center py-8">No hay anuncios publicados.</p>
+        <tr><td colspan="5" style="text-align:center;padding:40px;color:#97A0AF">No hay anuncios. <a href="{{ route('anuncios.create') }}" style="color:#0052CC;font-weight:600">Crear primero</a></td></tr>
         @endforelse
-    </div>
+        </tbody>
+    </table>
 </div>
 @endsection

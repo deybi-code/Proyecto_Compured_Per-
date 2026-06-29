@@ -8,12 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class EsVendedor
 {
-    /**
-     * Permite acceso a vendedores Y administradores.
-     */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && in_array(Auth::user()->rol, ['vendedor', 'administrador'])) {
+        $rol = strtolower(trim(Auth::user()->rol ?? ''));
+        if (Auth::check() && in_array($rol, ['admin', 'vendedor'])) {
             return $next($request);
         }
 

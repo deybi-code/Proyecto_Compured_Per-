@@ -15,7 +15,7 @@ use App\Http\Controllers\{
 
 /*
 |--------------------------------------------------------------------------
-| 🟢 RUTAS PÚBLICAS
+| 🌐 RUTAS PÚBLICAS
 |--------------------------------------------------------------------------
 */
 
@@ -27,7 +27,7 @@ Route::get('/terminos', fn() => view('terminos'))->name('terminos');
 
 /*
 |--------------------------------------------------------------------------
-| 🔎 SEGUIMIENTO
+| 🔍 SEGUIMIENTO DE BOLETA
 |--------------------------------------------------------------------------
 */
 
@@ -37,7 +37,8 @@ Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
     $guia = null;
 
     if ($request->filled('boleta')) {
-        $boleta = \App\Models\Boleta::find($request->boleta, ['*']);
+
+        $boleta = \App\Models\Boleta::find($request->input('boleta'));
 
         if ($boleta) {
             $guia = \Illuminate\Support\Facades\DB::table('guias_remision')
@@ -49,7 +50,6 @@ Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
     return view('seguimiento', compact('boleta', 'guia'));
 
 })->name('seguimiento');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -63,10 +63,9 @@ Route::delete('/carrito/{id}', [CarritoController::class, 'destroy'])->name('car
 
 Route::get('/checkout', fn() => view('pago'))->name('checkout');
 
-
 /*
 |--------------------------------------------------------------------------
-| 🔐 RUTAS AUTENTICADAS (USUARIO NORMAL)
+| 🔐 USUARIO NORMAL
 |--------------------------------------------------------------------------
 */
 
@@ -74,13 +73,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
 
-    // 📊 DASHBOARD USUARIO
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // 🧾 PEDIDOS USUARIO
     Route::get('/dashboard/pedidos', [DashboardController::class, 'pedidos'])->name('pedidos');
 
-    // 👤 PERFIL USUARIO
     Route::get('/dashboard/perfil', [DashboardController::class, 'editProfile'])->name('perfil');
     Route::post('/dashboard/perfil', [DashboardController::class, 'updateProfile'])->name('perfil.update');
 
@@ -89,10 +85,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
 /*
 |--------------------------------------------------------------------------
-| 🟡 PANEL VENDEDOR
+| 🟡 VENDEDOR
 |--------------------------------------------------------------------------
 */
 
@@ -107,18 +102,18 @@ Route::middleware(['auth', 'es_vendedor'])
         Route::get('/boletas/{id}', [BoletaController::class, 'show'])->name('boletas.show');
     });
 
-
 /*
 |--------------------------------------------------------------------------
-| 🔴 PANEL ADMIN (SISTEMA PRINCIPAL)
+| 🔴 ADMIN PRINCIPAL
 |--------------------------------------------------------------------------
 */
+
 Route::middleware(['auth', 'es_admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        // 📊 PANEL ADMIN (CORRECTO)
+        // 📊 PANEL ADMIN
         Route::get('/panel', function () {
             return view('admin.panel');
         })->name('panel');
@@ -132,4 +127,5 @@ Route::middleware(['auth', 'es_admin'])
         Route::post('/anuncios', [AdminAnuncioController::class, 'store'])->name('anuncios.store');
         Route::delete('/anuncios/{id}', [AdminAnuncioController::class, 'destroy'])->name('anuncios.destroy');
     });
+
 require __DIR__.'/auth.php';

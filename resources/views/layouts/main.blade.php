@@ -116,6 +116,22 @@
                 <button class="dark-toggle" onclick="toggleDark()" aria-label="Cambiar tema"></button>
             </div>
 
+            {{-- Botón Panel Admin (solo administradores) --}}
+            @auth
+            @if(auth()->user()->esAdmin())
+            <a href="/admin/productos" style="
+                display:inline-flex;align-items:center;gap:6px;
+                background:#0052CC;color:white;
+                padding:7px 14px;border-radius:8px;
+                font-size:0.78rem;font-weight:700;
+                text-decoration:none;white-space:nowrap;
+                transition:background 0.2s;
+            " onmouseover="this.style.background='#003A99'" onmouseout="this.style.background='#0052CC'">
+                🛡️ Panel Admin
+            </a>
+            @endif
+            @endauth
+
             {{-- User Menu --}}
             @auth
             {{-- Logueado: ícono persona con dropdown --}}

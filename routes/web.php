@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use App\Models\Categoria;
+use App\Models\Producto;
 use App\Http\Controllers\{
     DashboardController,
     CarritoController,
@@ -17,9 +21,42 @@ use App\Http\Controllers\{
 | 1. RUTAS PÚBLICAS
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () { return view('index'); })->name('home');
-Route::get('/categoria/{slug?}', function () { return view('categoria'); })->name('categoria');
-Route::get('/producto/{id?}', function () { return view('producto'); })->name('producto');
+Route::get('/', function () {
+    // FIX: antes este closure devolvía la vista sin ninguna variable,
+    // por eso el inicio siempre mostraba el estado vacío/skeleton.
+    $categorias = Categoria::orderBy('nombre_categoria')->get();
+    $productos  = Producto::orderByDesc('id_producto')->take(8)->get();
+    $anuncios   = DB::table('anuncios')->where('activo', 1)->get();
+
+    return view('index', compact('categorias', 'productos', 'anuncios'));
+})->name('home');
+
+Route::get('/categoria/{slug?}', function ($slug = null) {
+    // FIX: antes este closure ignoraba el {slug} por completo,
+    // por eso siempre mostraba "Categoría" y "0 productos disponibles".
+    $categoria = null;
+    $productos = collect();
+
+    if ($slug) {
+        $categoria = Categoria::all()->first(
+            fn ($cat) => Str::slug($cat->nombre_categoria) === $slug
+        );
+    }
+
+    if ($categoria) {
+        $productos = Producto::where('id_categoria', $categoria->id_categoria)->get();
+    }
+
+    return view('categoria', compact('categoria', 'productos'));
+})->name('categoria');
+
+Route::get('/producto/{id?}', function ($id = null) {
+    // FIX: antes este closure ignoraba el {id} y nunca cargaba el producto.
+    $producto = $id ? Producto::with(['categoria', 'fotos'])->find($id) : null;
+
+    return view('producto', compact('producto'));
+})->name('producto');
+
 Route::get('/nosotros', function () { return view('nosotros'); })->name('nosotros');
 Route::get('/terminos', function () { return view('terminos'); })->name('terminos');
 

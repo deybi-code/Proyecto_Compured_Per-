@@ -1,55 +1,57 @@
 @extends('layouts.admin')
 
-@section('title', 'Productos')
+@section('title', 'Productos Admin')
 
 @section('content')
 
-@php
-    use App\Models\Producto;
-    $productos = Producto::all();
-@endphp
-
-<div class="topbar">
-    <h1>📦 Productos</h1>
-
-    <a class="btn" href="{{ route('admin.productos.create') }}">
-        + Nuevo Producto
-    </a>
+<div class="card">
+    <h1>📦 Gestión de Productos</h1>
 </div>
 
 <div class="card">
 
 <table width="100%" cellpadding="10">
 
-    <tr>
-        <th>Imagen</th>
-        <th>Nombre</th>
-        <th>Precio</th>
-        <th>Stock</th>
-        <th>Acciones</th>
-    </tr>
+    <thead>
+        <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
 
-    @foreach($productos as $p)
+    <tbody>
 
-    <tr>
-        <td>
-            @if($p->imagen)
-                <img src="{{ asset('storage/'.$p->imagen) }}" width="60">
-            @else
-                ❌
-            @endif
-        </td>
+        @foreach($productos as $p)
 
-        <td>{{ $p->nombre }}</td>
-        <td>S/ {{ $p->precio }}</td>
-        <td>{{ $p->stock }}</td>
+        <tr>
+            <td>
+                @if($p->imagen)
+                    <img src="{{ asset('storage/'.$p->imagen) }}" width="60">
+                @else
+                    ❌
+                @endif
+            </td>
 
-        <td>
-            <a href="{{ route('admin.productos.edit', $p->id) }}">Editar</a>
-        </td>
-    </tr>
+            <td>{{ $p->nombre }}</td>
+            <td>S/ {{ $p->precio }}</td>
+            <td>{{ $p->stock }}</td>
 
-    @endforeach
+            <td>
+
+                {{-- EDITAR ✔ CORREGIDO --}}
+                <a href="{{ route('admin.productos.edit', ['producto' => $p->id]) }}">
+                    ✏️ Editar
+                </a>
+
+            </td>
+        </tr>
+
+        @endforeach
+
+    </tbody>
 
 </table>
 

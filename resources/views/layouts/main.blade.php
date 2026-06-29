@@ -47,6 +47,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         a { text-decoration: none; }
+        svg { display: block; }
 
         .cp-navbar {
             position: sticky; top: 0; z-index: 50;
@@ -70,22 +71,50 @@
         }
         .cp-nav-links a:hover, .cp-nav-links a.active { color: var(--primary); }
         .cp-nav-actions { display: flex; align-items: center; gap: 10px; }
+
         .cp-icon-btn {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 38px; height: 38px; border-radius: 10px;
+            width: 40px; height: 40px; border-radius: 10px;
             background: var(--input-bg); border: 1px solid var(--border);
-            color: var(--text); cursor: pointer; font-size: 16px;
-            transition: background 0.2s ease;
+            color: var(--text); cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            position: relative;
         }
-        .cp-icon-btn:hover { background: var(--border); }
+        .cp-icon-btn:hover { background: var(--border); color: var(--primary); }
+        .cp-icon-btn svg { width: 19px; height: 19px; }
+
+        .cp-cart-badge {
+            position: absolute; top: -5px; right: -5px;
+            background: var(--primary); color: #fff;
+            font-size: 10px; font-weight: 800; line-height: 1;
+            min-width: 16px; height: 16px; border-radius: 999px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 3px;
+        }
+
         .cp-btn-primary {
+            display: inline-flex; align-items: center; gap: 7px;
             background: var(--primary); color: #fff; font-weight: 700; font-size: 14px;
-            padding: 9px 18px; border-radius: 10px; transition: background 0.2s ease;
+            padding: 9px 16px; border-radius: 10px; transition: background 0.2s ease;
         }
         .cp-btn-primary:hover { background: var(--primary-hover); }
-        .cp-mobile-toggle { display: none; background: none; border: none; font-size: 22px; color: var(--text); cursor: pointer; }
+        .cp-btn-primary svg { width: 16px; height: 16px; }
+
+        .cp-mobile-toggle {
+            display: none; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 10px;
+            background: var(--input-bg); border: 1px solid var(--border);
+            color: var(--text); cursor: pointer;
+        }
+        .cp-mobile-toggle svg { width: 19px; height: 19px; }
         .cp-mobile-menu { display: none; flex-direction: column; gap: 12px; padding: 16px 20px; border-top: 1px solid var(--border); }
         .cp-mobile-menu.open { display: flex; }
+        .cp-mobile-menu a, .cp-mobile-menu button {
+            display: flex; align-items: center; gap: 10px;
+            font-weight: 600; font-size: 14px; color: var(--text);
+            background: none; border: none; padding: 0; text-align: left; cursor: pointer; font-family: inherit;
+        }
+        .cp-mobile-menu svg { width: 17px; height: 17px; }
 
         @media (max-width: 860px) {
             .cp-nav-links { display: none; }
@@ -103,22 +132,34 @@
 
         .cp-user-menu { position: relative; }
         .cp-user-dropdown {
-            position: absolute; right: 0; top: calc(100% + 8px);
-            min-width: 190px; background: var(--card); border: 1px solid var(--border);
-            border-radius: 12px; box-shadow: var(--shadow);
-            padding: 6px; display: none; flex-direction: column; gap: 2px;
-            backdrop-filter: blur(10px); z-index: 60;
+            position: absolute; right: 0; top: calc(100% + 10px);
+            min-width: 220px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; box-shadow: var(--shadow);
+            padding: 8px; display: none; flex-direction: column; gap: 2px;
+            backdrop-filter: blur(12px); z-index: 60;
         }
         .cp-user-dropdown.open { display: flex; }
+        .cp-user-dropdown-header {
+            padding: 8px 10px 10px; margin-bottom: 4px; border-bottom: 1px solid var(--border);
+        }
+        .cp-user-dropdown-header .name { font-weight: 700; font-size: 13.5px; color: var(--text); }
+        .cp-user-dropdown-header .role {
+            display: inline-block; margin-top: 4px;
+            font-size: 10.5px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase;
+            color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, transparent);
+            padding: 2px 8px; border-radius: 999px;
+        }
         .cp-user-dropdown a, .cp-user-dropdown button {
-            display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: 10px;
             width: 100%; text-align: left; background: none; border: none;
             font-family: inherit; font-size: 14px; font-weight: 600; color: var(--text);
-            padding: 9px 10px; border-radius: 8px; cursor: pointer;
+            padding: 10px; border-radius: 9px; cursor: pointer;
             transition: background 0.15s ease;
         }
+        .cp-user-dropdown svg { width: 17px; height: 17px; flex-shrink: 0; }
         .cp-user-dropdown a:hover, .cp-user-dropdown button:hover { background: var(--input-bg); }
         .cp-user-dropdown button.danger { color: var(--error); }
+        .cp-user-dropdown .divider { height: 1px; background: var(--border); margin: 4px 2px; }
     </style>
 
     @yield('styles')
@@ -140,33 +181,84 @@
             </div>
 
             <div class="cp-nav-actions">
+                {{-- Toggle de tema --}}
                 <button type="button" class="cp-icon-btn" id="cp-theme-toggle" title="Cambiar tema">
-                    <span id="cp-theme-icon">🌙</span>
+                    {{-- Sol --}}
+                    <svg id="cp-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4.2"/>
+                        <path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/>
+                    </svg>
+                    {{-- Luna --}}
+                    <svg id="cp-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                        <path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/>
+                    </svg>
                 </button>
 
-                <a href="{{ route('carrito.index') }}" class="cp-icon-btn" title="Carrito">🛒</a>
+                {{-- Carrito --}}
+                <a href="{{ route('carrito.index') }}" class="cp-icon-btn" title="Carrito">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="20" r="1.4"/>
+                        <circle cx="18" cy="20" r="1.4"/>
+                        <path d="M2.5 3h2.2l2.2 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/>
+                    </svg>
+                </a>
 
                 @auth
                     <a href="{{ route('dashboard') }}" class="cp-btn-primary">
-                        {{ auth()->user()->rol === 'admin' ? 'Panel Admin' : 'Mi Panel' }}
+                        @if(auth()->user()->rol === 'admin')
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3.4v5.4c0 5-3.2 8-7.5 9.7-4.3-1.7-7.5-4.7-7.5-9.7V5.9L12 2.5z"/></svg>
+                            Panel Admin
+                        @else
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+                            Mi Panel
+                        @endif
                     </a>
 
                     <div class="cp-user-menu" id="cp-user-menu">
-                        <button type="button" class="cp-icon-btn" id="cp-user-toggle" title="Mi cuenta">👤</button>
+                        <button type="button" class="cp-icon-btn" id="cp-user-toggle" title="Mi cuenta">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="8" r="3.6"/>
+                                <path d="M4.5 20.5c0-3.6 3.4-6.2 7.5-6.2s7.5 2.6 7.5 6.2"/>
+                            </svg>
+                        </button>
 
                         <div class="cp-user-dropdown" id="cp-user-dropdown">
-                            <a href="{{ route('profile.edit') }}">👤 Mi Perfil</a>
+                            <div class="cp-user-dropdown-header">
+                                <div class="name">{{ auth()->user()->nombre_completo ?? 'Mi cuenta' }}</div>
+                                <span class="role">{{ auth()->user()->rol === 'admin' ? 'Administrador' : 'Cliente' }}</span>
+                            </div>
+
+                            <a href="{{ route('dashboard') }}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+                                Panel de Usuario
+                            </a>
+
+                            <a href="{{ route('profile.edit') }}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.7 3.3a2 2 0 0 1 2.8 2.8L8 16.6l-4 1 1-4L15.7 3.3z"/></svg>
+                                Editar Perfil
+                            </a>
+
+                            <div class="divider"></div>
+
                             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                                 @csrf
-                                <button type="submit" class="danger">↩️ Cerrar Sesión</button>
+                                <button type="submit" class="danger">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l5-5-5-5M20 12H9M13 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7"/></svg>
+                                    Cerrar Sesión
+                                </button>
                             </form>
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="cp-btn-primary">Ingresar</a>
+                    <a href="{{ route('login') }}" class="cp-btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17l5-5-5-5M4 12h10M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></svg>
+                        Ingresar
+                    </a>
                 @endauth
 
-                <button type="button" class="cp-mobile-toggle" id="cp-mobile-toggle">☰</button>
+                <button type="button" class="cp-mobile-toggle" id="cp-mobile-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
             </div>
         </div>
 
@@ -177,11 +269,14 @@
             <a href="{{ route('terminos') }}">Términos</a>
             <a href="{{ route('carrito.index') }}">Carrito</a>
             @auth
-                <a href="{{ route('dashboard') }}">{{ auth()->user()->rol === 'admin' ? 'Panel Admin' : 'Mi Panel' }}</a>
-                <a href="{{ route('profile.edit') }}">Mi Perfil</a>
+                <a href="{{ route('dashboard') }}">{{ auth()->user()->rol === 'admin' ? 'Panel Admin' : 'Panel de Usuario' }}</a>
+                <a href="{{ route('profile.edit') }}">Editar Perfil</a>
                 <form method="POST" action="{{ route('logout') }}" style="margin:0">
                     @csrf
-                    <button type="submit" style="background:none;border:none;color:var(--error);font-weight:700;font-size:14px;padding:0;cursor:pointer;font-family:inherit">Cerrar Sesión</button>
+                    <button type="submit" style="color:var(--error);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l5-5-5-5M20 12H9M13 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7"/></svg>
+                        Cerrar Sesión
+                    </button>
                 </form>
             @else
                 <a href="{{ route('login') }}">Ingresar</a>
@@ -206,12 +301,14 @@
 
     <script>
         // Toggle de tema (sincronizado con el resto de páginas del sitio)
-        const themeBtn = document.getElementById('cp-theme-toggle');
-        const themeIcon = document.getElementById('cp-theme-icon');
+        const themeBtn  = document.getElementById('cp-theme-toggle');
+        const iconSun   = document.getElementById('cp-icon-sun');
+        const iconMoon  = document.getElementById('cp-icon-moon');
 
         function syncThemeIcon() {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            themeIcon.textContent = isDark ? '☀️' : '🌙';
+            iconSun.style.display  = isDark ? 'none' : 'block';
+            iconMoon.style.display = isDark ? 'block' : 'none';
         }
         syncThemeIcon();
 
@@ -230,7 +327,7 @@
             mobileMenu.classList.toggle('open');
         });
 
-        // Dropdown de usuario (perfil / cerrar sesión)
+        // Dropdown de usuario (panel / perfil / cerrar sesión)
         const userToggle = document.getElementById('cp-user-toggle');
         const userDropdown = document.getElementById('cp-user-dropdown');
         userToggle?.addEventListener('click', function (e) {

@@ -49,7 +49,7 @@
     <div class="sidebar">
         <h2>ADMIN</h2>
 
-        <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+        <a href="{{ route('admin.panel') }}">Dashboard</a>
         <a href="{{ route('admin.productos.index') }}">Productos</a>
         <a href="{{ route('admin.ventas.index') }}">Ventas</a>
         <a href="{{ route('admin.anuncios.index') }}">Anuncios</a>

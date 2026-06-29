@@ -100,6 +100,25 @@
         .cp-footer-inner { max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
         .cp-footer a { color: var(--muted); }
         .cp-footer a:hover { color: var(--primary); }
+
+        .cp-user-menu { position: relative; }
+        .cp-user-dropdown {
+            position: absolute; right: 0; top: calc(100% + 8px);
+            min-width: 190px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; box-shadow: var(--shadow);
+            padding: 6px; display: none; flex-direction: column; gap: 2px;
+            backdrop-filter: blur(10px); z-index: 60;
+        }
+        .cp-user-dropdown.open { display: flex; }
+        .cp-user-dropdown a, .cp-user-dropdown button {
+            display: flex; align-items: center; gap: 8px;
+            width: 100%; text-align: left; background: none; border: none;
+            font-family: inherit; font-size: 14px; font-weight: 600; color: var(--text);
+            padding: 9px 10px; border-radius: 8px; cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .cp-user-dropdown a:hover, .cp-user-dropdown button:hover { background: var(--input-bg); }
+        .cp-user-dropdown button.danger { color: var(--error); }
     </style>
 
     @yield('styles')
@@ -128,11 +147,21 @@
                 <a href="{{ route('carrito.index') }}" class="cp-icon-btn" title="Carrito">🛒</a>
 
                 @auth
-                    <a href="{{ route('dashboard') }}" class="cp-btn-primary">Mi Panel</a>
-                    <form method="POST" action="{{ route('logout') }}" style="display:inline">
-                        @csrf
-                        <button type="submit" class="cp-icon-btn" title="Cerrar sesión">↩️</button>
-                    </form>
+                    <a href="{{ route('dashboard') }}" class="cp-btn-primary">
+                        {{ auth()->user()->rol === 'admin' ? 'Panel Admin' : 'Mi Panel' }}
+                    </a>
+
+                    <div class="cp-user-menu" id="cp-user-menu">
+                        <button type="button" class="cp-icon-btn" id="cp-user-toggle" title="Mi cuenta">👤</button>
+
+                        <div class="cp-user-dropdown" id="cp-user-dropdown">
+                            <a href="{{ route('profile.edit') }}">👤 Mi Perfil</a>
+                            <form method="POST" action="{{ route('logout') }}" style="margin:0">
+                                @csrf
+                                <button type="submit" class="danger">↩️ Cerrar Sesión</button>
+                            </form>
+                        </div>
+                    </div>
                 @else
                     <a href="{{ route('login') }}" class="cp-btn-primary">Ingresar</a>
                 @endauth
@@ -148,7 +177,12 @@
             <a href="{{ route('terminos') }}">Términos</a>
             <a href="{{ route('carrito.index') }}">Carrito</a>
             @auth
-                <a href="{{ route('dashboard') }}">Mi Panel</a>
+                <a href="{{ route('dashboard') }}">{{ auth()->user()->rol === 'admin' ? 'Panel Admin' : 'Mi Panel' }}</a>
+                <a href="{{ route('profile.edit') }}">Mi Perfil</a>
+                <form method="POST" action="{{ route('logout') }}" style="margin:0">
+                    @csrf
+                    <button type="submit" style="background:none;border:none;color:var(--error);font-weight:700;font-size:14px;padding:0;cursor:pointer;font-family:inherit">Cerrar Sesión</button>
+                </form>
             @else
                 <a href="{{ route('login') }}">Ingresar</a>
             @endauth
@@ -194,6 +228,19 @@
         const mobileMenu = document.getElementById('cp-mobile-menu');
         mobileToggle?.addEventListener('click', function () {
             mobileMenu.classList.toggle('open');
+        });
+
+        // Dropdown de usuario (perfil / cerrar sesión)
+        const userToggle = document.getElementById('cp-user-toggle');
+        const userDropdown = document.getElementById('cp-user-dropdown');
+        userToggle?.addEventListener('click', function (e) {
+            e.stopPropagation();
+            userDropdown.classList.toggle('open');
+        });
+        document.addEventListener('click', function (e) {
+            if (userDropdown && !document.getElementById('cp-user-menu').contains(e.target)) {
+                userDropdown.classList.remove('open');
+            }
         });
     </script>
 

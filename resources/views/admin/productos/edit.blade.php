@@ -4,22 +4,22 @@
 
 @section('content')
 
-<div class="card">
+<div class="card" style="background:#ffffff; border-radius:12px; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); padding:30px; border-top:5px solid #0056b3;">
 
     {{-- HEADER --}}
-    <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
-            <h1>✏️ Editar Producto</h1>
-            <p style="color:#6b7280;">Actualiza información, imágenes y stock del producto</p>
+            <h1 style="color:#0056b3; font-size:24px; margin:0 0 5px 0;">✏️ Editar Producto</h1>
+            <p style="color:#64748b; margin:0; font-size:14px;">Actualiza información, imágenes y stock del producto</p>
         </div>
 
         <a href="{{ route('admin.productos.index') }}"
-           style="background:#6b7280;color:white;padding:8px 12px;border-radius:8px;text-decoration:none;">
-            Volver
+           style="background:#f1f5f9; color:#475569; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600; border:1px solid #cbd5e1;">
+            ← Volver
         </a>
     </div>
 
-    <hr style="margin:15px 0;">
+    <hr style="margin:25px 0; border:none; border-top:1px solid #e2e8f0;">
 
     {{-- FORM --}}
     <form method="POST"
@@ -30,121 +30,133 @@
         @method('PUT')
 
         {{-- NOMBRE --}}
-        <div style="margin-bottom:12px;">
-            <label>Nombre del producto</label>
+        <div style="margin-bottom:20px;">
+            <label style="display:block; color:#334155; font-weight:600; margin-bottom:8px;">Nombre del producto</label>
             <input type="text"
                    name="nombre"
                    value="{{ $producto->nombre }}"
                    required
-                   style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+                   style="width:100%; padding:12px 15px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#f8fafc; font-size:15px;">
         </div>
 
-        {{-- PRECIO --}}
-        <div style="margin-bottom:12px;">
-            <label>Precio</label>
-            <input type="number"
-                   name="precio"
-                   value="{{ $producto->precio }}"
-                   step="0.01"
-                   required
-                   style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
-        </div>
+        <div style="display:flex; gap:20px; margin-bottom:20px; flex-wrap:wrap;">
+            {{-- PRECIO --}}
+            <div style="flex:1; min-width:200px;">
+                <label style="display:block; color:#334155; font-weight:600; margin-bottom:8px;">Precio (S/)</label>
+                <input type="number"
+                       name="precio"
+                       value="{{ $producto->precio }}"
+                       step="0.01"
+                       required
+                       style="width:100%; padding:12px 15px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#f8fafc; font-size:15px;">
+            </div>
 
-        {{-- STOCK --}}
-        <div style="margin-bottom:12px;">
-            <label>Stock</label>
-            <input type="number"
-                   name="stock"
-                   value="{{ $producto->stock }}"
-                   required
-                   style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+            {{-- STOCK --}}
+            <div style="flex:1; min-width:200px;">
+                <label style="display:block; color:#334155; font-weight:600; margin-bottom:8px;">Stock</label>
+                <input type="number"
+                       name="stock"
+                       value="{{ $producto->stock }}"
+                       required
+                       style="width:100%; padding:12px 15px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#f8fafc; font-size:15px;">
+            </div>
         </div>
 
         {{-- DESCRIPCIÓN --}}
-        <div style="margin-bottom:12px;">
-            <label>Descripción</label>
+        <div style="margin-bottom:20px;">
+            <label style="display:block; color:#334155; font-weight:600; margin-bottom:8px;">Descripción</label>
             <textarea name="descripcion"
                       rows="4"
-                      style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">{{ $producto->descripcion }}</textarea>
+                      style="width:100%; padding:12px 15px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#f8fafc; font-size:15px;">{{ $producto->descripcion }}</textarea>
         </div>
 
         {{-- VARIANTES --}}
-        <div style="margin-bottom:12px;">
-            <label>Variantes (tallas, colores, etc)</label>
+        <div style="margin-bottom:30px;">
+            <label style="display:block; color:#334155; font-weight:600; margin-bottom:8px;">Variantes (tallas, colores, etc)</label>
             <input type="text"
                    name="variantes"
                    value="{{ $producto->variantes ?? '' }}"
                    placeholder="Ej: rojo, azul, M, L"
-                   style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+                   style="width:100%; padding:12px 15px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#f8fafc; font-size:15px;">
         </div>
 
         {{-- 🔥 IMÁGENES ACTUALES --}}
-        <div style="margin-top:20px;">
-            <h3>📸 Imágenes actuales</h3>
+        <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:20px; margin-bottom:25px;">
+            <h3 style="color:#0369a1; margin:0 0 15px 0; font-size:18px;">📸 Imágenes actuales</h3>
 
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px;">
 
                 @if($producto->imagen_1)
-                    <img src="{{ asset('storage/'.$producto->imagen_1) }}" style="width:100%;border-radius:8px;">
+                    <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <img src="{{ asset('storage/'.$producto->imagen_1) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
+                    </div>
                 @endif
 
                 @if($producto->imagen_2)
-                    <img src="{{ asset('storage/'.$producto->imagen_2) }}" style="width:100%;border-radius:8px;">
+                    <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <img src="{{ asset('storage/'.$producto->imagen_2) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
+                    </div>
                 @endif
 
                 @if($producto->imagen_3)
-                    <img src="{{ asset('storage/'.$producto->imagen_3) }}" style="width:100%;border-radius:8px;">
+                    <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <img src="{{ asset('storage/'.$producto->imagen_3) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
+                    </div>
                 @endif
 
                 @if($producto->imagen_4)
-                    <img src="{{ asset('storage/'.$producto->imagen_4) }}" style="width:100%;border-radius:8px;">
+                    <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                        <img src="{{ asset('storage/'.$producto->imagen_4) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
+                    </div>
                 @endif
 
             </div>
         </div>
 
         {{-- 🔥 NUEVAS IMÁGENES --}}
-        <div style="margin-top:20px;">
-            <h3>🆕 Reemplazar imágenes</h3>
-            <p style="color:#6b7280;font-size:13px;">
-                Solo sube nuevas imágenes si deseas reemplazar las actuales
-            </p>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px;">
-
-            <div>
-                <label>Imagen 1</label>
-                <input type="file" name="imagen_1">
+        <div style="border:1px dashed #cbd5e1; border-radius:12px; padding:20px; margin-bottom:30px;">
+            <div style="margin-bottom:15px;">
+                <h3 style="color:#0056b3; margin:0 0 5px 0; font-size:18px;">🆕 Reemplazar imágenes</h3>
+                <p style="color:#64748b; font-size:13px; margin:0;">
+                    Solo sube nuevas imágenes si deseas reemplazar las actuales.
+                </p>
             </div>
 
-            <div>
-                <label>Imagen 2</label>
-                <input type="file" name="imagen_2">
-            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
 
-            <div>
-                <label>Imagen 3</label>
-                <input type="file" name="imagen_3">
-            </div>
+                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Imagen 1</label>
+                    <input type="file" name="imagen_1" style="width:100%; font-size:13px;">
+                </div>
 
-            <div>
-                <label>Imagen 4</label>
-                <input type="file" name="imagen_4">
-            </div>
+                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Imagen 2</label>
+                    <input type="file" name="imagen_2" style="width:100%; font-size:13px;">
+                </div>
 
+                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Imagen 3</label>
+                    <input type="file" name="imagen_3" style="width:100%; font-size:13px;">
+                </div>
+
+                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
+                    <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Imagen 4</label>
+                    <input type="file" name="imagen_4" style="width:100%; font-size:13px;">
+                </div>
+
+            </div>
         </div>
 
         {{-- BOTONES --}}
-        <div style="margin-top:25px;display:flex;gap:10px;">
+        <div style="display:flex; gap:15px; border-top:1px solid #e2e8f0; padding-top:20px;">
 
             <button type="submit"
-                    style="background:#22c55e;color:white;padding:10px 15px;border:none;border-radius:8px;cursor:pointer;">
-                💾 Actualizar Producto
+                    style="background:#9ad800; color:#0f172a; padding:12px 25px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:15px; box-shadow:0 4px 6px -1px rgba(154,216,0,0.3);">
+                💾 Guardar Cambios
             </button>
 
             <a href="{{ route('admin.productos.index') }}"
-               style="background:#ef4444;color:white;padding:10px 15px;border-radius:8px;text-decoration:none;">
+               style="background:#ffffff; color:#ef4444; padding:12px 25px; border:1px solid #fca5a5; border-radius:8px; text-decoration:none; font-weight:bold; font-size:15px;">
                 ❌ Cancelar
             </a>
 

@@ -204,15 +204,24 @@
                 </a>
 
                 @auth
-                    <a href="{{ route('dashboard') }}" class="cp-btn-primary">
-                        @if(auth()->user()->rol === 'admin')
+                    @php($rol = strtolower(trim(auth()->user()->rol ?? '')))
+
+                    @if($rol === 'admin')
+                        <a href="{{ route('admin.productos.index') }}" class="cp-btn-primary">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3.4v5.4c0 5-3.2 8-7.5 9.7-4.3-1.7-7.5-4.7-7.5-9.7V5.9L12 2.5z"/></svg>
                             Panel Admin
-                        @else
+                        </a>
+                    @elseif($rol === 'vendedor')
+                        <a href="{{ route('ventas.index') }}" class="cp-btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
+                            Panel de Ventas
+                        </a>
+                    @else
+                        <a href="{{ route('dashboard') }}" class="cp-btn-primary">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
                             Mi Panel
-                        @endif
-                    </a>
+                        </a>
+                    @endif
 
                     <div class="cp-user-menu" id="cp-user-menu">
                         <button type="button" class="cp-icon-btn" id="cp-user-toggle" title="Mi cuenta">
@@ -225,12 +234,36 @@
                         <div class="cp-user-dropdown" id="cp-user-dropdown">
                             <div class="cp-user-dropdown-header">
                                 <div class="name">{{ auth()->user()->nombre_completo ?? 'Mi cuenta' }}</div>
-                                <span class="role">{{ auth()->user()->rol === 'admin' ? 'Administrador' : 'Cliente' }}</span>
+                                <span class="role">
+                                    {{ $rol === 'admin' ? 'Administrador' : ($rol === 'vendedor' ? 'Vendedor' : 'Cliente') }}
+                                </span>
                             </div>
+
+                            @if($rol === 'admin')
+                                <a href="{{ route('admin.productos.index') }}">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                    Productos (Admin)
+                                </a>
+                                <a href="{{ route('ventas.index') }}">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
+                                    Ventas
+                                </a>
+                                <a href="{{ route('anuncios.index') }}">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                                    Anuncios
+                                </a>
+                                <div class="divider"></div>
+                            @elseif($rol === 'vendedor')
+                                <a href="{{ route('ventas.index') }}">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
+                                    Panel de Ventas
+                                </a>
+                                <div class="divider"></div>
+                            @endif
 
                             <a href="{{ route('dashboard') }}">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
-                                Panel de Usuario
+                                {{ $rol === 'admin' || $rol === 'vendedor' ? 'Mis Compras' : 'Panel de Usuario' }}
                             </a>
 
                             <a href="{{ route('profile.edit') }}">
@@ -269,7 +302,15 @@
             <a href="{{ route('terminos') }}">Términos</a>
             <a href="{{ route('carrito.index') }}">Carrito</a>
             @auth
-                <a href="{{ route('dashboard') }}">{{ auth()->user()->rol === 'admin' ? 'Panel Admin' : 'Panel de Usuario' }}</a>
+                @php($rolMobile = strtolower(trim(auth()->user()->rol ?? '')))
+                @if($rolMobile === 'admin')
+                    <a href="{{ route('admin.productos.index') }}">Panel Admin (Productos)</a>
+                    <a href="{{ route('ventas.index') }}">Ventas</a>
+                    <a href="{{ route('anuncios.index') }}">Anuncios</a>
+                @elseif($rolMobile === 'vendedor')
+                    <a href="{{ route('ventas.index') }}">Panel de Ventas</a>
+                @endif
+                <a href="{{ route('dashboard') }}">{{ in_array($rolMobile, ['admin','vendedor']) ? 'Mis Compras' : 'Panel de Usuario' }}</a>
                 <a href="{{ route('profile.edit') }}">Editar Perfil</a>
                 <form method="POST" action="{{ route('logout') }}" style="margin:0">
                     @csrf

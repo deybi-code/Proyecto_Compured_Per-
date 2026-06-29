@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class EsAdmin
 {
+        if(!auth()->check() || auth()->user()->role !== 'admin'){ return redirect('/dashboard'); }
+
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check() && strtolower(trim(Auth::user()->rol ?? '')) === 'admin') {

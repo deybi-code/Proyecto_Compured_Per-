@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\{
     DashboardController,
     CarritoController,
@@ -14,22 +15,29 @@ use App\Http\Controllers\{
 
 /*
 |--------------------------------------------------------------------------
-| 1. RUTAS PÚBLICAS
+| 🟢 RUTAS PÚBLICAS
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () { return view('index'); })->name('home');
-Route::get('/categoria/{slug?}', function () { return view('categoria'); })->name('categoria');
-Route::get('/producto/{id?}', function () { return view('producto'); })->name('producto');
-Route::get('/nosotros', function () { return view('nosotros'); })->name('nosotros');
-Route::get('/terminos', function () { return view('terminos'); })->name('terminos');
 
-// AÑADIDO: la vista seguimiento.blade.php existía pero no tenía ruta asignada
+Route::get('/', fn() => view('index'))->name('home');
+Route::get('/categoria/{slug?}', fn() => view('categoria'))->name('categoria');
+Route::get('/producto/{id?}', fn() => view('producto'))->name('producto');
+Route::get('/nosotros', fn() => view('nosotros'))->name('nosotros');
+Route::get('/terminos', fn() => view('terminos'))->name('terminos');
+
+/*
+|--------------------------------------------------------------------------
+| 🔎 SEGUIMIENTO
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
+
     $boleta = null;
     $guia = null;
 
     if ($request->filled('boleta')) {
-        $boleta = \App\Models\Boleta::find($request->input('boleta'));
+        $boleta = \App\Models\Boleta::find($request->boleta);
 
         if ($boleta) {
             $guia = \Illuminate\Support\Facades\DB::table('guias_remision')
@@ -39,63 +47,89 @@ Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
     }
 
     return view('seguimiento', compact('boleta', 'guia'));
+
 })->name('seguimiento');
+
 
 /*
 |--------------------------------------------------------------------------
-| 2. CARRITO Y CHECKOUT
+| 🛒 CARRITO
 |--------------------------------------------------------------------------
 */
+
 Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index');
 Route::post('/carrito', [CarritoController::class, 'store'])->name('carrito.store');
 Route::delete('/carrito/{id}', [CarritoController::class, 'destroy'])->name('carrito.destroy');
-Route::get('/checkout', function () { return view('pago'); })->name('checkout');
 
-// CORREGIDO: el checkout y pago requieren login (no puede pagar sin estar autenticado)
+Route::get('/checkout', fn() => view('pago'))->name('checkout');
+
+
+/*
+|--------------------------------------------------------------------------
+| 🔐 RUTAS AUTENTICADAS (USUARIO NORMAL)
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware(['auth'])->group(function () {
 
     Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
 
-    /*
-    |--------------------------------------------------------------------------
-    | 3. DASHBOARD Y PERFIL (cualquier usuario autenticado)
-    |--------------------------------------------------------------------------
-    */
+    // 📊 DASHBOARD USUARIO
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // 🧾 PEDIDOS USUARIO
     Route::get('/dashboard/pedidos', [DashboardController::class, 'pedidos'])->name('pedidos');
+
+    // 👤 PERFIL USUARIO
     Route::get('/dashboard/perfil', [DashboardController::class, 'editProfile'])->name('perfil');
     Route::post('/dashboard/perfil', [DashboardController::class, 'updateProfile'])->name('perfil.update');
 
-    // Rutas de perfil de Breeze
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-    /*
-    |--------------------------------------------------------------------------
-    | 4. PANEL DE VENTAS (vendedor y administrador)
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware(['es_vendedor'])->prefix('admin')->group(function () {
+
+/*
+|--------------------------------------------------------------------------
+| 🟡 PANEL VENDEDOR
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'es_vendedor'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
         Route::get('/ventas', [VentasController::class, 'index'])->name('ventas.index');
         Route::post('/ventas', [VentasController::class, 'store'])->name('ventas.store');
+
         Route::get('/boletas/{id}', [BoletaController::class, 'show'])->name('boletas.show');
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | 5. PANEL ADMINISTRATIVO (solo administrador)
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware(['es_admin'])->prefix('admin')->group(function () {
-        // CRUD de productos
-        Route::resource('productos', AdminProductoController::class)->names('admin.productos');
 
-        // Gestión de anuncios
+/*
+|--------------------------------------------------------------------------
+| 🔴 PANEL ADMIN (SISTEMA PRINCIPAL)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'es_admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // 📊 DASHBOARD ADMIN
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // 📦 PRODUCTOS
+        Route::resource('productos', AdminProductoController::class)
+            ->names('productos');
+
+        // 📢 ANUNCIOS
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');
         Route::post('/anuncios', [AdminAnuncioController::class, 'store'])->name('anuncios.store');
         Route::delete('/anuncios/{id}', [AdminAnuncioController::class, 'destroy'])->name('anuncios.destroy');
     });
-});
 
 require __DIR__.'/auth.php';

@@ -14,7 +14,7 @@ class EsAdmin
     public function handle(Request $request, Closure $next)
     {
         // 🔐 VALIDACIÓN CORRECTA DE ADMIN
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
+        if (!Auth::check() || Auth::user()->rol !== 'admin') {
             return redirect('/dashboard')->with('error', 'No tienes permisos para acceder a esta sección.');
         }
 

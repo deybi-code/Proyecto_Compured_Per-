@@ -11,7 +11,7 @@
         <div class="cp-nav-links">
 
             {{-- SOLO ADMIN --}}
-            @if(Auth::check() && Auth::user()->role === 'admin')
+            @if(Auth::check() && Auth::user()->rol === 'admin')
 
                 {{-- 🔥 PANEL ADMIN (CORRECTO) --}}
                 <a href="{{ route('admin.panel') }}" class="cp-btn-primary">
@@ -95,7 +95,7 @@
     <div class="cp-mobile-menu" id="cp-mobile-menu">
 
         {{-- ADMIN MOBILE --}}
-        @if(Auth::check() && Auth::user()->role === 'admin')
+        @if(Auth::check() && Auth::user()->rol === 'admin')
 
             <a href="{{ route('admin.panel') }}">
                 Panel Admin

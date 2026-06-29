@@ -1,50 +1,71 @@
-<nav x-data="{ open: false }" class="bg-white border-b shadow">
+<nav class="cp-navbar">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="cp-navbar-inner flex justify-between items-center">
 
-        <div class="flex justify-between h-16">
+        {{-- 🔵 LOGO --}}
+        <a href="{{ route('home') }}" class="cp-logo">
+            Compured Perú
+        </a>
 
-            <!-- LOGO -->
-            <div class="flex items-center">
-                <a href="{{ route('home') }}" class="font-bold text-xl">
-                    Compured Perú
+        {{-- 🟡 LINKS CENTRALES (DESKTOP) --}}
+        <div class="cp-nav-links">
+
+            {{-- SOLO ADMIN --}}
+            @if(Auth::check() && Auth::user()->role === 'admin')
+
+                {{-- 🔥 PANEL ADMIN (CORRECTO) --}}
+                <a href="{{ route('admin.panel') }}" class="cp-btn-primary">
+                    Panel Admin
                 </a>
-            </div>
 
-            <!-- MENÚ ADMIN -->
-            <div class="hidden sm:flex sm:items-center sm:space-x-6">
+                <a href="{{ route('admin.productos.index') }}">
+                    Productos
+                </a>
 
-                @if(Auth::check() && Auth::user()->role === 'admin')
+                <a href="{{ route('admin.ventas.index') }}">
+                    Ventas
+                </a>
 
-                    <a href="{{ route('admin.panel') }}">Panel Admin</a>
+                <a href="{{ route('admin.anuncios.index') }}">
+                    Anuncios
+                </a>
 
-                    <a href="{{ route('admin.productos.index') }}">Productos</a>
+            @endif
 
-                    <a href="{{ route('admin.ventas.index') }}">Ventas</a>
+        </div>
 
-                    <a href="{{ route('admin.anuncios.index') }}">Anuncios</a>
+        {{-- 🟣 ACCIONES DERECHA --}}
+        <div class="cp-nav-actions">
 
-                @endif
+            {{-- THEME TOGGLE --}}
+            <button type="button" class="cp-icon-btn" id="cp-theme-toggle" title="Cambiar tema">
+                🌙
+            </button>
 
-            </div>
+            {{-- CARRITO --}}
+            <a href="{{ route('carrito.index') }}" class="cp-icon-btn" title="Carrito">
+                🛒
+            </a>
 
-            <!-- USUARIO -->
-            <div class="hidden sm:flex sm:items-center sm:ml-6">
+            {{-- USER MENU --}}
+            <div class="cp-user-menu" id="cp-user-menu">
 
-                <x-dropdown align="right">
+                <x-dropdown align="right" width="48">
 
                     <x-slot name="trigger">
-                        <button>
-                            {{ Auth::user()->name }}
+                        <button class="cp-icon-btn">
+                            👤
                         </button>
                     </x-slot>
 
                     <x-slot name="content">
 
+                        {{-- PERFIL --}}
                         <x-dropdown-link :href="route('profile.edit')">
-                            Perfil
+                            Ver perfil
                         </x-dropdown-link>
 
+                        {{-- LOGOUT --}}
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
@@ -61,7 +82,53 @@
 
             </div>
 
+            {{-- MOBILE TOGGLE --}}
+            <button type="button" class="cp-mobile-toggle" id="cp-mobile-toggle">
+                ☰
+            </button>
+
         </div>
+
+    </div>
+
+    {{-- 📱 MOBILE MENU --}}
+    <div class="cp-mobile-menu" id="cp-mobile-menu">
+
+        {{-- ADMIN MOBILE --}}
+        @if(Auth::check() && Auth::user()->role === 'admin')
+
+            <a href="{{ route('admin.panel') }}">
+                Panel Admin
+            </a>
+
+            <a href="{{ route('admin.productos.index') }}">
+                Productos
+            </a>
+
+            <a href="{{ route('admin.ventas.index') }}">
+                Ventas
+            </a>
+
+            <a href="{{ route('admin.anuncios.index') }}">
+                Anuncios
+            </a>
+
+        @endif
+
+        {{-- USER --}}
+        <a href="{{ route('profile.edit') }}">
+            Mi perfil
+        </a>
+
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+
+            <button type="submit">
+                Cerrar sesión
+            </button>
+
+        </form>
+
     </div>
 
 </nav>

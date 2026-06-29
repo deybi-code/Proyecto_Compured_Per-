@@ -22,6 +22,15 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        // Limpiar caché de vistas automáticamente
+        try {
+            \Illuminate\Support\Facades\Artisan::call('view:clear');
+            \Illuminate\Support\Facades\Artisan::call('cache:clear');
+            \Illuminate\Support\Facades\Artisan::call('config:clear');
+        } catch (\Exception $e) {
+            // Silencioso si falla
+        }
+
         // Registrar proveedor de autenticación flexible
         // Soporta contraseñas en Bcrypt, MD5, SHA1 y texto plano
         Auth::provider('flexible-eloquent', function ($app, array $config) {

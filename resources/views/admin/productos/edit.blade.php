@@ -23,11 +23,15 @@
 
     {{-- FORM --}}
     <form method="POST"
-          action="{{ route('admin.productos.update', $producto) }}"
+          action="{{ route('admin.productos.update', $producto->id_producto) }}"
           enctype="multipart/form-data">
 
         @csrf
         @method('PUT')
+
+        {{-- CAMPOS OBLIGATORIOS (Ocultos para no romper tu diseño) --}}
+        <input type="hidden" name="marca" value="{{ $producto->marca }}">
+        <input type="hidden" name="id_categoria" value="{{ $producto->id_categoria }}">
 
         {{-- NOMBRE --}}
         <div style="margin-bottom:20px;">
@@ -62,15 +66,14 @@
             </div>
         </div>
 
-        {{-- DESCRIPCIÓN --}}
+        {{-- DESCRIPCIÓN CORREGIDA --}}
         <div style="margin-bottom:20px;">
-            <label style="display:block; color:#334155; font-weight:600; margin-bottom:8px;">Descripción</label>
-            <textarea name="descripcion"
+            <label style="display:block; color:#334155; font-weight:600; margin-bottom:8px;">Detalles Técnicos</label>
+            <textarea name="detalles_tecnicos"
                       rows="4"
-                      style="width:100%; padding:12px 15px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#f8fafc; font-size:15px;">{{ $producto->descripcion }}</textarea>
+                      style="width:100%; padding:12px 15px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#f8fafc; font-size:15px;">{{ $producto->detalles_tecnicos }}</textarea>
         </div>
-
-        {{-- VARIANTES --}}
+{{-- VARIANTES --}}
         <div style="margin-bottom:30px;">
             <label style="display:block; color:#334155; font-weight:600; margin-bottom:8px;">Variantes (tallas, colores, etc)</label>
             <input type="text"
@@ -80,90 +83,47 @@
                    style="width:100%; padding:12px 15px; border:1px solid #cbd5e1; border-radius:8px; outline:none; background:#f8fafc; font-size:15px;">
         </div>
 
-        {{-- 🔥 IMÁGENES ACTUALES --}}
+        {{-- 🔥 IMÁGENES ACTUALES (CORREGIDO: USANDO RELACIÓN FOTOS) --}}
         <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:20px; margin-bottom:25px;">
             <h3 style="color:#0369a1; margin:0 0 15px 0; font-size:18px;">📸 Imágenes actuales</h3>
 
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px;">
-
-                @if($producto->imagen_1)
+                @forelse($producto->fotos as $foto)
                     <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                        <img src="{{ asset('storage/'.$producto->imagen_1) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
+                        <img src="{{ asset('storage/'.$foto->ruta_foto) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
                     </div>
-                @endif
-
-                @if($producto->imagen_2)
-                    <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                        <img src="{{ asset('storage/'.$producto->imagen_2) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
-                    </div>
-                @endif
-
-                @if($producto->imagen_3)
-                    <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                        <img src="{{ asset('storage/'.$producto->imagen_3) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
-                    </div>
-                @endif
-
-                @if($producto->imagen_4)
-                    <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                        <img src="{{ asset('storage/'.$producto->imagen_4) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
-                    </div>
-                @endif
-
+                @empty
+                    <p>No hay fotos cargadas.</p>
+                @endforelse
             </div>
         </div>
 
-        {{-- 🔥 NUEVAS IMÁGENES --}}
+        {{-- 🔥 NUEVAS IMÁGENES (CORREGIDO: CAMPO ÚNICO PARA SUBIR) --}}
         <div style="border:1px dashed #cbd5e1; border-radius:12px; padding:20px; margin-bottom:30px;">
             <div style="margin-bottom:15px;">
                 <h3 style="color:#0056b3; margin:0 0 5px 0; font-size:18px;">🆕 Reemplazar imágenes</h3>
                 <p style="color:#64748b; font-size:13px; margin:0;">
-                    Solo sube nuevas imágenes si deseas reemplazar las actuales.
+                    Selecciona nuevos archivos para actualizar.
                 </p>
             </div>
 
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
-
-                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
-                    <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Imagen 1</label>
-                    <input type="file" name="imagen_1" style="width:100%; font-size:13px;">
-                </div>
-
-                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
-                    <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Imagen 2</label>
-                    <input type="file" name="imagen_2" style="width:100%; font-size:13px;">
-                </div>
-
-                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
-                    <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Imagen 3</label>
-                    <input type="file" name="imagen_3" style="width:100%; font-size:13px;">
-                </div>
-
-                <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
-                    <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Imagen 4</label>
-                    <input type="file" name="imagen_4" style="width:100%; font-size:13px;">
-                </div>
-
+            <div style="background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
+                <label style="display:block; font-weight:600; color:#475569; margin-bottom:8px; font-size:14px;">Subir imágenes</label>
+                <input type="file" name="fotos[]" multiple style="width:100%; font-size:13px;">
             </div>
         </div>
 
         {{-- BOTONES --}}
         <div style="display:flex; gap:15px; border-top:1px solid #e2e8f0; padding-top:20px;">
-
             <button type="submit"
                     style="background:#9ad800; color:#0f172a; padding:12px 25px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:15px; box-shadow:0 4px 6px -1px rgba(154,216,0,0.3);">
                 💾 Guardar Cambios
             </button>
-
             <a href="{{ route('admin.productos.index') }}"
                style="background:#ffffff; color:#ef4444; padding:12px 25px; border:1px solid #fca5a5; border-radius:8px; text-decoration:none; font-weight:bold; font-size:15px;">
                 ❌ Cancelar
             </a>
-
         </div>
-
     </form>
-
 </div>
-
 @endsection

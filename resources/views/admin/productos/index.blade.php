@@ -92,13 +92,14 @@
             {{-- CHECK --}}
             <td><input type="checkbox"></td>
 
-            {{-- IMAGEN --}}
+            {{-- IMAGEN CORREGIDA --}}
             <td>
-                @if($p->imagen_1)
-                    <img src="{{ asset('storage/'.$p->imagen_1) }}"
+                @php $foto = $p->fotos->first(); @endphp
+                @if($foto)
+                    <img src="{{ asset('storage/'.$foto->ruta_foto) }}"
                          style="width:50px;height:50px;border-radius:8px;object-fit:cover; border: 1px solid #eee;">
                 @else
-                    <div style="width:50px;height:50px;background:#ddd;border-radius:8px;"></div>
+                    <div style="width:50px;height:50px;background:#ddd;border-radius:8px; display:flex; align-items:center; justify-content:center; color:#666; font-size:10px;">Sin foto</div>
                 @endif
             </td>
 
@@ -111,7 +112,7 @@
             </td>
 
             {{-- PRECIO --}}
-            <td style="font-weight: 600;">S/ {{ $p->precio }}</td>
+            <td style="font-weight: 600;">S/ {{ number_format($p->precio, 2) }}</td>
 
             {{-- STOCK --}}
             <td>
@@ -152,11 +153,9 @@
                 </button>
 
                 {{-- ELIMINAR --}}
-                <form method="POST"
-                      action="{{ route('admin.productos.destroy', $p) }}">
+                <form method="POST" action="{{ route('admin.productos.destroy', $p) }}">
                     @csrf
                     @method('DELETE')
-
                     <button onclick="return confirm('¿Eliminar producto?')"
                             style="background:#fee2e2;color:#b91c1c;padding:6px 10px;border:none;border-radius:6px; cursor: pointer;">
                         🗑

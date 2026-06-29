@@ -91,8 +91,7 @@ class AdminProductoController extends Controller
         $categorias = Categoria::orderBy('nombre_categoria')->get();
         return view('admin.productos.edit', compact('producto', 'categorias'));
     }
-
-    // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
     // 🔄 ACTUALIZAR PRODUCTO
     // ─────────────────────────────────────────────
     public function update(Request $request, $id)
@@ -105,24 +104,26 @@ class AdminProductoController extends Controller
             'stock'             => 'required|integer|min:0',
             'marca'             => 'required|string|max:50',
             'id_categoria'      => 'required|integer|exists:categorias,id_categoria',
-            'detalles_tecnicos' => 'nullable|string',
+            'detalles_tecnicos' => 'nullable|string', // Cambiado de 'descripcion'
             'mostrar_inicio'    => 'nullable|in:0,1',
-            'imagen_principal'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $data['mostrar_inicio'] = $request->has('mostrar_inicio') ? 1 : 0;
 
-        // Reemplazar imagen principal si se sube una nueva
-        if ($request->hasFile('imagen_principal')) {
-            // Eliminar la anterior si existe
-            if ($producto->imagen) {
-                Storage::disk('public')->delete($producto->imagen);
-            }
-            $data['imagen'] = $request->file('imagen_principal')
-                ->store('productos', 'public');
-        }
-
+        // 1. Actualizar datos básicos
         $producto->update($data);
+
+        // 2. Procesar fotos adicionales (fotos[])
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $foto) {
+                $ruta = $foto->store('productos', 'public');
+                \Illuminate\Support\Facades\DB::table('fotos_productos')->insert([
+                    'id_producto'  => $producto->id_producto,
+                    'ruta_foto'    => $ruta,
+                    'es_principal' => 0,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.productos.index')
             ->with('success', '✅ Producto actualizado correctamente.');

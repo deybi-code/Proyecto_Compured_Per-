@@ -31,37 +31,34 @@
             margin-left: auto;
             flex-shrink: 0;
         }
-        .header-user-btn {
+        /* ── USER ICON BUTTON ── */
+        .user-icon-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            color: #374151;
+            gap: 3px;
             background: none;
             border: none;
             cursor: pointer;
-            padding: 0;
-            width: auto;
+            padding: 6px 8px;
+            border-radius: 8px;
+            color: #374151;
             text-decoration: none;
-            transition: color 0.2s;
-        }
-        html.dark .header-user-btn { color: #D1D5DB; }
-        .header-user-btn:hover { color: #0052CC; background: none; }
-        html.dark .header-user-btn:hover { color: #2684FF; }
-        .header-auth-links {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.875rem;
+            transition: background 0.2s, color 0.2s;
+            width: auto;
             flex-shrink: 0;
         }
-        .header-auth-links a { white-space: nowrap; }
-        .header-divider {
-            color: #D1D5DB;
+        .user-icon-btn:hover {
+            background: #EBF3FF;
+            color: #0052CC;
         }
-        html.dark .header-divider { color: #4B5563; }
+        html.dark .user-icon-btn { color: #D1D5DB; }
+        html.dark .user-icon-btn:hover { background: rgba(0,82,204,0.15); color: #2684FF; }
+        .user-icon-btn span {
+            font-size: 0.65rem;
+            font-weight: 600;
+            line-height: 1;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -121,29 +118,34 @@
 
             {{-- User Menu --}}
             @auth
+            {{-- Logueado: ícono persona con dropdown --}}
             <div x-data="{ open: false }" style="position:relative;">
-                <button @click="open = !open" class="header-user-btn">
-                    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    Mi cuenta
+                <button @click="open = !open" class="user-icon-btn" title="{{ auth()->user()->nombre_completo ?? auth()->user()->name ?? 'Mi cuenta' }}">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span>Mi cuenta</span>
                 </button>
-                <div x-show="open" @click.away="open = false" x-cloak class="user-dropdown" style="position:absolute;right:0;margin-top:8px;z-index:50;">
-                    <div style="padding:8px 16px;border-bottom:1px solid #F3F4F6;font-size:0.75rem;color:#6B7280;">
-                        {{ auth()->user()->nombre_completo ?? auth()->user()->name ?? 'Usuario' }}
+                <div x-show="open" @click.away="open = false" x-cloak class="user-dropdown" style="position:absolute;right:0;margin-top:8px;z-index:50;min-width:190px;">
+                    <div style="padding:10px 16px;border-bottom:1px solid #F3F4F6;font-size:0.75rem;color:#6B7280;font-weight:600;">
+                        👤 {{ auth()->user()->nombre_completo ?? auth()->user()->name ?? 'Usuario' }}
                     </div>
                     <a href="/dashboard">📊 Panel de usuario</a>
                     <a href="{{ route('profile.edit') }}">⚙️ Editar perfil</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="danger">🚪 Cerrar sesión</button>
+                        <button type="submit" class="danger" style="width:100%;text-align:left;padding:10px 16px;background:none;border:none;cursor:pointer;font-size:0.85rem;color:#DC2626;">🚪 Cerrar sesión</button>
                     </form>
                 </div>
             </div>
             @else
-            <div class="header-auth-links">
-                <a href="{{ route('login') }}" style="font-weight:600;color:#374151;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#0052CC'" onmouseout="this.style.color='#374151'">Entrar</a>
-                <span class="header-divider">|</span>
-                <a href="{{ route('register') }}" class="btn-primary" style="font-size:0.75rem;padding:8px 16px;">Registrarse</a>
-            </div>
+            {{-- No logueado: mismo ícono persona que lleva al login --}}
+            <a href="{{ route('login') }}" class="user-icon-btn" title="Iniciar sesión">
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span>Ingresar</span>
+            </a>
             @endauth
 
             {{-- Cart --}}

@@ -89,12 +89,13 @@ class User extends Authenticatable
     // Helpers de rol
     public function esAdmin(): bool
     {
-        return $this->rol === 'administrador';
+        return strtolower(trim($this->rol ?? '')) === 'administrador';
     }
 
     public function esVendedor(): bool
     {
-        return in_array($this->rol, ['vendedor', 'administrador']);
+        $rol = strtolower(trim($this->rol ?? ''));
+        return in_array($rol, ['vendedor', 'administrador']);
     }
 
     // Relaciones

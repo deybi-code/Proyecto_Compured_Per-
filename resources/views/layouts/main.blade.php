@@ -118,7 +118,7 @@
 
             {{-- Botón Panel Admin (solo administradores) --}}
             @auth
-            @if(auth()->user()->esAdmin())
+            @if(strtolower(trim(auth()->user()->rol ?? '')) === 'administrador')
             <a href="/admin/productos" style="
                 display:inline-flex;align-items:center;gap:6px;
                 background:#0052CC;color:white;
@@ -146,7 +146,7 @@
                     <div style="padding:10px 16px;border-bottom:1px solid #F3F4F6;font-size:0.75rem;color:#6B7280;font-weight:600;">
                         👤 {{ auth()->user()->nombre_completo ?? auth()->user()->name ?? 'Usuario' }}
                     </div>
-                    @if(auth()->user()->esAdmin())
+                    @if(strtolower(trim(auth()->user()->rol ?? '')) === 'administrador')
                     <a href="/admin/productos" style="background:#EBF3FF;color:#0052CC;font-weight:700;">🛡️ Panel Admin</a>
                     @endif
                     <a href="/dashboard">📊 Panel de usuario</a>

@@ -1,23 +1,45 @@
-<nav class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-            <div class="flex-shrink-0">
-                <img src="{{ asset('images/logo.png') }}" alt="Compured" class="h-10">
-            </div>
+    <title>{{ config('app.name', 'Compured Perú') }}</title>
 
-            <div class="flex-1 mx-8">
-                <input type="text" placeholder="Buscar producto..."
-                    class="w-full bg-gray-100 dark:bg-slate-800 border-none rounded-lg py-2 px-4 focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white">
-            </div>
+    <!-- Estilos -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-            <div class="flex items-center space-x-4">
-                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700">
-                    <span class="dark:hidden">🌙</span>
-                    <span class="hidden dark:inline">☀️</span>
-                </button>
-                <a href="{{ route('login') }}" class="text-gray-700 dark:text-gray-200 font-medium">Entrar</a>
-            </div>
-        </div>
+    <script>
+        // Mantener preferencia de modo oscuro
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+</head>
+<body class="font-sans antialiased bg-gray-50 dark:bg-slate-900 transition-colors duration-300">
+
+    <div class="min-h-screen">
+        @include('layouts.navigation') <!-- Manteniendo tu archivo original -->
+
+        <!-- Page Heading -->
+        @if (isset($header))
+            <header class="bg-white dark:bg-slate-800 shadow">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    {{ $header }}
+                </div>
+            </header>
+        @endif
+
+        <!-- Page Content -->
+        <main>
+            {{ $slot }} <!-- O @yield('content') según tu configuración original -->
+        </main>
     </div>
-</nav>
+
+    <!-- Scripts adicionales -->
+    @stack('scripts')
+</body>
+</html>

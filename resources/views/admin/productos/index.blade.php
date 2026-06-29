@@ -1,116 +1,90 @@
 @extends('layouts.admin')
 
-@section('title', 'Gestión de Productos')
+@section('title','Productos Pro')
 
 @section('content')
 
-@php
-    // Si ya estás pasando $productos desde controller, esto no afecta
-@endphp
+<div class="p-6">
 
-<div class="card" style="display:flex;justify-content:space-between;align-items:center;">
-    <div>
-        <h1>📦 Gestión de Productos</h1>
-        <p style="opacity:.7;">Administra productos, stock, precios e imágenes</p>
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold">📦 Gestión de Productos</h1>
+            <p class="text-gray-500">Admin enterprise panel</p>
+        </div>
+
+        <a href="{{ route('admin.productos.create') }}"
+           class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+           + Nuevo Producto
+        </a>
     </div>
 
-    <a href="{{ route('admin.productos.create') }}"
-       style="background:#2563eb;color:white;padding:10px 14px;border-radius:8px;text-decoration:none;">
-        + Nuevo Producto
-    </a>
-</div>
+    <div class="overflow-x-auto bg-white rounded-xl shadow">
 
-<div class="card">
+        <table class="w-full">
 
-    <table width="100%" cellpadding="10" style="border-collapse:collapse;">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-3 text-left">Imagen</th>
+                    <th class="p-3 text-left">Nombre</th>
+                    <th class="p-3 text-left">Precio</th>
+                    <th class="p-3 text-left">Stock</th>
+                    <th class="p-3 text-left">Acciones</th>
+                </tr>
+            </thead>
 
-        <thead>
-            <tr style="text-align:left;border-bottom:1px solid #e5e7eb;">
-                <th>Imagen</th>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
+            <tbody>
 
-        <tbody>
+                @foreach($productos as $p)
 
-        @foreach($productos as $p)
+                <tr class="border-b hover:bg-gray-50 transition">
 
-            <tr style="border-bottom:1px solid #f1f1f1;">
+                    <td class="p-3">
+                        @if($p->imagen)
+                            <img src="{{ asset('storage/'.$p->imagen) }}"
+                                 class="w-14 h-14 object-cover rounded-lg">
+                        @else
+                            <div class="w-14 h-14 bg-gray-200 rounded-lg"></div>
+                        @endif
+                    </td>
 
-                {{-- 🖼 IMAGEN --}}
-                <td>
-                    @if(isset($p->imagen) && $p->imagen)
-                        <img src="{{ asset('storage/'.$p->imagen) }}"
-                             width="55"
-                             style="border-radius:8px;">
-                    @else
-                        <span style="opacity:.5;">Sin imagen</span>
-                    @endif
-                </td>
+                    <td class="p-3 font-semibold">{{ $p->nombre }}</td>
 
-                {{-- 📦 NOMBRE --}}
-                <td>
-                    <strong>{{ $p->nombre }}</strong>
-                </td>
+                    <td class="p-3">S/ {{ $p->precio }}</td>
 
-                {{-- 💰 PRECIO --}}
-                <td>
-                    S/ {{ $p->precio }}
-                </td>
-
-                {{-- 📊 STOCK --}}
-                <td>
-                    @if($p->stock > 10)
-                        <span style="color:green;font-weight:600;">
+                    <td class="p-3">
+                        <span class="px-2 py-1 rounded bg-green-100 text-green-700">
                             {{ $p->stock }}
                         </span>
-                    @elseif($p->stock > 0)
-                        <span style="color:orange;font-weight:600;">
-                            {{ $p->stock }}
-                        </span>
-                    @else
-                        <span style="color:red;font-weight:600;">
-                            Sin stock
-                        </span>
-                    @endif
-                </td>
+                    </td>
 
-                {{-- ⚙ ACCIONES --}}
-                <td style="display:flex;gap:8px;align-items:center;">
+                    <td class="p-3 flex gap-2">
 
-                    {{-- ✏️ EDITAR (CORREGIDO 100%) --}}
-                    <a href="{{ route('admin.productos.edit', ['producto' => $p->id_producto]) }}"
-                       style="background:#e0f2fe;color:#0369a1;padding:6px 10px;border-radius:6px;text-decoration:none;font-size:13px;">
-                        Editar
-                    </a>
+                        <a href="{{ route('admin.productos.edit',['producto'=>$p->id_producto]) }}"
+                           class="px-3 py-1 bg-yellow-400 rounded text-white">
+                           Editar
+                        </a>
 
-                    {{-- 🗑 ELIMINAR --}}
-                    <form action="{{ route('admin.productos.destroy', ['producto' => $p->id_producto]) }}"
-                          method="POST"
-                          onsubmit="return confirm('¿Eliminar este producto?')">
+                        <form method="POST"
+                              action="{{ route('admin.productos.destroy',['producto'=>$p->id_producto]) }}">
+                            @csrf
+                            @method('DELETE')
 
-                        @csrf
-                        @method('DELETE')
+                            <button class="px-3 py-1 bg-red-500 text-white rounded">
+                                Eliminar
+                            </button>
+                        </form>
 
-                        <button type="submit"
-                                style="background:#fee2e2;color:#b91c1c;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
-                            Eliminar
-                        </button>
+                    </td>
 
-                    </form>
+                </tr>
 
-                </td>
+                @endforeach
 
-            </tr>
+            </tbody>
 
-        @endforeach
+        </table>
 
-        </tbody>
-
-    </table>
+    </div>
 
 </div>
 

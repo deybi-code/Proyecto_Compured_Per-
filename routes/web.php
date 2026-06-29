@@ -23,6 +23,24 @@ Route::get('/producto/{id?}', function () { return view('producto'); })->name('p
 Route::get('/nosotros', function () { return view('nosotros'); })->name('nosotros');
 Route::get('/terminos', function () { return view('terminos'); })->name('terminos');
 
+// AÑADIDO: la vista seguimiento.blade.php existía pero no tenía ruta asignada
+Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
+    $boleta = null;
+    $guia = null;
+
+    if ($request->filled('boleta')) {
+        $boleta = \App\Models\Boleta::find($request->input('boleta'));
+
+        if ($boleta) {
+            $guia = \Illuminate\Support\Facades\DB::table('guias_remision')
+                ->where('id_boleta', $boleta->id_boleta)
+                ->first();
+        }
+    }
+
+    return view('seguimiento', compact('boleta', 'guia'));
+})->name('seguimiento');
+
 /*
 |--------------------------------------------------------------------------
 | 2. CARRITO Y CHECKOUT

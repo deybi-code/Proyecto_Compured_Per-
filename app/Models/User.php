@@ -29,4 +29,20 @@ class User extends Authenticatable
     {
         return $this->password;
     }
+
+    /**
+     * AÑADIDO: algunas vistas heredadas de Breeze (layouts/navigation.blade.php)
+     * usan Auth::user()->name y ->email, pero tus columnas reales son
+     * 'nombre_completo' y 'correo'. Estos accessors evitan que esas vistas
+     * truenen con "Property [name] does not exist".
+     */
+    public function getNameAttribute()
+    {
+        return $this->attributes['nombre_completo'] ?? null;
+    }
+
+    public function getEmailAttribute()
+    {
+        return $this->attributes['correo'] ?? null;
+    }
 }

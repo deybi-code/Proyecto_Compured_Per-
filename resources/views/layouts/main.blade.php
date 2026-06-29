@@ -130,6 +130,9 @@
                     <div style="padding:10px 16px;border-bottom:1px solid #F3F4F6;font-size:0.75rem;color:#6B7280;font-weight:600;">
                         👤 {{ auth()->user()->nombre_completo ?? auth()->user()->name ?? 'Usuario' }}
                     </div>
+                    @if(auth()->user()->esAdmin())
+                    <a href="/admin/productos" style="background:#EBF3FF;color:#0052CC;font-weight:700;">🛡️ Panel Admin</a>
+                    @endif
                     <a href="/dashboard">📊 Panel de usuario</a>
                     <a href="{{ route('profile.edit') }}">⚙️ Editar perfil</a>
                     <form method="POST" action="{{ route('logout') }}">

@@ -118,10 +118,10 @@ Route::middleware(['auth', 'es_admin'])
     ->name('admin.')
     ->group(function () {
 
-        // 📊 DASHBOARD ADMIN (CORREGIDO)
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        // 📊 PANEL ADMIN (CORRECTO)
+        Route::get('/panel', function () {
+            return view('admin.panel');
+        })->name('panel');
 
         // 📦 PRODUCTOS
         Route::resource('productos', AdminProductoController::class)
@@ -132,5 +132,4 @@ Route::middleware(['auth', 'es_admin'])
         Route::post('/anuncios', [AdminAnuncioController::class, 'store'])->name('anuncios.store');
         Route::delete('/anuncios/{id}', [AdminAnuncioController::class, 'destroy'])->name('anuncios.destroy');
     });
-
 require __DIR__.'/auth.php';

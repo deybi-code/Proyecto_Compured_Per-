@@ -1,6 +1,6 @@
 // theme.js — aplica el tema ANTES de pintar la página (evita flash)
 (function () {
-    const theme = localStorage.getItem('theme');
+    const theme = localStorage.getItem('cpTheme');
     if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
     } else {

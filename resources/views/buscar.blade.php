@@ -16,7 +16,7 @@
             </p>
 
             {{-- Buscador Corregido (Encuadrado y proporcional) --}}
-            <form method="GET" action="{{ route('buscar') }}" class="relative max-w-lg mx-auto">
+            <form method="GET" action="{{ url()->current() }}" class="relative max-w-lg mx-auto">
                 <input type="text" name="q" value="{{ request('q') }}"
                     class="w-full pl-12 pr-4 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-4 focus:ring-blue-400/30 backdrop-blur-md transition-all text-lg"
                     placeholder="Buscar otro producto...">

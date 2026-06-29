@@ -37,7 +37,7 @@ Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
     $guia = null;
 
     if ($request->filled('boleta')) {
-        $boleta = \App\Models\Boleta::find($request->boleta);
+        $boleta = \App\Models\Boleta::find($request->boleta, ['*']);
 
         if ($boleta) {
             $guia = \Illuminate\Support\Facades\DB::table('guias_remision')
@@ -113,14 +113,15 @@ Route::middleware(['auth', 'es_vendedor'])
 | 🔴 PANEL ADMIN (SISTEMA PRINCIPAL)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth', 'es_admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        // 📊 DASHBOARD ADMIN
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        // 📊 DASHBOARD ADMIN (CORREGIDO)
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
 
         // 📦 PRODUCTOS
         Route::resource('productos', AdminProductoController::class)

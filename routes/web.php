@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\{
     DashboardController,
@@ -19,11 +20,48 @@ use App\Http\Controllers\{
 |--------------------------------------------------------------------------
 */
 
-Route::get('/', fn() => view('index'))->name('home');
-Route::get('/categoria/{slug?}', fn() => view('categoria'))->name('categoria');
-Route::get('/producto/{id?}', fn() => view('producto'))->name('producto');
+Route::get('/', function () {
+    $productos  = \App\Models\Producto::with('fotos')
+                    ->where('mostrar_inicio', 1)
+                    ->orderBy('fecha_registro', 'desc')
+                    ->get();
+
+    $categorias = \App\Models\Categoria::all();
+
+    $anuncios   = DB::table('anuncios')
+                    ->where('activo', 1)
+                    ->orderBy('id_anuncio', 'desc')
+                    ->get();
+
+    return view('index', compact('productos', 'categorias', 'anuncios'));
+})->name('home');
+
+Route::get('/categoria/{slug?}', function ($slug = null) {
+    $categorias = \App\Models\Categoria::all();
+    $productos  = collect();
+
+    if ($slug) {
+        $cat = $categorias->first(fn($c) =>
+            \Illuminate\Support\Str::slug($c->nombre_categoria) === $slug
+        );
+        if ($cat) {
+            $productos = \App\Models\Producto::with('fotos')
+                ->where('id_categoria', $cat->id_categoria)
+                ->get();
+        }
+    }
+
+    return view('categoria', compact('categorias', 'productos', 'slug'));
+})->name('categoria');
+
+Route::get('/producto/{id?}', function ($id = null) {
+    $producto   = $id ? \App\Models\Producto::with(['fotos', 'categoria'])->findOrFail($id) : null;
+    $categorias = \App\Models\Categoria::all();
+    return view('producto', compact('producto', 'categorias'));
+})->name('producto');
+
 Route::get('/nosotros', fn() => view('nosotros'))->name('nosotros');
-Route::get('/terminos', fn() => view('terminos'))->name('terminos');
+Route::get('/terminos', fn()  => view('terminos'))->name('terminos');
 
 /*
 |--------------------------------------------------------------------------
@@ -34,14 +72,13 @@ Route::get('/terminos', fn() => view('terminos'))->name('terminos');
 Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
 
     $boleta = null;
-    $guia = null;
+    $guia   = null;
 
     if ($request->filled('boleta')) {
-
         $boleta = \App\Models\Boleta::find($request->input('boleta'));
 
         if ($boleta) {
-            $guia = \Illuminate\Support\Facades\DB::table('guias_remision')
+            $guia = DB::table('guias_remision')
                 ->where('id_boleta', $boleta->id_boleta)
                 ->first();
         }
@@ -50,6 +87,28 @@ Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
     return view('seguimiento', compact('boleta', 'guia'));
 
 })->name('seguimiento');
+
+/*
+|--------------------------------------------------------------------------
+| 🔍 BUSCADOR PÚBLICO
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/buscar', function (\Illuminate\Http\Request $request) {
+    $q         = $request->input('q', '');
+    $productos = collect();
+
+    if (strlen(trim($q)) >= 2) {
+        $productos = \App\Models\Producto::with('fotos')
+            ->where('nombre', 'like', "%{$q}%")
+            ->orWhere('marca', 'like', "%{$q}%")
+            ->orWhere('detalles_tecnicos', 'like', "%{$q}%")
+            ->get();
+    }
+
+    $categorias = \App\Models\Categoria::all();
+    return view('buscar', compact('productos', 'categorias', 'q'));
+})->name('buscar');
 
 /*
 |--------------------------------------------------------------------------
@@ -115,7 +174,10 @@ Route::middleware(['auth', 'es_admin'])
 
         // 📊 PANEL ADMIN
         Route::get('/panel', function () {
-            return view('admin.panel');
+            $totalProductos  = \App\Models\Producto::count();
+            $stockBajo       = \App\Models\Producto::where('stock', '<=', 5)->count();
+            $productosActivos = \App\Models\Producto::where('mostrar_inicio', 1)->count();
+            return view('admin.panel', compact('totalProductos', 'stockBajo', 'productosActivos'));
         })->name('panel');
 
         // 📦 PRODUCTOS

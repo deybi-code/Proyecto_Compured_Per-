@@ -4,7 +4,7 @@
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
     <div>
         <h1 style="font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:800;color:#172B4D" class="dark:text-white">Gestión de Productos</h1>
-        <p style="font-size:0.82rem;color:#97A0AF;margin-top:2px">{{ isset($productos) ? ($productos->total() ?? $productos->count()) : 0 }} productos registrados</p>
+        <p style="font-size:0.82rem;color:#97A0AF;margin-top:2px">{{ isset($productos) ? $productos->total() ?? $productos->count() : 0 }} productos registrados</p>
     </div>
     <a href="{{ route('admin.productos.create') }}" class="btn-primary">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>

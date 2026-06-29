@@ -63,7 +63,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            'driver' => 'flexible-eloquent',   // soporta Bcrypt, MD5, SHA1, texto plano
             'model' => env('AUTH_MODEL', User::class),
         ],
 

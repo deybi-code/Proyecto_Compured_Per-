@@ -8,14 +8,16 @@ use Illuminate\Support\Facades\Auth;
 
 class EsAdmin
 {
-        if(!auth()->check() || auth()->user()->role !== 'admin'){ return redirect('/dashboard'); }
-
+    /**
+     * Handle an incoming request.
+     */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && strtolower(trim(Auth::user()->rol ?? '')) === 'admin') {
-            return $next($request);
+        // 🔐 VALIDACIÓN CORRECTA DE ADMIN
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return redirect('/dashboard')->with('error', 'No tienes permisos para acceder a esta sección.');
         }
 
-        return redirect('/')->with('error', 'No tienes permisos para acceder a esta sección.');
+        return $next($request);
     }
 }

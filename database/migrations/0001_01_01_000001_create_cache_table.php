@@ -11,17 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cache', function (Blueprint $table) {
-            $table->string('key')->primary();
-            $table->mediumText('value');
-            $table->integer('expiration')->index();
-        });
+        // CORREGIDO: protegido con hasTable() por el mismo motivo que en
+        // 0001_01_01_000000_create_users_table.php (evitar "already exists").
+        if (!Schema::hasTable('cache')) {
+            Schema::create('cache', function (Blueprint $table) {
+                $table->string('key')->primary();
+                $table->mediumText('value');
+                $table->integer('expiration')->index();
+            });
+        }
 
-        Schema::create('cache_locks', function (Blueprint $table) {
-            $table->string('key')->primary();
-            $table->string('owner');
-            $table->integer('expiration')->index();
-        });
+        if (!Schema::hasTable('cache_locks')) {
+            Schema::create('cache_locks', function (Blueprint $table) {
+                $table->string('key')->primary();
+                $table->string('owner');
+                $table->integer('expiration')->index();
+            });
+        }
     }
 
     /**

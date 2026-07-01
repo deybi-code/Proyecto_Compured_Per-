@@ -5,10 +5,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class FotoProducto extends Model
 {
-    protected $table = 'fotos_productos'; // Asegúrate que coincida con tu BD
-    protected $fillable = ['id_producto', 'ruta_foto'];
+    protected $table      = 'fotos_productos';
+    protected $primaryKey = 'id_foto';   // ← clave correcta para findOrFail y destroy
+    public $timestamps    = false;
 
-    public function producto() {
+    protected $fillable = ['id_producto', 'ruta_foto', 'es_principal'];
+
+    public function producto()
+    {
         return $this->belongsTo(Producto::class, 'id_producto');
     }
 }

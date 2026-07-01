@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\{
     DashboardController,
+    FotoProductoController,
     CarritoController,
     PagoController,
     AdminProductoController,
@@ -200,6 +201,10 @@ Route::middleware(['auth', 'es_admin'])
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');
         Route::post('/anuncios', [AdminAnuncioController::class, 'store'])->name('anuncios.store');
         Route::delete('/anuncios/{id}', [AdminAnuncioController::class, 'destroy'])->name('anuncios.destroy');
+
+        // 📸 FOTOS INDIVIDUALES DE PRODUCTOS
+        Route::post('/productos/{id}/fotos', [FotoProductoController::class, 'store'])->name('admin.fotos.store');
+        Route::delete('/fotos/{id}', [FotoProductoController::class, 'destroy'])->name('admin.fotos.destroy');
     });
 
 require __DIR__.'/auth.php';

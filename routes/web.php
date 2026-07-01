@@ -194,8 +194,7 @@ Route::middleware(['auth', 'es_admin'])
         })->name('panel');
 
         // 📦 PRODUCTOS
-        Route::resource('productos', AdminProductoController::class)
-            ->names('productos');
+        Route::resource('productos', AdminProductoController::class);
 
         // 📢 ANUNCIOS
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');
@@ -203,8 +202,8 @@ Route::middleware(['auth', 'es_admin'])
         Route::delete('/anuncios/{id}', [AdminAnuncioController::class, 'destroy'])->name('anuncios.destroy');
 
         // 📸 FOTOS INDIVIDUALES DE PRODUCTOS
-        Route::post('/productos/{id}/fotos', [FotoProductoController::class, 'store'])->name('admin.fotos.store');
-        Route::delete('/fotos/{id}', [FotoProductoController::class, 'destroy'])->name('admin.fotos.destroy');
+        Route::post('/productos/{id}/fotos', [FotoProductoController::class, 'store'])->name('fotos.store');
+        Route::delete('/fotos/{id}', [FotoProductoController::class, 'destroy'])->name('fotos.destroy');
     });
 
 require __DIR__.'/auth.php';

@@ -13,7 +13,7 @@
             <p style="color:#64748b; margin:0; font-size:14px;">Actualiza información, imágenes y stock</p>
         </div>
         <a href="{{ route('admin.productos.index') }}"
-           style="background:#f1f5f9; color:#475569; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600; border:1px solid #cbd5e1;">
+            style="background:#f1f5f9; color:#475569; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:600; border:1px solid #cbd5e1;">
             ← Volver
         </a>
     </div>

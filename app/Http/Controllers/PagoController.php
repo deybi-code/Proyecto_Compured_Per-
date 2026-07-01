@@ -65,12 +65,15 @@ class PagoController extends Controller
                 }
 
                 // Registrar en pagos_online
+                // CORREGIDO: la tabla real no tiene columna "monto" (el total ya
+                // queda guardado en boletas.total_pago). En su lugar tiene
+                // "transaccion_id", que es la que realmente existe en producción.
                 DB::table('pagos_online')->insert([
-                    'id_boleta'   => $idBoleta,
-                    'monto'       => $total,
-                    'metodo_pago' => 'tarjeta',
-                    'estado_pago' => 'aprobado',
-                    'fecha_pago'  => now(),
+                    'id_boleta'      => $idBoleta,
+                    'metodo_pago'    => 'tarjeta',
+                    'transaccion_id' => 'TXN-' . strtoupper(uniqid()),
+                    'estado_pago'    => 'aprobado',
+                    'fecha_pago'     => now(),
                 ]);
 
                 return $idBoleta;
@@ -85,3 +88,4 @@ class PagoController extends Controller
         }
     }
 }
+ 

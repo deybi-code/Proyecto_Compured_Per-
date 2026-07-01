@@ -30,21 +30,21 @@ class RegisteredUserController extends Controller
      */
 public function store(Request $request): RedirectResponse
 {
-    // 1. Validamos usando los nombres de los inputs del formulario tradicional
+    // 1. Validamos usando los nombres reales de los inputs del formulario
+    //    (el formulario envía "nombre_completo", no "name")
     $request->validate([
-        'name' => ['required', 'string', 'max:255'],
+        'nombre_completo' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:usuarios,correo'], // Apunta a tu tabla 'usuarios' y columna 'correo'
         'password' => ['required', 'confirmed', Rules\Password::defaults()],
     ]);
 
     // 2. Mapeamos las variables a las columnas reales de tu tabla 'usuarios'
     $user = User::create([
-        'nombre_completo' => $request->name,
+        'nombre_completo' => $request->nombre_completo,
         'correo'          => $request->email,
         'password'        => Hash::make($request->password), // Encriptación correcta para Laravel
         'rol'             => 'normal',                       // Soluciona el NOT NULL de la DB
         'preferencia_tema'=> 'light',                        // Soluciona el NOT NULL de la DB
-        'fecha_registro'  => now(),                         // Llena el campo de fecha actual
     ]);
 
     event(new Registered($user));

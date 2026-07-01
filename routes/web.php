@@ -112,6 +112,18 @@ Route::get('/buscar', function (\Illuminate\Http\Request $request) {
 
 /*
 |--------------------------------------------------------------------------
+| 🔐 GOOGLE OAUTH  ← AÑADIDO
+|--------------------------------------------------------------------------
+*/
+
+Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle'])
+    ->name('google.redirect');
+
+Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback'])
+    ->name('google.callback');
+
+/*
+|--------------------------------------------------------------------------
 | 🛒 CARRITO
 |--------------------------------------------------------------------------
 */
@@ -174,8 +186,8 @@ Route::middleware(['auth', 'es_admin'])
 
         // 📊 PANEL ADMIN
         Route::get('/panel', function () {
-            $totalProductos  = \App\Models\Producto::count();
-            $stockBajo       = \App\Models\Producto::where('stock', '<=', 5)->count();
+            $totalProductos   = \App\Models\Producto::count();
+            $stockBajo        = \App\Models\Producto::where('stock', '<=', 5)->count();
             $productosActivos = \App\Models\Producto::where('mostrar_inicio', 1)->count();
             return view('admin.panel', compact('totalProductos', 'stockBajo', 'productosActivos'));
         })->name('panel');

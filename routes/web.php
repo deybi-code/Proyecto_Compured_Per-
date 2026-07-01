@@ -158,6 +158,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/pagar', [PagoController::class, 'procesar'])->name('pago.procesar');
 
+    // 💳 Pasarela de pago (solo se usa cuando el método elegido es "tarjeta")
+    Route::get('/pago/pasarela', [PagoController::class, 'mostrarPasarela'])->name('pago.pasarela');
+    Route::post('/pago/pasarela', [PagoController::class, 'confirmarTarjeta'])->name('pago.pasarela.confirmar');
+    Route::post('/pago/pasarela/cancelar', [PagoController::class, 'cancelarPasarela'])->name('pago.pasarela.cancelar');
+
+    // 🧾 Boleta electrónica del cliente (la boleta debe ser suya)
+    Route::get('/mis-boletas/{id}', [BoletaController::class, 'showCliente'])->name('boletas.mia');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/dashboard/pedidos', [DashboardController::class, 'pedidos'])->name('pedidos');

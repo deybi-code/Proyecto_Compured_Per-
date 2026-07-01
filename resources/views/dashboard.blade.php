@@ -219,6 +219,7 @@
                                 <th>Total</th>
                                 <th>Método de Pago</th>
                                 <th>Estado</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -235,10 +236,15 @@
                                         {{ $p->estado_pedido }}
                                     </span>
                                 </td>
+                                <td>
+                                    <a href="{{ route('boletas.mia', $p->id_boleta) }}" style="font-size:12px; font-weight:800; color:var(--primary); white-space:nowrap;">
+                                        🧾 Ver boleta
+                                    </a>
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" style="text-align:center; padding:40px 20px;">
+                                <td colspan="6" style="text-align:center; padding:40px 20px;">
                                     <div style="font-size:40px; margin-bottom:12px; opacity:0.5;">📦</div>
                                     <div style="font-weight:700; color:var(--text); margin-bottom:8px;">No tienes pedidos aún</div>
                                     <p style="color:var(--muted); font-size:14px; margin-bottom:16px;">¡Explora nuestra tienda y encuentra las mejores ofertas!</p>

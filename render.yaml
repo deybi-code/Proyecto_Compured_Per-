@@ -3,7 +3,7 @@ services:
     name: compured-peru
     runtime: php
     plan: free
-    buildCommand: "composer install --no-dev --optimize-autoloader && npm install && npm run build && php artisan config:cache && php artisan route:cache && php artisan view:cache && php artisan migrate --force"
+    buildCommand: "composer install --no-dev --optimize-autoloader && npm install && npm run build && php artisan config:cache && php artisan view:cache && php artisan migrate --force"
     startCommand: "apache2-foreground"
     envVars:
       - key: DB_HOST

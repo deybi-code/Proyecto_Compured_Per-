@@ -107,13 +107,6 @@
         <a href="/">Inicio</a><span>›</span><span style="color:var(--text);">Carrito de compras / Checkout</span>
     </nav>
 
-    @if(session('success'))
-        <div class="alert-success animate-card" style="animation-delay: 0.1s;">
-            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            {{ session('success') }}
-        </div>
-    @endif
-
     @if(empty($carrito))
     <div class="glass-card animate-card" style="padding:80px 20px; text-align:center; animation-delay:0.1s;">
         <div style="font-size:80px; margin-bottom:20px; opacity:0.6; filter:grayscale(100%); animation:bounce 2s infinite;">🛒</div>

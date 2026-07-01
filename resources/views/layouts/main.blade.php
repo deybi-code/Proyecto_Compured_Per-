@@ -84,6 +84,23 @@
         .cp-icon-btn svg { width: 19px; height: 19px; }
 
         .cp-cart-badge {
+            position: absolute; top: -6px; right: -6px;
+            min-width: 18px; height: 18px; padding: 0 4px;
+            border-radius: 999px; background: var(--primary); color: #fff;
+            font-size: 11px; font-weight: 800; line-height: 18px; text-align: center;
+        }
+
+        .cp-flash { max-width: 1280px; margin: 16px auto 0; padding: 0 20px; }
+        .cp-flash-msg {
+            display: flex; align-items: center; gap: 10px;
+            padding: 14px 18px; border-radius: 12px; font-size: 14px; font-weight: 600;
+            margin-bottom: 12px; animation: cpFlashIn 0.3s ease;
+        }
+        .cp-flash-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #059669; }
+        .cp-flash-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--error); }
+        @keyframes cpFlashIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .cp-cart-badge {
             position: absolute; top: -5px; right: -5px;
             background: var(--primary); color: #fff;
             font-size: 10px; font-weight: 800; line-height: 1;
@@ -201,6 +218,10 @@
                         <circle cx="18" cy="20" r="1.4"/>
                         <path d="M2.5 3h2.2l2.2 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/>
                     </svg>
+                    @php($cpCarritoCount = collect(session('carrito', []))->sum('cantidad'))
+                    @if($cpCarritoCount > 0)
+                        <span class="cp-cart-badge">{{ $cpCarritoCount }}</span>
+                    @endif
                 </a>
 
                 @auth
@@ -324,6 +345,17 @@
             @endauth
         </div>
     </nav>
+
+    @if(session('success') || session('error'))
+        <div class="cp-flash">
+            @if(session('success'))
+                <div class="cp-flash-msg cp-flash-success">✅ {{ session('success') }}</div>
+            @endif
+            @if(session('error'))
+                <div class="cp-flash-msg cp-flash-error">⚠️ {{ session('error') }}</div>
+            @endif
+        </div>
+    @endif
 
     <main>
         @yield('content')

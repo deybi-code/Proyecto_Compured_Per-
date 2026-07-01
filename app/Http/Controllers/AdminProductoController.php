@@ -5,10 +5,83 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class AdminProductoController extends Controller
 {
+    // ─────────────────────────────────────────────
+    // 🔧 HELPER: Subir imagen a Cloudinary
+    // ─────────────────────────────────────────────
+    private function subirACloudinary($archivo, $carpeta = 'compuredperu/productos')
+    {
+        $cloudName  = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey     = env('CLOUDINARY_API_KEY');
+        $apiSecret  = env('CLOUDINARY_API_SECRET');
+
+        $timestamp  = time();
+        $params     = "folder={$carpeta}&timestamp={$timestamp}{$apiSecret}";
+        $signature  = sha1($params);
+
+        $url = "https://api.cloudinary.com/v1_1/{$cloudName}/image/upload";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
+            'file'      => new \CURLFile($archivo->getRealPath(), $archivo->getMimeType(), $archivo->getClientOriginalName()),
+            'api_key'   => $apiKey,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+            'folder'    => $carpeta,
+        ]);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $data = json_decode($response, true);
+
+        // Retorna la URL segura de Cloudinary o null si falló
+        return $data['secure_url'] ?? null;
+    }
+
+    // ─────────────────────────────────────────────
+    // 🔧 HELPER: Eliminar imagen de Cloudinary
+    // ─────────────────────────────────────────────
+    private function eliminarDeCloudinary($url)
+    {
+        if (!$url || !str_contains($url, 'cloudinary.com')) return;
+
+        $cloudName = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey    = env('CLOUDINARY_API_KEY');
+        $apiSecret = env('CLOUDINARY_API_SECRET');
+
+        // Extraer el public_id de la URL de Cloudinary
+        // Ejemplo URL: https://res.cloudinary.com/dwea7sfmc/image/upload/v123/compuredperu/productos/abc123.jpg
+        preg_match('/upload\/(?:v\d+\/)?(.+)\.\w+$/', $url, $matches);
+        if (empty($matches[1])) return;
+
+        $publicId  = $matches[1];
+        $timestamp = time();
+        $signature = sha1("public_id={$publicId}&timestamp={$timestamp}{$apiSecret}");
+
+        $destroyUrl = "https://api.cloudinary.com/v1_1/{$cloudName}/image/destroy";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $destroyUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
+            'public_id' => $publicId,
+            'api_key'   => $apiKey,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+        ]);
+
+        curl_exec($ch);
+        curl_close($ch);
+    }
+
     // ─────────────────────────────────────────────
     // 📋 LISTAR
     // ─────────────────────────────────────────────
@@ -43,29 +116,28 @@ class AdminProductoController extends Controller
             'imagen_principal'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        // Checkbox → 0 o 1
         $data['mostrar_inicio'] = $request->has('mostrar_inicio') ? 1 : 0;
         $data['fecha_registro'] = now();
 
-        // Imagen principal
+        // Imagen principal → Cloudinary
         if ($request->hasFile('imagen_principal')) {
-            $data['imagen'] = $request->file('imagen_principal')
-                ->store('productos', 'public');
+            $url = $this->subirACloudinary($request->file('imagen_principal'));
+            if ($url) $data['imagen'] = $url;
         }
 
-        // Crear producto
         $producto = Producto::create($data);
 
-        // Imágenes adicionales → tabla fotos_productos
+        // Imágenes adicionales → Cloudinary → tabla fotos_productos
         foreach (['imagen_1', 'imagen_2', 'imagen_3', 'imagen_4'] as $i => $campo) {
             if ($request->hasFile($campo)) {
-                $ruta = $request->file($campo)->store('productos', 'public');
-
-                \Illuminate\Support\Facades\DB::table('fotos_productos')->insert([
-                    'id_producto'  => $producto->id_producto,
-                    'ruta_foto'    => $ruta,
-                    'es_principal' => ($i === 0 && !isset($data['imagen'])) ? 1 : 0,
-                ]);
+                $url = $this->subirACloudinary($request->file($campo));
+                if ($url) {
+                    DB::table('fotos_productos')->insert([
+                        'id_producto'  => $producto->id_producto,
+                        'ruta_foto'    => $url,
+                        'es_principal' => ($i === 0 && !isset($data['imagen'])) ? 1 : 0,
+                    ]);
+                }
             }
         }
 
@@ -91,7 +163,8 @@ class AdminProductoController extends Controller
         $categorias = Categoria::orderBy('nombre_categoria')->get();
         return view('admin.productos.edit', compact('producto', 'categorias'));
     }
-// ─────────────────────────────────────────────
+
+    // ─────────────────────────────────────────────
     // 🔄 ACTUALIZAR PRODUCTO
     // ─────────────────────────────────────────────
     public function update(Request $request, $id)
@@ -104,24 +177,25 @@ class AdminProductoController extends Controller
             'stock'             => 'required|integer|min:0',
             'marca'             => 'required|string|max:50',
             'id_categoria'      => 'required|integer|exists:categorias,id_categoria',
-            'detalles_tecnicos' => 'nullable|string', // Cambiado de 'descripcion'
+            'detalles_tecnicos' => 'nullable|string',
             'mostrar_inicio'    => 'nullable|in:0,1',
         ]);
 
         $data['mostrar_inicio'] = $request->has('mostrar_inicio') ? 1 : 0;
 
-        // 1. Actualizar datos básicos
         $producto->update($data);
 
-        // 2. Procesar fotos adicionales (fotos[])
+        // Nuevas fotos adicionales → Cloudinary
         if ($request->hasFile('fotos')) {
             foreach ($request->file('fotos') as $foto) {
-                $ruta = $foto->store('productos', 'public');
-                \Illuminate\Support\Facades\DB::table('fotos_productos')->insert([
-                    'id_producto'  => $producto->id_producto,
-                    'ruta_foto'    => $ruta,
-                    'es_principal' => 0,
-                ]);
+                $url = $this->subirACloudinary($foto);
+                if ($url) {
+                    DB::table('fotos_productos')->insert([
+                        'id_producto'  => $producto->id_producto,
+                        'ruta_foto'    => $url,
+                        'es_principal' => 0,
+                    ]);
+                }
             }
         }
 
@@ -136,14 +210,12 @@ class AdminProductoController extends Controller
     {
         $producto = Producto::findOrFail($id);
 
-        // Eliminar imagen principal del disco
-        if ($producto->imagen) {
-            Storage::disk('public')->delete($producto->imagen);
-        }
+        // Eliminar imagen principal de Cloudinary
+        $this->eliminarDeCloudinary($producto->imagen);
 
-        // Eliminar fotos adicionales del disco
+        // Eliminar fotos adicionales de Cloudinary
         foreach ($producto->fotos as $foto) {
-            Storage::disk('public')->delete($foto->ruta_foto);
+            $this->eliminarDeCloudinary($foto->ruta_foto);
         }
 
         $producto->delete();

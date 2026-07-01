@@ -1,5 +1,13 @@
 import './bootstrap';
 
+// ===== ALPINE.JS =====
+// Estaba instalado en package.json pero nunca se importaba ni arrancaba,
+// por eso x-data, x-show, @click, etc. no funcionaban en ninguna vista
+// (carrito, checkout, toggles...).
+import Alpine from 'alpinejs';
+window.Alpine = Alpine;
+Alpine.start();
+
 // ===== COMPURED PERÚ - DARK MODE =====
 window.toggleDark = function() {
   const html = document.documentElement;

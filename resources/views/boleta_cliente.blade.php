@@ -1,92 +1,125 @@
 @extends('layouts.main')
-@section('title', 'Boleta N° ' . $boleta->id_boleta . ' – Compured Perú')
+@section('title', $numeroComprobante . ' – Compured Perú')
 @section('content')
-<div class="max-w-3xl mx-auto px-4 py-8" style="max-width:700px;margin:0 auto;padding:32px 16px;">
+<div style="max-width:820px;margin:0 auto;padding:32px 16px;">
 
-    <nav class="breadcrumb mb-6"><a href="/">Inicio</a><span>›</span><a href="{{ route('dashboard') }}">Mis pedidos</a><span>›</span><span>Boleta #{{ $boleta->id_boleta }}</span></nav>
+    <nav class="breadcrumb mb-6"><a href="/">Inicio</a><span>›</span><a href="{{ route('dashboard') }}">Mis pedidos</a><span>›</span><span>{{ $numeroComprobante }}</span></nav>
 
     @if(session('success'))
     <div class="cp-flash-msg cp-flash-success" style="margin-bottom:18px;">✅ {{ session('success') }}</div>
     @endif
 
-    <div class="cp-card" id="boleta-imprimible" style="padding:32px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;border-bottom:2px solid var(--border);padding-bottom:18px;margin-bottom:20px;">
-            <div>
-                <h1 style="font-family:'Rajdhani',sans-serif;font-size:1.5rem;font-weight:800;color:var(--text);margin:0;">
-                    {{ $boleta->tipo_comprobante ?? 'Boleta' }} electrónica
-                </h1>
-                <p style="color:var(--muted);font-size:0.85rem;margin:4px 0 0;">N° {{ str_pad($boleta->id_boleta, 8, '0', STR_PAD_LEFT) }}</p>
+    <div id="boleta-imprimible" style="background:#fff;color:#0f172a;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+
+        {{-- ===== Encabezado ===== --}}
+        <div style="display:flex;justify-content:space-between;align-items:stretch;padding:22px 24px;border-bottom:3px solid {{ config('empresa.color_primario') }};gap:16px;flex-wrap:wrap;">
+            <div style="display:flex;gap:14px;align-items:center;">
+                <img src="{{ asset(config('empresa.logo')) }}" alt="Logo" style="height:56px;width:auto;object-fit:contain;">
+                <div>
+                    <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:1.15rem;color:{{ config('empresa.color_primario') }};line-height:1.2;">{{ config('empresa.nombre') }}</div>
+                    <div style="font-size:0.72rem;color:#475569;line-height:1.5;max-width:320px;">
+                        {{ config('empresa.direccion') }}<br>
+                        {{ config('empresa.telefono') }} / {{ config('empresa.celular') }}<br>
+                        {{ config('empresa.correo') }} · {{ config('empresa.web') }}
+                    </div>
+                </div>
             </div>
-            <span style="background:{{ $boleta->estado_pedido === 'Pagado' ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)' }};color:{{ $boleta->estado_pedido === 'Pagado' ? '#059669' : '#b45309' }};font-weight:700;font-size:0.8rem;padding:6px 14px;border-radius:999px;">
-                {{ $boleta->estado_pedido }}
-            </span>
+            <div style="border:2px solid {{ config('empresa.color_primario') }};border-radius:10px;padding:12px 20px;text-align:center;min-width:220px;">
+                <div style="font-size:0.72rem;font-weight:700;color:#475569;">RUC: {{ config('empresa.ruc') }}</div>
+                <div style="font-weight:800;font-size:0.85rem;color:{{ config('empresa.color_primario') }};margin-top:6px;">
+                    {{ strtoupper($boleta->tipo_comprobante ?? 'BOLETA') }} DE VENTA ELECTRÓNICA
+                </div>
+                <div style="font-family:'Rajdhani',sans-serif;font-weight:800;font-size:1.1rem;color:#0f172a;margin-top:4px;">{{ $numeroComprobante }}</div>
+            </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;font-size:0.85rem;">
-            <div>
-                <div style="color:var(--muted);font-weight:700;font-size:0.72rem;text-transform:uppercase;margin-bottom:4px;">Fecha de venta</div>
-                <div style="color:var(--text);font-weight:600;">{{ \Carbon\Carbon::parse($boleta->fecha_venta)->format('d/m/Y H:i') }}</div>
+        {{-- ===== Datos del cliente + datos de la venta ===== --}}
+        <div style="display:flex;gap:0;flex-wrap:wrap;border-bottom:1px solid #cbd5e1;">
+            <div style="flex:1 1 320px;padding:16px 24px;border-right:1px solid #e2e8f0;font-size:0.8rem;">
+                <div style="display:grid;grid-template-columns:90px 1fr;gap:4px 8px;">
+                    <div style="font-weight:700;color:#475569;">CLIENTE</div>
+                    <div>{{ $boleta->nombre_cliente ?? '—' }}</div>
+
+                    <div style="font-weight:700;color:#475569;">{{ $boleta->ruc_empresa ? 'RUC' : 'DNI' }}</div>
+                    <div>{{ $boleta->ruc_empresa ?? ($boleta->dni_cliente ?? '—') }}</div>
+
+                    <div style="font-weight:700;color:#475569;">DIRECCIÓN</div>
+                    <div>{{ $boleta->direccion_cliente ?? ($boleta->canal_venta === 'Recojo en Tienda' ? 'Recojo en tienda' : '—') }}</div>
+
+                    <div style="font-weight:700;color:#475569;">TELÉFONO</div>
+                    <div>{{ $boleta->telefono_cliente ?? '—' }}</div>
+                </div>
             </div>
-            <div>
-                <div style="color:var(--muted);font-weight:700;font-size:0.72rem;text-transform:uppercase;margin-bottom:4px;">Método de pago</div>
-                <div style="color:var(--text);font-weight:600;">{{ ucfirst($boleta->metodo_pago) }}</div>
+            <div style="flex:1 1 220px;padding:16px 24px;font-size:0.8rem;">
+                <div style="display:grid;grid-template-columns:110px 1fr;gap:4px 8px;">
+                    <div style="font-weight:700;color:#475569;">FECHA EMISIÓN</div>
+                    <div>{{ \Carbon\Carbon::parse($boleta->fecha_venta)->format('d/m/Y H:i') }}</div>
+
+                    <div style="font-weight:700;color:#475569;">MONEDA</div>
+                    <div>SOLES</div>
+
+                    <div style="font-weight:700;color:#475569;">MÉTODO PAGO</div>
+                    <div>{{ ucfirst($boleta->metodo_pago) }}</div>
+
+                    <div style="font-weight:700;color:#475569;">ESTADO</div>
+                    <div style="font-weight:700;color:{{ $boleta->estado_pedido === 'Pagado' ? '#059669' : '#b45309' }};">{{ $boleta->estado_pedido }}</div>
+                </div>
             </div>
-            <div>
-                <div style="color:var(--muted);font-weight:700;font-size:0.72rem;text-transform:uppercase;margin-bottom:4px;">Canal de venta</div>
-                <div style="color:var(--text);font-weight:600;">{{ $boleta->canal_venta ?? '—' }}</div>
-            </div>
-            @if($boleta->ruc_empresa)
-            <div>
-                <div style="color:var(--muted);font-weight:700;font-size:0.72rem;text-transform:uppercase;margin-bottom:4px;">RUC</div>
-                <div style="color:var(--text);font-weight:600;">{{ $boleta->ruc_empresa }}</div>
-            </div>
-            @endif
-            @if($pago)
-            <div>
-                <div style="color:var(--muted);font-weight:700;font-size:0.72rem;text-transform:uppercase;margin-bottom:4px;">N° de transacción</div>
-                <div style="color:var(--text);font-weight:600;">{{ $pago->transaccion_id }}</div>
-            </div>
-            <div>
-                <div style="color:var(--muted);font-weight:700;font-size:0.72rem;text-transform:uppercase;margin-bottom:4px;">Estado del pago</div>
-                <div style="color:var(--text);font-weight:600;text-transform:capitalize;">{{ $pago->estado_pago }}</div>
-            </div>
-            @endif
         </div>
 
-        <div class="table-container">
-            <table class="cp-table" style="width:100%;border-collapse:collapse;">
+        {{-- ===== Tabla de productos ===== --}}
+        <div style="padding:0 24px;">
+            <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:0.8rem;">
                 <thead>
-                    <tr style="border-bottom:1px solid var(--border);">
-                        <th style="text-align:left;padding:8px;font-size:0.75rem;color:var(--muted);">Producto</th>
-                        <th style="text-align:left;padding:8px;font-size:0.75rem;color:var(--muted);">Marca</th>
-                        <th style="text-align:right;padding:8px;font-size:0.75rem;color:var(--muted);">Cant.</th>
-                        <th style="text-align:right;padding:8px;font-size:0.75rem;color:var(--muted);">P. Unit.</th>
-                        <th style="text-align:right;padding:8px;font-size:0.75rem;color:var(--muted);">Subtotal</th>
+                    <tr style="background:{{ config('empresa.color_primario') }};color:#fff;">
+                        <th style="text-align:left;padding:8px 10px;font-size:0.7rem;">DESCRIPCIÓN</th>
+                        <th style="text-align:left;padding:8px 10px;font-size:0.7rem;">MARCA</th>
+                        <th style="text-align:center;padding:8px 10px;font-size:0.7rem;">CANT.</th>
+                        <th style="text-align:right;padding:8px 10px;font-size:0.7rem;">P. UNIT.</th>
+                        <th style="text-align:right;padding:8px 10px;font-size:0.7rem;">IMPORTE</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($detalles as $det)
-                    <tr style="border-bottom:1px solid var(--border);">
-                        <td style="padding:8px;color:var(--text);font-size:0.85rem;">{{ $det->nombre }}</td>
-                        <td style="padding:8px;color:var(--muted);font-size:0.85rem;">{{ $det->marca }}</td>
-                        <td style="padding:8px;text-align:right;color:var(--text);font-size:0.85rem;">{{ $det->cantidad }}</td>
-                        <td style="padding:8px;text-align:right;color:var(--text);font-size:0.85rem;">S/ {{ number_format($det->precio_unitario, 2) }}</td>
-                        <td style="padding:8px;text-align:right;color:var(--text);font-weight:700;font-size:0.85rem;">S/ {{ number_format($det->cantidad * $det->precio_unitario, 2) }}</td>
+                    <tr style="border-bottom:1px solid #e2e8f0;">
+                        <td style="padding:8px 10px;">{{ $det->nombre }}</td>
+                        <td style="padding:8px 10px;color:#64748b;">{{ $det->marca }}</td>
+                        <td style="padding:8px 10px;text-align:center;">{{ $det->cantidad }}</td>
+                        <td style="padding:8px 10px;text-align:right;">S/ {{ number_format($det->precio_unitario, 2) }}</td>
+                        <td style="padding:8px 10px;text-align:right;font-weight:700;">S/ {{ number_format($det->cantidad * $det->precio_unitario, 2) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
 
-        <div style="display:flex;justify-content:flex-end;margin-top:18px;padding-top:18px;border-top:2px solid var(--border);">
-            <div style="text-align:right;">
-                <div style="color:var(--muted);font-size:0.8rem;font-weight:700;text-transform:uppercase;">Total pagado</div>
-                <div style="font-family:'Rajdhani',sans-serif;font-size:1.8rem;font-weight:800;color:var(--primary);">S/ {{ number_format($boleta->total_pago, 2) }}</div>
+        {{-- ===== Importe en letras + totales ===== --}}
+        <div style="display:flex;flex-wrap:wrap;gap:16px;padding:20px 24px;">
+            <div style="flex:1 1 320px;border:1px solid #cbd5e1;border-radius:8px;padding:12px 16px;font-size:0.78rem;align-self:flex-start;">
+                <div style="font-weight:700;color:#475569;font-size:0.7rem;margin-bottom:4px;">IMPORTE EN LETRAS</div>
+                <div>SON: {{ $importeEnLetras }}</div>
             </div>
+            <div style="flex:1 1 220px;font-size:0.82rem;">
+                <div style="display:flex;justify-content:space-between;padding:4px 0;">
+                    <span style="color:#475569;">Op. Gravada</span><span>S/ {{ number_format($opGravada, 2) }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:4px 0;">
+                    <span style="color:#475569;">IGV (18%)</span><span>S/ {{ number_format($igv, 2) }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:8px 0;margin-top:4px;border-top:2px solid {{ config('empresa.color_primario') }};font-weight:800;font-size:1.05rem;">
+                    <span>TOTAL</span><span style="color:{{ config('empresa.color_primario') }};">S/ {{ number_format($total, 2) }}</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== Pie ===== --}}
+        <div style="border-top:1px solid #cbd5e1;padding:14px 24px;font-size:0.68rem;color:#64748b;text-align:center;">
+            Comprobante generado por el sistema de Compured Perú a partir de tu compra en línea.
+            Consérvalo como constancia de tu pedido.
         </div>
     </div>
 
-    <div style="display:flex;gap:12px;margin-top:20px;">
+    <div class="boleta-acciones-no-print" style="display:flex;gap:12px;margin-top:20px;">
         <button onclick="window.print()" class="btn-primary" style="flex:1;justify-content:center;">
             🖨️ Imprimir / Descargar PDF
         </button>
@@ -98,7 +131,7 @@
 
 <style>
     @media print {
-        .cp-navbar, .cp-footer, nav.breadcrumb, .cp-flash-msg { display: none !important; }
+        .cp-navbar, .cp-footer, nav.breadcrumb, .cp-flash-msg, .boleta-acciones-no-print { display: none !important; }
         #boleta-imprimible { border: none !important; box-shadow: none !important; }
     }
 </style>

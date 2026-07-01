@@ -16,8 +16,11 @@ class PagoController extends Controller
      * - Si el método es "tarjeta": NO se cobra ni se genera boleta todavía.
      *   Se guardan los datos validados en sesión y se redirige a la pasarela
      *   de pago (/pago/pasarela), donde recién se piden los datos de la tarjeta.
-     * - Si el método es "transferencia" o "efectivo": se registra el pedido
-     *   de una vez (como antes), porque no hay cobro automático que hacer.
+     * - Si el método es "efectivo": el admin/ventas ya tiene el dinero en mano
+     *   al confirmar (se cobra en caja al momento), así que la boleta se marca
+     *   "Pagado" de inmediato.
+     * - Si el método es "transferencia": el pago aún no está confirmado (falta
+     *   que el cliente envíe su voucher), así que queda "Pendiente".
      */
     public function procesar(Request $request)
     {
@@ -55,17 +58,21 @@ class PagoController extends Controller
             return redirect()->route('pago.pasarela');
         }
 
-        // Transferencia / Efectivo: se registra el pedido de inmediato (sin cobro online).
+        // Efectivo / Transferencia: se registra el pedido de inmediato (sin pasarela online).
         try {
+            // ✅ Efectivo = ya se cobró en caja al confirmar -> Pagado.
+            // Transferencia = falta verificar el voucher -> Pendiente.
+            $estadoPedido = $data['metodo_pago'] === 'efectivo' ? 'Pagado' : 'Pendiente';
+
             $idBoleta = $this->registrarBoleta($carrito, $data, [
-                'estado_pedido' => 'Pendiente',
+                'estado_pedido' => $estadoPedido,
             ]);
 
             Session::forget('carrito');
             Session::forget('checkout_pendiente');
 
             $mensaje = $data['metodo_pago'] === 'efectivo'
-                ? '¡Pedido registrado! Tu boleta N° ' . $idBoleta . ' fue generada. Paga en caja al recoger/recibir tu pedido.'
+                ? '¡Pago recibido! Tu boleta N° ' . $idBoleta . ' fue generada y marcada como pagada.'
                 : '¡Pedido registrado! Tu boleta N° ' . $idBoleta . ' fue generada. Envíanos tu voucher de la transferencia para confirmar el pago.';
 
             return redirect()->route('boletas.mia', $idBoleta)->with('success', $mensaje);
@@ -163,10 +170,10 @@ class PagoController extends Controller
     }
 
     /**
-     * Verifica stock, calcula el total, crea la boleta, sus detalles y
-     * descuenta el stock. Reutilizado tanto por el flujo directo
-     * (transferencia/efectivo) como por el flujo de tarjeta (tras aprobar
-     * el pago en la pasarela).
+     * Verifica stock, calcula el total, crea la boleta (con los datos del
+     * cliente que llenó en el checkout), sus detalles, y descuenta el stock.
+     * Reutilizado tanto por el flujo directo (efectivo/transferencia) como
+     * por el flujo de tarjeta (tras aprobar el pago en la pasarela).
      */
     private function registrarBoleta(array $carrito, array $data, array $overrides = []): int
     {
@@ -185,14 +192,20 @@ class PagoController extends Controller
             }
 
             $idBoleta = DB::table('boletas')->insertGetId([
-                'id_usuario'       => Auth::user()->id_usuario,
-                'fecha_venta'      => now(),
-                'total_pago'       => $total,
-                'metodo_pago'      => $data['metodo_pago'],
-                'canal_venta'      => $data['entrega'] === 'recojo' ? 'Recojo en Tienda' : 'Tienda Online',
-                'estado_pedido'    => $overrides['estado_pedido'] ?? 'Pendiente',
-                'tipo_comprobante' => $data['tipo_doc'] === 'ruc' ? 'Factura' : 'Boleta',
-                'ruc_empresa'      => $data['tipo_doc'] === 'ruc' ? ($data['ruc'] ?? null) : null,
+                'id_usuario'        => Auth::user()->id_usuario,
+                'fecha_venta'       => now(),
+                'total_pago'        => $total,
+                'metodo_pago'       => $data['metodo_pago'],
+                'canal_venta'       => $data['entrega'] === 'recojo' ? 'Recojo en Tienda' : 'Tienda Online',
+                'estado_pedido'     => $overrides['estado_pedido'] ?? 'Pendiente',
+                'tipo_comprobante'  => $data['tipo_doc'] === 'ruc' ? 'Factura' : 'Boleta',
+                'ruc_empresa'       => $data['tipo_doc'] === 'ruc' ? ($data['ruc'] ?? null) : null,
+                // 🧾 Datos del cliente tal cual los llenó en el checkout,
+                // para que la boleta electrónica los pueda mostrar.
+                'dni_cliente'       => $data['tipo_doc'] === 'dni' ? ($data['dni'] ?? null) : null,
+                'nombre_cliente'    => $data['tipo_doc'] === 'ruc' ? ($data['razon_social'] ?? null) : ($data['nombre'] ?? null),
+                'direccion_cliente' => $data['direccion'] ?? null,
+                'telefono_cliente'  => $data['telefono'] ?? null,
             ]);
 
             foreach ($carrito as $id => $item) {

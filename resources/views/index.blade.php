@@ -296,7 +296,7 @@
     <div style="max-width:1280px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:32px; text-align:center; position:relative; z-index:10;">
         <div style="background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); padding:24px; border-radius:20px; border:1px solid rgba(255,255,255,0.1);">
             <div style="font-size:36px; margin-bottom:16px;">🚚</div>
-            <div style="font-weight:800; font-size:15px; color:white; margin-bottom:6px;">Envío a Lima</div>
+            <div style="font-weight:800; font-size:15px; color:white; margin-bottom:6px;">Envío a TRUJILLO</div>
             <div style="font-size:13px; color:rgba(255,255,255,0.6);">Delivery rápido y seguro</div>
         </div>
         <div style="background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); padding:24px; border-radius:20px; border:1px solid rgba(255,255,255,0.1);">

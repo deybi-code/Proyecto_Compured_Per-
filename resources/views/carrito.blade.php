@@ -186,12 +186,13 @@
         {{-- RESUMEN Y CHECKOUT (Alpine.js Integrado) --}}
         <div style="width:100%; lg:max-width:400px; flex-shrink:0;" class="animate-card" style="animation-delay: 0.3s;">
 
-            <form action="{{ route('checkout') }}" method="GET" x-data="{
+            <form action="{{ route('pago.procesar') }}" method="POST" x-data="{
                 tipo_doc: 'dni',
                 entrega: 'delivery',
                 metodo_pago: 'tarjeta',
                 rol: '{{ $rolUsuario }}'
             }">
+                @csrf
 
                 <div class="glass-card" style="border-top:4px solid var(--primary);">
 
@@ -209,6 +210,7 @@
                             <div class="toggle-btn" :class="tipo_doc === 'dni' ? 'active' : ''" @click="tipo_doc = 'dni'">Boleta (DNI)</div>
                             <div class="toggle-btn" :class="tipo_doc === 'ruc' ? 'active' : ''" @click="tipo_doc = 'ruc'">Factura (RUC)</div>
                         </div>
+                        <input type="hidden" name="tipo_doc" :value="tipo_doc">
 
                         {{-- Campos DNI --}}
                         <div x-show="tipo_doc === 'dni'" x-transition.opacity>
@@ -242,6 +244,7 @@
                             <div class="toggle-btn" :class="entrega === 'delivery' ? 'active' : ''" @click="entrega = 'delivery'">Envío a Domicilio</div>
                             <div class="toggle-btn" :class="entrega === 'recojo' ? 'active' : ''" @click="entrega = 'recojo'">Recojo en Tienda</div>
                         </div>
+                        <input type="hidden" name="entrega" :value="entrega">
 
                         <div class="cp-input-group">
                             <label>Teléfono de Contacto</label>

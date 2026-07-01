@@ -127,7 +127,7 @@
                 ✦ Tecnología Informática a tu Alcance ✦
             </div>
             <h1 style="font-family:'Segoe UI',sans-serif; font-size:clamp(2rem, 5vw, 3.5rem); font-weight:800; color:white; line-height:1.15; margin-bottom:20px; text-shadow:0 10px 30px rgba(0,0,0,0.3);">
-                Computadoras, Laptops<br><span style="color:var(--accent);">y Accesorios en Lima</span>
+                Computadoras, Laptops<br><span style="color:var(--accent);">y Accesorios en TRUJILLO</span>
             </h1>
             <p style="color:rgba(255,255,255,0.7); font-size:16px; max-width:600px; margin:0 auto 30px auto;">Los mejores precios en tecnología informática con calidad garantizada. Envíos seguros a todo el Perú.</p>
             <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">

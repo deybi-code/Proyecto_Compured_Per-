@@ -3,7 +3,7 @@
 @section('content')
 
 <style>
-    /* Variables sincronizadas con el ecosistema (Login, Index, Dashboard, etc.) */
+    /* Variables y diseño base sincronizado con Home / Login */
     :root {
         --bg: #f0f4ff; --card: rgba(255,255,255,0.92); --text: #0f172a; --muted: #64748b;
         --border: #cbd5e1; --input-bg: #f8fafc; --primary: #1d4ed8; --primary-hover: #1e40af;
@@ -17,6 +17,29 @@
         --success: #34d399; --warning: #fbbf24; --danger: #f87171;
     }
 
+    /* ===== Hero estilo Home (fondo, grid, círculos flotantes) ===== */
+    .hero-scene {
+        position: relative; overflow: hidden;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 70%, #0f172a 100%);
+        transition: all 0.4s;
+    }
+    [data-theme="dark"] .hero-scene {
+        background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e3a5f 70%, #020617 100%);
+    }
+    .hero-grid {
+        position: absolute; inset: 0; z-index: 1; pointer-events: none;
+        background-image: linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
+        background-size: 50px 50px;
+    }
+    .hero-circles span {
+        position: absolute; border-radius: 50%; background: rgba(59,130,246,0.1);
+        animation: floatUp linear infinite; z-index: 1; pointer-events: none;
+    }
+    .hero-circles span:nth-child(1) { width:100px; height:100px; left:8%; animation-duration:14s; }
+    .hero-circles span:nth-child(2) { width:55px; height:55px; left:45%; animation-duration:9s; animation-delay:2s; }
+    .hero-circles span:nth-child(3) { width:80px; height:80px; left:82%; animation-duration:12s; animation-delay:1s; }
+    @keyframes floatUp { 0% { transform:translateY(110vh) rotate(0deg); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform:translateY(-10vh) rotate(720deg); opacity:0; } }
+
     /* Animaciones Generales */
     @keyframes fadeUp {
         from { opacity: 0; transform: translateY(30px) scale(0.98); }
@@ -24,38 +47,62 @@
     }
     .animate-card { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
 
-    /* Tarjetas Glassmorphism */
+    /* Tarjetas Glassmorphism (idénticas al Home) */
     .glass-card {
         background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(59,130,246,0.2); border-top: 4px solid var(--primary);
-        border-radius: 20px; box-shadow: var(--shadow); transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        border: 1px solid rgba(59,130,246,0.2); border-radius: 16px;
+        box-shadow: var(--shadow); transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
         color: var(--text); overflow: hidden;
+    }
+
+    /* Cabecera tipo "cat-sidebar-title" del Home, reutilizada para secciones del carrito */
+    .cp-section-title {
+        background: linear-gradient(135deg, var(--primary), #2563eb);
+        color: white; font-weight: 800; padding: 16px 20px;
+        text-transform: uppercase; letter-spacing: 0.5px; font-size: 13px;
+        display: flex; align-items: center; gap: 10px;
     }
 
     /* Tabla Pro del Carrito */
     .cart-table-wrap { width: 100%; overflow-x: auto; }
-    .cp-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    .cp-table { width: 100%; border-collapse: collapse; min-width: 560px; }
     .cp-table th {
         background: rgba(59,130,246,0.05); padding: 16px 24px; text-align: left;
-        font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+        font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
         border-bottom: 2px solid var(--border);
     }
     .cp-table td {
-        padding: 20px 24px; font-size: 14px; color: var(--text); font-weight: 600;
+        padding: 18px 24px; font-size: 14px; color: var(--text); font-weight: 600;
         border-bottom: 1px solid var(--border); transition: background 0.2s; vertical-align: middle;
     }
-    .cp-table tbody tr:hover td { background: rgba(59,130,246,0.02); }
+    .cp-table tbody tr:hover td { background: rgba(59,130,246,0.03); }
     .cp-table tbody tr:last-child td { border-bottom: none; }
 
-    /* Botones y Controles */
+    .prod-thumb {
+        width:64px; height:64px; background: var(--input-bg); border-radius: 14px;
+        display:flex; align-items:center; justify-content:center; font-size: 28px;
+        flex-shrink: 0; border: 1px solid var(--border); overflow: hidden;
+    }
+    .prod-thumb img { width: 100%; height: 100%; object-fit: contain; }
+
+    /* Botones y Controles (idénticos al Home) */
     .btn-mega {
         display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         padding: 14px 24px; background: linear-gradient(135deg, var(--primary), #2563eb);
-        border: none; border-radius: 12px; color: white !important; font-size: 14px; font-weight: 800;
-        cursor: pointer; text-transform: uppercase; transition: all 0.3s;
+        border: none; border-radius: 10px; color: white !important; font-size: 14px; font-weight: 800;
+        cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.3s;
         box-shadow: 0 4px 15px rgba(29,78,216,0.4); text-decoration: none; width: 100%;
     }
     .btn-mega:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(29,78,216,0.5); }
+    .btn-mega:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-outline-mega {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 12px 24px; background: transparent; border: 2px solid rgba(255,255,255,0.5);
+        border-radius: 10px; color: white !important; font-size: 14px; font-weight: 700;
+        cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; transition: all 0.3s; text-decoration: none;
+    }
+    .btn-outline-mega:hover { background: rgba(255,255,255,0.1); border-color: white; }
 
     .btn-danger-icon {
         display: inline-flex; align-items: center; justify-content: center;
@@ -66,7 +113,11 @@
 
     /* Formulario de Checkout Interactivo Integrado */
     .checkout-section { padding: 24px; background: var(--input-bg); border-top: 1px solid var(--border); }
-    .checkout-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .checkout-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; display:flex; align-items:center; gap:8px; }
+    .checkout-title .step-badge {
+        display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px;
+        border-radius:50%; background: var(--primary); color:white; font-size:11px; font-weight:900; flex-shrink:0;
+    }
 
     .toggle-group { display: flex; gap: 10px; margin-bottom: 16px; background: rgba(59,130,246,0.05); padding: 6px; border-radius: 12px; border: 1px solid var(--border); }
     .toggle-btn {
@@ -84,6 +135,22 @@
     }
     .cp-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
 
+    /* Opciones de pago (tarjeta tipo radio-card) */
+    .pay-option {
+        display:flex; align-items:center; gap:12px; padding:16px; border:2px solid var(--border);
+        border-radius:14px; cursor:pointer; margin-bottom:10px; transition:all 0.2s; background: var(--card);
+    }
+    .pay-option:last-child { margin-bottom: 0; }
+    .pay-icon {
+        width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+        font-size:20px; flex-shrink:0; background: var(--input-bg);
+    }
+    .role-chip {
+        display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:800;
+        padding:2px 8px; border-radius:20px; background: rgba(16,185,129,0.15); color: var(--success);
+        text-transform:uppercase; letter-spacing:0.5px;
+    }
+
     /* Breadcrumbs */
     .modern-breadcrumb {
         display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;
@@ -99,20 +166,42 @@
         color: var(--success); border-radius: 12px; padding: 16px 20px; font-size: 14px;
         font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
     }
+
+    @media (max-width: 640px) {
+        .cp-hero-title { font-size: 1.6rem !important; }
+        .checkout-section { padding: 18px; }
+        .cp-table td, .cp-table th { padding: 14px 16px; }
+    }
 </style>
 
-<div class="max-w-7xl mx-auto px-4 py-8" style="min-height: calc(100vh - 200px);">
+{{-- ===== HERO / CABECERA (adaptado del diseño Home) ===== --}}
+<div class="hero-scene w-full" style="min-height:220px; display:flex; align-items:center; border-radius:0 0 30px 30px; box-shadow:var(--shadow); margin-bottom:32px;">
+    <div class="hero-grid"></div>
+    <div class="hero-circles"><span></span><span></span><span></span></div>
 
-    <nav class="modern-breadcrumb animate-card" style="animation-delay: 0s;">
-        <a href="/">Inicio</a><span>›</span><span style="color:var(--text);">Carrito de compras / Checkout</span>
-    </nav>
+    <div class="max-w-7xl mx-auto px-4 w-full z-10" style="position:relative; padding:40px 20px;">
+        <div style="display:inline-block; padding:6px 16px; background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.3); color:var(--accent); font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; border-radius:20px; margin-bottom:16px; backdrop-filter:blur(5px);">
+            🛒 Tu compra en Compured
+        </div>
+        <h1 class="cp-hero-title" style="font-family:'Segoe UI',sans-serif; font-size:clamp(1.6rem, 4vw, 2.6rem); font-weight:800; color:white; line-height:1.2; margin-bottom:10px; text-shadow:0 10px 30px rgba(0,0,0,0.3);">
+            Carrito de Compras <span style="color:var(--accent);">/ Checkout</span>
+        </h1>
+        <nav style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:rgba(255,255,255,0.7);">
+            <a href="/" style="color:rgba(255,255,255,0.9); text-decoration:none;">Inicio</a>
+            <span>›</span>
+            <span style="color:white;">Carrito de compras</span>
+        </nav>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 pb-16" style="min-height: calc(100vh - 320px);">
 
     @if(empty($carrito))
-    <div class="glass-card animate-card" style="padding:80px 20px; text-align:center; animation-delay:0.1s;">
+    <div class="glass-card animate-card" style="padding:80px 20px; text-align:center; animation-delay:0.1s; border-top:4px solid var(--primary);">
         <div style="font-size:80px; margin-bottom:20px; opacity:0.6; filter:grayscale(100%); animation:bounce 2s infinite;">🛒</div>
         <h2 style="font-size:28px; font-weight:900; color:var(--text); margin-bottom:12px;">Tu carrito está vacío</h2>
         <p style="color:var(--muted); font-size:16px; margin-bottom:32px;">Aún no has agregado equipos o accesorios a tu compra.</p>
-        <a href="/" class="btn-mega" style="width:auto; padding:16px 40px; font-size:16px;">Ir a la tienda</a>
+        <a href="/" class="btn-mega" style="width:auto; padding:16px 40px; font-size:16px; display:inline-flex;">Ir a la tienda</a>
     </div>
     @else
 
@@ -124,10 +213,10 @@
     <div class="flex flex-col lg:flex-row gap-8">
         {{-- LISTA DE PRODUCTOS --}}
         <div style="flex:1;" class="animate-card" style="animation-delay: 0.2s;">
-            <div class="glass-card mb-6">
-                <div style="padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; background:rgba(59,130,246,0.05);">
-                    <div style="background:var(--primary); color:white; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px;">{{ count($carrito) }}</div>
-                    <span style="font-weight:800; font-size:16px; color:var(--text);">Productos en tu Carrito</span>
+            <div class="glass-card mb-6" style="border-top:4px solid var(--primary);">
+                <div class="cp-section-title">
+                    <span style="background:rgba(255,255,255,0.25); width:24px; height:24px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px;">{{ count($carrito) }}</span>
+                    Productos en tu Carrito
                 </div>
 
                 <div class="cart-table-wrap">
@@ -146,7 +235,7 @@
                         <tr>
                             <td>
                                 <div style="display:flex; align-items:center; gap:16px;">
-                                    <div style="width:64px; height:64px; background:var(--input-bg); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0; border:1px solid var(--border);">💻</div>
+                                    <div class="prod-thumb">💻</div>
                                     <span style="font-weight:700; font-size:14px; color:var(--text); line-height:1.4;">{{ $item['nombre'] }}</span>
                                 </div>
                             </td>
@@ -189,16 +278,14 @@
 
                 <div class="glass-card" style="border-top:4px solid var(--primary);">
 
-                    <div style="padding:24px; border-bottom:1px solid var(--border);">
-                        <h2 style="font-size:18px; font-weight:900; color:var(--text); display:flex; align-items:center; gap:10px;">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            Resumen y Pago
-                        </h2>
+                    <div class="cp-section-title">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Resumen y Pago
                     </div>
 
                     {{-- 1. Tipo de Comprobante --}}
                     <div class="checkout-section">
-                        <div class="checkout-title">1. Tipo de Comprobante</div>
+                        <div class="checkout-title"><span class="step-badge">1</span> Tipo de Comprobante</div>
                         <div class="toggle-group">
                             <div class="toggle-btn" :class="tipo_doc === 'dni' ? 'active' : ''" @click="tipo_doc = 'dni'">Boleta (DNI)</div>
                             <div class="toggle-btn" :class="tipo_doc === 'ruc' ? 'active' : ''" @click="tipo_doc = 'ruc'">Factura (RUC)</div>
@@ -232,7 +319,7 @@
 
                     {{-- 2. Método de Entrega --}}
                     <div class="checkout-section">
-                        <div class="checkout-title">2. Método de Entrega</div>
+                        <div class="checkout-title"><span class="step-badge">2</span> Método de Entrega</div>
                         <div class="toggle-group">
                             <div class="toggle-btn" :class="entrega === 'delivery' ? 'active' : ''" @click="entrega = 'delivery'">Envío a Domicilio</div>
                             <div class="toggle-btn" :class="entrega === 'recojo' ? 'active' : ''" @click="entrega = 'recojo'">Recojo en Tienda</div>
@@ -266,30 +353,55 @@
                         </div>
                     </div>
 
-                    {{-- 3. Método de Pago (Roles) --}}
+                    {{-- 3. Método de Pago (según rol del usuario) --}}
                     <div class="checkout-section">
-                        <div class="checkout-title">3. Método de Pago</div>
+                        <div class="checkout-title">
+                            <span class="step-badge">3</span> Método de Pago
+                            @if($rolUsuario === 'admin' || $rolUsuario === 'ventas')
+                                <span class="role-chip">✓ Rol {{ strtoupper($rolUsuario) }}</span>
+                            @endif
+                        </div>
 
-                        <label style="display:flex; align-items:center; gap:12px; padding:16px; border:2px solid var(--border); border-radius:12px; cursor:pointer; margin-bottom:10px; transition:all 0.2s;" :style="metodo_pago === 'tarjeta' ? 'border-color:var(--primary); background:rgba(59,130,246,0.05);' : ''">
+                        {{-- Pago con Tarjeta (Pasarela online) --}}
+                        <label class="pay-option" :style="metodo_pago === 'tarjeta' ? 'border-color:var(--primary); background:rgba(59,130,246,0.06);' : ''">
                             <input type="radio" name="metodo_pago" value="tarjeta" x-model="metodo_pago" style="accent-color:var(--primary); width:18px; height:18px;">
-                            <span style="font-size:24px;">💳</span>
-                            <div>
-                                <div style="font-weight:800; font-size:14px; color:var(--text);">Pago con Tarjeta Online</div>
-                                <div style="font-size:12px; color:var(--muted); font-weight:600;">Débito / Crédito / Yape</div>
+                            <div class="pay-icon">💳</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:800; font-size:14px; color:var(--text);">Pago con Tarjeta</div>
+                                <div style="font-size:12px; color:var(--muted); font-weight:600;">Pasarela segura · Visa / Mastercard / Yape</div>
                             </div>
                         </label>
 
-                        {{-- Opción Efectivo solo para Admin o Ventas --}}
-                        <div x-show="rol === 'admin' || rol === 'ventas'">
-                            <label style="display:flex; align-items:center; gap:12px; padding:16px; border:2px solid var(--border); border-radius:12px; cursor:pointer; transition:all 0.2s;" :style="metodo_pago === 'efectivo' ? 'border-color:var(--success); background:rgba(16,185,129,0.05);' : ''">
-                                <input type="radio" name="metodo_pago" value="efectivo" x-model="metodo_pago" style="accent-color:var(--success); width:18px; height:18px;">
-                                <span style="font-size:24px;">💵</span>
-                                <div>
-                                    <div style="font-weight:800; font-size:14px; color:var(--text);">Efectivo (Caja)</div>
-                                    <div style="font-size:12px; color:var(--success); font-weight:700;">Habilitado para tu rol: <span x-text="rol.toUpperCase()"></span></div>
-                                </div>
-                            </label>
+                        {{-- Transferencia Bancaria (disponible para todos los roles) --}}
+                        <label class="pay-option" :style="metodo_pago === 'transferencia' ? 'border-color:var(--accent); background:rgba(59,130,246,0.06);' : ''">
+                            <input type="radio" name="metodo_pago" value="transferencia" x-model="metodo_pago" style="accent-color:var(--accent); width:18px; height:18px;">
+                            <div class="pay-icon">🏦</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:800; font-size:14px; color:var(--text);">Transferencia Bancaria</div>
+                                <div style="font-size:12px; color:var(--muted); font-weight:600;">BCP / Interbank / BBVA — envío de voucher</div>
+                            </div>
+                        </label>
+
+                        {{-- Detalle de cuentas al elegir Transferencia --}}
+                        <div x-show="metodo_pago === 'transferencia'" x-transition.opacity style="display:none; background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2); padding:14px 16px; border-radius:12px; margin-top:2px; margin-bottom:6px;">
+                            <div style="font-weight:800; color:var(--primary); font-size:12px; margin-bottom:6px;">📋 Cuentas para depósito</div>
+                            <div style="font-size:12px; color:var(--text); font-weight:600; line-height:1.8;">
+                                BCP: 193-XXXXXXX-0-XX &nbsp;·&nbsp; CCI: 002193XXXXXXXXXXX18<br>
+                                Titular: Compured Perú S.A.C.
+                            </div>
                         </div>
+
+                        {{-- Opción Efectivo: solo visible para Admin o Ventas --}}
+                        @if($rolUsuario === 'admin' || $rolUsuario === 'ventas')
+                        <label class="pay-option" :style="metodo_pago === 'efectivo' ? 'border-color:var(--success); background:rgba(16,185,129,0.06);' : ''">
+                            <input type="radio" name="metodo_pago" value="efectivo" x-model="metodo_pago" style="accent-color:var(--success); width:18px; height:18px;">
+                            <div class="pay-icon">💵</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:800; font-size:14px; color:var(--text);">Efectivo (Caja)</div>
+                                <div style="font-size:12px; color:var(--success); font-weight:700;">Habilitado por tu rol: {{ strtoupper($rolUsuario) }}</div>
+                            </div>
+                        </label>
+                        @endif
                     </div>
 
                     {{-- Totales --}}
@@ -308,9 +420,9 @@
                             <span style="font-family:'Segoe UI', sans-serif; font-size:28px; font-weight:900; color:var(--primary);">S/ {{ number_format($total,2) }}</span>
                         </div>
 
-                        <button type="submit" class="btn-mega" :style="metodo_pago === 'efectivo' ? 'background:linear-gradient(135deg, #10b981, #059669); box-shadow:0 4px 15px rgba(16,185,129,0.4);' : ''">
+                        <button type="submit" class="btn-mega" :style="metodo_pago === 'efectivo' ? 'background:linear-gradient(135deg, #10b981, #059669); box-shadow:0 4px 15px rgba(16,185,129,0.4);' : (metodo_pago === 'transferencia' ? 'background:linear-gradient(135deg, #3b82f6, #2563eb);' : '')">
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                            <span x-text="metodo_pago === 'efectivo' ? 'COBRAR EN EFECTIVO' : 'PAGAR SEGURO'"></span>
+                            <span x-text="metodo_pago === 'efectivo' ? 'COBRAR EN EFECTIVO' : (metodo_pago === 'transferencia' ? 'CONFIRMAR TRANSFERENCIA' : 'PAGAR SEGURO')"></span>
                         </button>
 
                         <div style="text-align:center; font-size:12px; color:var(--muted); font-weight:600; margin-top:16px;">

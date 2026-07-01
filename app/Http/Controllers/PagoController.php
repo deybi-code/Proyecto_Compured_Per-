@@ -33,7 +33,7 @@ class PagoController extends Controller
             'telefono'      => ['required', 'string', 'max:20'],
             'direccion'     => ['required_if:entrega,delivery', 'nullable', 'string', 'max:255'],
             'referencia'    => ['nullable', 'string', 'max:255'],
-            'metodo_pago'   => ['required', 'in:tarjeta,efectivo'],
+            'metodo_pago'   => ['required', 'in:tarjeta,transferencia,efectivo'],
         ]);
 
         // 2. "Efectivo" solo puede usarlo admin o ventas.
@@ -67,7 +67,7 @@ class PagoController extends Controller
                     'total_pago'       => $total,
                     'metodo_pago'      => $data['metodo_pago'],
                     'canal_venta'      => $data['entrega'] === 'recojo' ? 'Recojo en Tienda' : 'Tienda Online',
-                    'estado_pedido'    => $data['metodo_pago'] === 'efectivo' ? 'Pendiente' : 'Pagado',
+                    'estado_pedido'    => $data['metodo_pago'] === 'tarjeta' ? 'Pagado' : 'Pendiente',
                     'tipo_comprobante' => $data['tipo_doc'] === 'ruc' ? 'Factura' : 'Boleta',
                     'ruc_empresa'      => $data['tipo_doc'] === 'ruc' ? ($data['ruc'] ?? null) : null,
                 ]);
@@ -87,8 +87,10 @@ class PagoController extends Controller
                     $producto->save();
                 }
 
-                // Registrar en pagos_online SOLO si el pago fue con tarjeta/online.
-                // El efectivo se cobra físicamente en caja, no genera transacción online.
+                // Registrar en pagos_online SOLO si el pago fue con tarjeta (pasarela automática).
+                // "Efectivo" se cobra físicamente en caja y "Transferencia" requiere que el cliente
+                // suba/envíe su voucher para verificación manual; ninguno de los dos genera una
+                // transacción online confirmada automáticamente.
                 if ($data['metodo_pago'] === 'tarjeta') {
                     DB::table('pagos_online')->insert([
                         'id_boleta'      => $idBoleta,
@@ -104,9 +106,11 @@ class PagoController extends Controller
 
             Session::forget('carrito');
 
-            $mensaje = $data['metodo_pago'] === 'efectivo'
-                ? '¡Pedido registrado! Tu boleta N° ' . $idBoleta . ' fue generada. Paga en caja al recoger/recibir tu pedido.'
-                : '¡Pago procesado! Tu boleta N° ' . $idBoleta . ' fue generada.';
+            $mensaje = match ($data['metodo_pago']) {
+                'efectivo'      => '¡Pedido registrado! Tu boleta N° ' . $idBoleta . ' fue generada. Paga en caja al recoger/recibir tu pedido.',
+                'transferencia' => '¡Pedido registrado! Tu boleta N° ' . $idBoleta . ' fue generada. Envíanos tu voucher de la transferencia para confirmar el pago.',
+                default         => '¡Pago procesado! Tu boleta N° ' . $idBoleta . ' fue generada.',
+            };
 
             return redirect()->route('dashboard')->with('success', $mensaje);
 
@@ -115,4 +119,3 @@ class PagoController extends Controller
         }
     }
 }
- 

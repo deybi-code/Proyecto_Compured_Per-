@@ -58,7 +58,20 @@ Route::get('/categoria/{slug?}', function ($slug = null) {
 Route::get('/producto/{id?}', function ($id = null) {
     $producto   = $id ? \App\Models\Producto::with(['fotos', 'categoria'])->findOrFail($id) : null;
     $categorias = \App\Models\Categoria::all();
-    return view('producto', compact('producto', 'categorias'));
+
+    // Productos relacionados: misma categoría, excluyendo el actual, máx 4
+    $relacionados = collect();
+    if ($producto && $producto->id_categoria) {
+        $relacionados = \App\Models\Producto::with('fotos')
+            ->where('id_categoria', $producto->id_categoria)
+            ->where('id_producto', '!=', $producto->id_producto)
+            ->where('stock', '>', 0)
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
+    }
+
+    return view('producto', compact('producto', 'categorias', 'relacionados'));
 })->name('producto');
 
 Route::get('/nosotros', fn() => view('nosotros'))->name('nosotros');

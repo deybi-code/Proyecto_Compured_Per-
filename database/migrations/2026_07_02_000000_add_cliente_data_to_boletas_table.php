@@ -15,10 +15,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('boletas', function (Blueprint $table) {
-            $table->string('dni_cliente', 8)->nullable()->after('ruc_empresa');
-            $table->string('nombre_cliente')->nullable()->after('dni_cliente');
-            $table->string('direccion_cliente')->nullable()->after('nombre_cliente');
-            $table->string('telefono_cliente', 20)->nullable()->after('direccion_cliente');
+            // CORREGIDO: protegido con hasColumn() por el mismo motivo que las
+            // demás migraciones — evita "Duplicate column name" si la columna
+            // ya existe en la BD pero la migración no estaba registrada.
+            if (!Schema::hasColumn('boletas', 'dni_cliente')) {
+                $table->string('dni_cliente', 8)->nullable()->after('ruc_empresa');
+            }
+            if (!Schema::hasColumn('boletas', 'nombre_cliente')) {
+                $table->string('nombre_cliente')->nullable()->after('dni_cliente');
+            }
+            if (!Schema::hasColumn('boletas', 'direccion_cliente')) {
+                $table->string('direccion_cliente')->nullable()->after('nombre_cliente');
+            }
+            if (!Schema::hasColumn('boletas', 'telefono_cliente')) {
+                $table->string('telefono_cliente', 20)->nullable()->after('direccion_cliente');
+            }
         });
     }
 

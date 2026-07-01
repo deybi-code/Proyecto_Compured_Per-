@@ -10,6 +10,10 @@ return new class extends Migration
     // quedaba fuera del método), lo que causaría un error de sintaxis.
     public function up(): void
     {
+        if (Schema::hasTable('anuncios')) {
+            return;
+        }
+
         Schema::create('anuncios', function (Blueprint $table) {
             $table->id('id_anuncio');
             $table->string('titulo');

@@ -10,6 +10,10 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void {
+        if (Schema::hasTable('categorias')) {
+            return;
+        }
+
         Schema::create('categorias', function (Blueprint $table) {
             $table->id('id_categoria'); // RESPETA TU ID
             $table->string('nombre_categoria'); // Corregido: coincide con el diagrama y con app/Models/Categoria.php

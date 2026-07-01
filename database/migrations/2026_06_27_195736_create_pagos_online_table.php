@@ -10,6 +10,10 @@ return new class extends Migration
     // quedaba fuera del método), lo que causaría un error de sintaxis.
     public function up(): void
     {
+        if (Schema::hasTable('pagos_online')) {
+            return;
+        }
+
         Schema::create('pagos_online', function (Blueprint $table) {
             $table->id('id_pago');
             $table->unsignedBigInteger('id_boleta');

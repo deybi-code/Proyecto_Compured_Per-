@@ -12,6 +12,10 @@ return new class extends Migration
      * y "detalle_boleta" y "pagos_online" ya dependían de su llave foránea).
      */
     public function up(): void {
+        if (Schema::hasTable('boletas')) {
+            return;
+        }
+
         Schema::create('boletas', function (Blueprint $table) {
             $table->id('id_boleta');
             $table->unsignedBigInteger('id_usuario');

@@ -27,15 +27,41 @@ class FlexibleUserProvider extends EloquentUserProvider
 
         // MD5
         if (strlen($stored) === 32 && ctype_xdigit($stored)) {
-            return md5($plain) === $stored;
+            $valido = md5($plain) === $stored;
+            if ($valido) {
+                $this->rehashALaBcrypt($user, $plain);
+            }
+            return $valido;
         }
 
         // SHA1
         if (strlen($stored) === 40 && ctype_xdigit($stored)) {
-            return sha1($plain) === $stored;
+            $valido = sha1($plain) === $stored;
+            if ($valido) {
+                $this->rehashALaBcrypt($user, $plain);
+            }
+            return $valido;
         }
 
         // Texto plano
-        return $plain === $stored;
+        $valido = $plain === $stored;
+        if ($valido) {
+            $this->rehashALaBcrypt($user, $plain);
+        }
+        return $valido;
+    }
+
+    /**
+     * CORREGIDO: las contraseñas MD5/SHA1/texto plano quedaban así para
+     * siempre, ya que solo se comparaban pero nunca se actualizaban. Ahora,
+     * en cuanto un usuario legado inicia sesión correctamente, su contraseña
+     * se re-hashea a Bcrypt de forma transparente, sin pedirle nada. Con el
+     * tiempo, todos los usuarios activos terminan en Bcrypt.
+     */
+    private function rehashALaBcrypt(Authenticatable $user, string $plain): void
+    {
+        $user->forceFill([
+            $user->getAuthPasswordName() => $this->hasher->make($plain),
+        ])->save();
     }
 }

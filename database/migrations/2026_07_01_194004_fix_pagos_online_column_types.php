@@ -16,9 +16,17 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // CORREGIDO: en una instalación nueva la columna todavía se llama
+        // 'estado' (o no existe como ENUM), así que forzar el ->change() aquí
+        // rompía el deploy con "Unknown column". Se protege para que solo
+        // actúe si la columna ya existe con ese nombre.
         Schema::table('pagos_online', function (Blueprint $table) {
-            $table->string('estado_pago', 50)->change();
-            $table->string('metodo_pago', 50)->change();
+            if (Schema::hasColumn('pagos_online', 'estado_pago')) {
+                $table->string('estado_pago', 50)->change();
+            }
+            if (Schema::hasColumn('pagos_online', 'metodo_pago')) {
+                $table->string('metodo_pago', 50)->change();
+            }
         });
     }
 

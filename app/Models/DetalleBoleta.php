@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class DetalleBoleta extends Model
 {
     protected $table      = 'detalle_boleta';
-    protected $primaryKey = 'id_detalle';
+    // CORREGIDO: la columna real en la BD es 'id_detalle_boleta' (ver migración
+    // create_detalle_boleta_table), no 'id_detalle'. Con el valor equivocado,
+    // find()/update()/delete()/route-model-binding sobre este modelo fallaban
+    // porque Eloquent buscaba una columna que no existe.
+    protected $primaryKey = 'id_detalle_boleta';
     public    $timestamps = false;
 
     protected $fillable = [

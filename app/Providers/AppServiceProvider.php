@@ -22,14 +22,12 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        // Limpiar caché de vistas automáticamente
-        try {
-            \Illuminate\Support\Facades\Artisan::call('view:clear');
-            \Illuminate\Support\Facades\Artisan::call('cache:clear');
-            \Illuminate\Support\Facades\Artisan::call('config:clear');
-        } catch (\Exception $e) {
-            // Silencioso si falla
-        }
+        // CORREGIDO: se quitó la limpieza de caché (view/cache/config) que
+        // corría en boot(). boot() se ejecuta en CADA petición HTTP, así que
+        // esto anulaba el caché de vistas/config en cada carga de página y
+        // agregaba lecturas/escrituras a disco de forma constante. La
+        // limpieza de caché ya se hace correctamente una sola vez por deploy
+        // en docker/entrypoint.sh (config:clear, route:clear, view:clear).
 
         // Registrar proveedor de autenticación flexible
         // Soporta contraseñas en Bcrypt, MD5, SHA1 y texto plano

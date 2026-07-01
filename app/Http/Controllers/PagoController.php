@@ -144,8 +144,14 @@ class PagoController extends Controller
                 'estado_pedido' => 'Pagado',
             ]);
 
+            // CORREGIDO: 'monto' es obligatoria en pagos_online y no se estaba
+            // enviando. Se toma el total ya calculado y guardado en la boleta
+            // recién creada.
+            $totalBoleta = DB::table('boletas')->where('id_boleta', $idBoleta)->value('total_pago');
+
             DB::table('pagos_online')->insert([
                 'id_boleta'      => $idBoleta,
+                'monto'          => $totalBoleta,
                 'metodo_pago'    => 'tarjeta',
                 'transaccion_id' => 'TXN-' . strtoupper(uniqid()) . '-' . $ultimos4,
                 'estado_pago'    => 'aprobado',

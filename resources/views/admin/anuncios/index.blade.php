@@ -71,7 +71,7 @@
                 @foreach($anuncios as $anuncio)
                 <tr style="border-bottom:1px solid #e2e8f0;">
                     <td style="padding:10px;">
-                        <img src="{{ asset('storage/' . $anuncio->imagen_url) }}"
+                        <img src="{{ $anuncio->imagen_url && str_starts_with($anuncio->imagen_url, 'http') ? $anuncio->imagen_url : asset('storage/' . $anuncio->imagen_url) }}"
                              alt="{{ $anuncio->titulo }}"
                              style="width:80px;height:50px;object-fit:cover;border-radius:4px;">
                     </td>

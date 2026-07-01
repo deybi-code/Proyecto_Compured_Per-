@@ -187,7 +187,6 @@
         <div class="cp-navbar-inner">
             <a href="{{ route('home') }}" class="cp-logo">
                 <img src="{{ asset('img/logo.png') }}" alt="Compured Perú">
-                <span>Compured Perú</span>
             </a>
 
             <div class="cp-nav-links">

@@ -90,7 +90,7 @@
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px;">
                 @forelse($producto->fotos as $foto)
                     <div style="background:#ffffff; padding:5px; border-radius:10px; border:1px solid #e0f2fe; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
-                        <img src="{{ asset('storage/'.$foto->ruta_foto) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
+                        <img src="{{ str_starts_with($foto->ruta_foto, 'http') ? $foto->ruta_foto : asset('storage/'.$foto->ruta_foto) }}" style="width:100%; height:150px; object-fit:cover; border-radius:6px;">
                     </div>
                 @empty
                     <p>No hay fotos cargadas.</p>

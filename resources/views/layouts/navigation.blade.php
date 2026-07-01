@@ -2,10 +2,6 @@
 
     <div class="cp-navbar-inner flex justify-between items-center">
 
-        {{-- 🔵 LOGO --}}
-        {{--<a href="{{ route('home') }}" class="cp-logo">
-            Compured Perú
-        </a>
 
         {{-- 🟡 LINKS CENTRALES (DESKTOP) --}}
         <div class="cp-nav-links">

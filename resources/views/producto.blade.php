@@ -140,7 +140,7 @@
     </nav>
 
     {{-- Componente Principal Alpine.js --}}
-    <div x-data="{ cantidad: 1, tab: 'descripcion', imgSrc: '{{ isset($producto) && ($producto->imagen ?? false) ? asset('storage/'.$producto->imagen) : asset('img/producto.webp') }}' }" class="animate-block" style="animation-delay: 0.1s;">
+    <div x-data="{ cantidad: 1, tab: 'descripcion', imgSrc: '{{ isset($producto) && ($producto->imagen ?? false) ? (str_starts_with($producto->imagen, 'http') ? $producto->imagen : asset('storage/'.$producto->imagen)) : asset('img/producto.webp') }}' }" class="animate-block" style="animation-delay: 0.1s;">
 
         <div class="glass-card glass-card-top p-6 md:p-10 mb-8">
             <div class="flex flex-col lg:flex-row gap-10">

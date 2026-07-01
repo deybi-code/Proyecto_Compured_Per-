@@ -96,7 +96,7 @@
             <td>
                 @php $foto = $p->fotos->first(); @endphp
                 @if($foto)
-                    <img src="{{ asset('storage/'.$foto->ruta_foto) }}"
+                    <img src="{{ str_starts_with($foto->ruta_foto, 'http') ? $foto->ruta_foto : asset('storage/'.$foto->ruta_foto) }}"
                          style="width:50px;height:50px;border-radius:8px;object-fit:cover; border: 1px solid #eee;">
                 @else
                     <div style="width:50px;height:50px;background:#ddd;border-radius:8px; display:flex; align-items:center; justify-content:center; color:#666; font-size:10px;">Sin foto</div>

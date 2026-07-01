@@ -12,6 +12,14 @@ class User extends Authenticatable
     protected $table = 'usuarios';
     protected $primaryKey = 'id_usuario';
 
+    /**
+     * La tabla 'usuarios' no tiene columnas created_at / updated_at,
+     * solo tiene 'fecha_registro'. Por eso desactivamos los timestamps
+     * automáticos de Eloquent (si no, el INSERT falla con
+     * "Unknown column 'updated_at' in 'field list'").
+     */
+    public $timestamps = false;
+
     protected $fillable = [
         'nombre_completo',
         'correo',

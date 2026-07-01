@@ -81,6 +81,11 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Configuración de PHP
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
 
+# Script de arranque: corre migraciones pendientes automáticamente
+# antes de levantar Nginx + PHP-FPM en cada despliegue/reinicio.
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 80
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/entrypoint.sh"]

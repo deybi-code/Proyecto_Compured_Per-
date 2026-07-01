@@ -110,9 +110,11 @@
             border: 1px solid rgba(59,130,246,0.2);
             border-top: 4px solid var(--primary);
             border-radius: 20px;
-            padding: 40px 44px;
+            padding: 44px 52px;
             width: 100%;
-            max-width: 440px;
+            /* AÑADIDO: la tarjeta era muy angosta y sobraba espacio a los
+               costados; se ensanchó un poco (440px -> 480px). */
+            max-width: 480px;
             box-shadow: var(--shadow);
             animation: slideUp 0.5s cubic-bezier(0.34,1.56,0.64,1);
         }
@@ -121,21 +123,24 @@
             to   { opacity:1; transform: translateY(0) scale(1); }
         }
 
-        /* Botón de tema en esquina */
+        /* CORREGIDO: el botón de tema usaba emojis (🌙/☀️) dentro de un
+           círculo flotante, distinto al ícono cuadrado del resto del sitio
+           (ver .cp-icon-btn en layouts/main.blade.php). Se adapta aquí el
+           mismo estilo cuadrado + SVG, ajustado a esta pantalla de login
+           (posición fija en la esquina, sobre el fondo oscuro animado). */
         .theme-btn {
             position: fixed; top: 20px; right: 20px; z-index: 100;
-            background: rgba(255,255,255,0.15);
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 42px; height: 42px; border-radius: 10px;
+            background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            border-radius: 50%;
-            width: 44px; height: 44px;
             cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s;
-            font-size: 18px;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
         }
-        .theme-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.1); }
+        .theme-btn:hover { background: rgba(255,255,255,0.2); }
+        .theme-btn svg { width: 19px; height: 19px; }
 
         /* Logo area */
         .logo-area { text-align: center; margin-bottom: 28px; }
@@ -239,10 +244,15 @@
     <span></span><span></span><span></span>
 </div>
 
-{{-- Botón de tema sincronizado --}}
+{{-- Botón de tema sincronizado (mismo ícono SVG que usa el resto del sitio) --}}
 <button class="theme-btn" onclick="toggleTheme()" title="Cambiar tema">
-    <span id="icon-moon">🌙</span>
-    <span id="icon-sun" style="display:none">☀️</span>
+    <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/>
+    </svg>
+    <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+        <path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/>
+    </svg>
 </button>
 
 <div class="auth-card">
@@ -276,8 +286,8 @@
             <label for="email">Correo Electrónico</label>
             <div class="input-wrap">
                 <input type="email" id="email" name="email"
-                       value="{{ old('email') }}"
-                       placeholder="tu@correo.com" required autofocus>
+                        value="{{ old('email') }}"
+                        placeholder="tu@correo.com" required autofocus>
                 <span class="icon">
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -292,7 +302,7 @@
             <label for="password">Contraseña</label>
             <div class="input-wrap">
                 <input type="password" id="password" name="password"
-                       placeholder="••••••••" required>
+                        placeholder="••••••••" required>
                 <span class="icon" onclick="togglePassword('password', this)" title="Ver contraseña">
                     <svg id="eye-open" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>

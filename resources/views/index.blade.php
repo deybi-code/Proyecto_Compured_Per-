@@ -100,41 +100,48 @@
     .section-title { font-size: 24px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 10px; }
 </style>
 
-{{-- ===== HERO / BANNER ===== --}}
-<div class="hero-scene w-full" style="min-height:380px; display:flex; align-items:center; border-radius:0 0 30px 30px; box-shadow:var(--shadow); margin-bottom:40px;">
+{{-- ===== HERO / BANNER (carrusel) ===== --}}
+@php
+    // CORREGIDO: antes, si había anuncios, el hero por defecto ("Computadoras,
+    // Laptops...") desaparecía por completo. Ahora forma parte del carrusel
+    // como slide 0: se muestra primero, y 3s después empiezan a rotar los
+    // anuncios (uno por uno, cada 3s), volviendo al final al hero por defecto.
+    $totalSlides = 1 + (isset($anuncios) ? $anuncios->count() : 0);
+@endphp
+<div class="hero-scene w-full" style="min-height:380px; display:flex; align-items:center; border-radius:0 0 30px 30px; box-shadow:var(--shadow); margin-bottom:40px;" x-data="{ slide: 0 }" x-init="setInterval(() => slide = (slide + 1) % {{ $totalSlides }}, 3000)">
     <div class="hero-grid"></div>
     <div class="hero-circles"><span></span><span></span><span></span></div>
 
+    {{-- Slide 0: hero por defecto --}}
+    <div x-show="slide === 0" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="max-w-7xl mx-auto px-4 w-full z-10" style="padding:60px 20px; text-align:center;">
+        <div style="display:inline-block; padding:6px 16px; background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.3); color:var(--accent); font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase; border-radius:20px; margin-bottom:20px; backdrop-filter:blur(5px);">
+            ✦ Tecnología Informática a tu Alcance ✦
+        </div>
+        <h1 style="font-family:'Segoe UI',sans-serif; font-size:clamp(2rem, 5vw, 3.5rem); font-weight:800; color:white; line-height:1.15; margin-bottom:20px; text-shadow:0 10px 30px rgba(0,0,0,0.3);">
+            Computadoras, Laptops<br><span style="color:var(--accent);">y Accesorios en TRUJILLO</span>
+        </h1>
+        <p style="color:rgba(255,255,255,0.7); font-size:16px; max-width:600px; margin:0 auto 30px auto;">Los mejores precios en tecnología informática con calidad garantizada. Envíos seguros a todo el Perú.</p>
+        <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+            <a href="/categoria/computadoras" class="btn-mega" style="width:auto; padding:14px 32px;">🔥 Ver computadoras</a>
+            <a href="/categoria/laptops" class="btn-outline-mega">💻 Ver laptops</a>
+        </div>
+    </div>
+
+    {{-- Slides 1..N: anuncios (fotos subidas desde el Panel Admin) --}}
     @if(isset($anuncios) && $anuncios->count())
-        <div class="max-w-7xl mx-auto px-4 w-full z-10" x-data="{ slide: 0 }" x-init="setInterval(() => slide = (slide + 1) % {{ $anuncios->count() }}, 4000)">
-            @foreach($anuncios as $i => $anuncio)
-            <div x-show="slide === {{ $i }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
-                @if($anuncio->imagen_url)
-                    <div style="flex:1; min-width:300px;">
-                        <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:20px; border:4px solid rgba(255,255,255,0.1); box-shadow:0 20px 40px rgba(0,0,0,0.3);">
-                    </div>
-                @endif
-                <div style="flex:1; min-width:300px; padding:40px; background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); border-radius:20px; border:1px solid rgba(255,255,255,0.1);">
-                    <h2 style="font-family:'Segoe UI',sans-serif; font-size:2.5rem; font-weight:800; color:white; margin-bottom:16px; line-height:1.2;">{{ $anuncio->titulo }}</h2>
-                    <a href="/buscar" class="btn-mega" style="width:auto; padding:12px 30px;">Descubrir más 🚀</a>
+        @foreach($anuncios as $i => $anuncio)
+        <div x-show="slide === {{ $i + 1 }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
+            @if($anuncio->imagen_url)
+                <div style="flex:1; min-width:300px;">
+                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:20px; border:4px solid rgba(255,255,255,0.1); box-shadow:0 20px 40px rgba(0,0,0,0.3);">
                 </div>
-            </div>
-            @endforeach
-        </div>
-    @else
-        <div class="max-w-7xl mx-auto px-4 w-full z-10" style="padding:60px 20px; text-align:center;">
-            <div style="display:inline-block; padding:6px 16px; background:rgba(59,130,246,0.2); border:1px solid rgba(59,130,246,0.3); color:var(--accent); font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase; border-radius:20px; margin-bottom:20px; backdrop-filter:blur(5px);">
-                ✦ Tecnología Informática a tu Alcance ✦
-            </div>
-            <h1 style="font-family:'Segoe UI',sans-serif; font-size:clamp(2rem, 5vw, 3.5rem); font-weight:800; color:white; line-height:1.15; margin-bottom:20px; text-shadow:0 10px 30px rgba(0,0,0,0.3);">
-                Computadoras, Laptops<br><span style="color:var(--accent);">y Accesorios en TRUJILLO</span>
-            </h1>
-            <p style="color:rgba(255,255,255,0.7); font-size:16px; max-width:600px; margin:0 auto 30px auto;">Los mejores precios en tecnología informática con calidad garantizada. Envíos seguros a todo el Perú.</p>
-            <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
-                <a href="/categoria/computadoras" class="btn-mega" style="width:auto; padding:14px 32px;">🔥 Ver computadoras</a>
-                <a href="/categoria/laptops" class="btn-outline-mega">💻 Ver laptops</a>
+            @endif
+            <div style="flex:1; min-width:300px; padding:40px; background:rgba(255,255,255,0.05); backdrop-filter:blur(10px); border-radius:20px; border:1px solid rgba(255,255,255,0.1);">
+                <h2 style="font-family:'Segoe UI',sans-serif; font-size:2.5rem; font-weight:800; color:white; margin-bottom:16px; line-height:1.2;">{{ $anuncio->titulo }}</h2>
+                <a href="/buscar" class="btn-mega" style="width:auto; padding:12px 30px;">Descubrir más 🚀</a>
             </div>
         </div>
+        @endforeach
     @endif
 </div>
 
@@ -146,7 +153,14 @@
         <img src="{{ asset('img/marca3.jpg') }}" alt="Marca" style="height:35px; object-fit:contain; opacity:0.7; transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onerror="this.remove()">
         <img src="{{ asset('img/marca4.jpg') }}" alt="Marca" style="height:35px; object-fit:contain; opacity:0.7; transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onerror="this.remove()">
         <img src="{{ asset('img/marca5.jpg') }}" alt="Marca" style="height:35px; object-fit:contain; opacity:0.7; transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onerror="this.remove()">
-        <span style="font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap;">HP • DELL • LENOVO • ASUS • ACER • INTEL • AMD</span>
+        {{-- AÑADIDO: logos de HP, Dell, Intel y AMD (antes solo aparecían como
+             texto). Sube los archivos reales del logo a public/img/ con estos
+             nombres exactos y aparecerán solos; si un archivo no existe, el
+             onerror lo oculta automáticamente sin romper el layout. --}}
+        <img src="{{ asset('img/marca-hp.png') }}" alt="HP" style="height:35px; object-fit:contain; opacity:0.7; transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onerror="this.remove()">
+        <img src="{{ asset('img/marca-dell.jpg') }}" alt="Dell" style="height:35px; object-fit:contain; opacity:0.7; transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onerror="this.remove()">
+        <img src="{{ asset('img/marca-intel.jpg') }}" alt="Intel" style="height:35px; object-fit:contain; opacity:0.7; transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onerror="this.remove()">
+        <img src="{{ asset('img/marca-amd.jpg') }}" alt="AMD" style="height:35px; object-fit:contain; opacity:0.7; transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7" onerror="this.remove()">
     </div>
 </div>
 

@@ -256,6 +256,211 @@
         .cp-user-dropdown a:hover, .cp-user-dropdown button:hover { background: var(--input-bg); }
         .cp-user-dropdown button.danger { color: var(--cp-blue-dark, #003A99); }
         .cp-user-dropdown .divider { height: 1px; background: var(--border); margin: 4px 2px; }
+
+        /* ===== PREDICTIVE SEARCH STYLES ===== */
+        .cp-search-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cp-search-container input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            min-width: 200px;
+            font-size: 14px;
+            background: var(--input-bg);
+            color: var(--text);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cp-search-container input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .cp-search-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+        }
+
+        .cp-search-dropdown.cp-search-dropdown-visible {
+            display: block;
+            animation: cpSearchDropdownIn 0.2s ease;
+        }
+
+        @keyframes cpSearchDropdownIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cp-search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            text-decoration: none;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s ease;
+            min-height: 64px; /* 48px minimum tap target + padding */
+        }
+
+        .cp-search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .cp-search-result-item:hover {
+            background: var(--input-bg);
+        }
+
+        .cp-search-result-image {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--input-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cp-search-result-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cp-search-result-placeholder {
+            font-size: 20px;
+            color: var(--muted);
+        }
+
+        .cp-search-result-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cp-search-result-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .cp-search-result-name mark {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        .cp-search-result-brand {
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .cp-search-result-price {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .cp-search-result-arrow {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            color: var(--muted);
+        }
+
+        /* Mobile-specific search styles */
+        .cp-search-container-mobile input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px; /* Prevents zoom on iOS */
+            border-radius: 12px;
+        }
+
+        .cp-search-dropdown-mobile {
+            left: -20px;
+            right: -20px;
+            border-radius: 0 0 12px 12px;
+            max-height: 350px;
+        }
+
+        .cp-search-dropdown-mobile .cp-search-result-item {
+            padding: 16px 18px;
+            min-height: 72px; /* Larger tap targets for mobile */
+        }
+
+        .cp-search-dropdown-mobile .cp-search-result-image {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+        }
+
+        .cp-search-dropdown-mobile .cp-search-result-name {
+            font-size: 15px;
+        }
+
+        .cp-search-dropdown-mobile .cp-search-result-brand {
+            font-size: 13px;
+        }
+
+        .cp-search-dropdown-mobile .cp-search-result-price {
+            font-size: 15px;
+        }
+
+        /* Scrollbar styling for search dropdown */
+        .cp-search-dropdown::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cp-search-dropdown::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .cp-search-dropdown::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .cp-search-dropdown::-webkit-scrollbar-thumb:hover {
+            background: var(--muted);
+        }
+
+        @media (max-width: 768px) {
+            .cp-search-dropdown {
+                max-width: calc(100vw - 40px);
+            }
+        }
     </style>
 
     @yield('styles')
@@ -303,13 +508,15 @@
 
             {{-- Mobile Search --}}
             <div style="padding: 0 20px 16px;">
-                <form method="GET" action="{{ route('buscar') }}" style="display:flex;">
+                <div class="cp-search-container cp-search-container-mobile">
                     <input type="text"
+                           id="cp-mobile-search-input"
                            name="q"
                            value="{{ request('q') }}"
                            placeholder="🔍 Buscar productos..."
-                           style="width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;outline:none;font-size:14px;background:var(--input-bg);color:var(--text);">
-                </form>
+                           autocomplete="off">
+                    <div id="cp-mobile-search-dropdown" class="cp-search-dropdown cp-search-dropdown-mobile"></div>
+                </div>
             </div>
 
             <div class="cp-drawer-section">
@@ -431,14 +638,16 @@
             </div>
 
             <div class="cp-nav-actions">
-                {{-- Buscador --}}
-                <form method="GET" action="{{ route('buscar') }}" style="display:flex;">
+                {{-- Buscador Predictivo --}}
+                <div class="cp-search-container">
                     <input type="text"
+                           id="cp-desktop-search-input"
                            name="q"
                            value="{{ request('q') }}"
-                           placeholder="🔍 Buscar..."
-                           style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;outline:none;min-width:200px;font-size:14px;background:var(--input-bg);color:var(--text);">
-                </form>
+                           placeholder="🔍 Buscar productos..."
+                           autocomplete="off">
+                    <div id="cp-desktop-search-dropdown" class="cp-search-dropdown"></div>
+                </div>
 
                 {{-- Toggle de tema --}}
                 <button type="button" class="cp-icon-btn" id="cp-theme-toggle" title="Cambiar tema">
@@ -733,6 +942,7 @@
         </svg>
     </a>
 
+    <script src="{{ asset('js/live-search.js') }}"></script>
     @yield('scripts')
 </body>
 </html>

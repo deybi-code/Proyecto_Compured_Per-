@@ -129,6 +129,37 @@ Route::get('/buscar', function (Request $request) {
     return view('buscar', compact('productos', 'categorias', 'q'));
 })->name('buscar');
 
+// 🔍 API para búsqueda predictiva (autocomplete)
+Route::get('/api/buscar', function (Request $request) {
+    $q = trim($request->input('q', ''));
+
+    if (strlen($q) < 2) {
+        return response()->json([]);
+    }
+
+    $productos = Producto::with('fotos')
+        ->where('stock', '>', 0)
+        ->where(function ($query) use ($q) {
+            $query->where('nombre', 'like', "%{$q}%")
+                ->orWhere('marca', 'like', "%{$q}%")
+                ->orWhere('detalles_tecnicos', 'like', "%{$q}%");
+        })
+        ->limit(10)
+        ->get();
+
+    return response()->json($productos->map(function ($producto) {
+        $foto = $producto->fotos->first();
+        return [
+            'id' => $producto->id_producto,
+            'nombre' => $producto->nombre,
+            'marca' => $producto->marca,
+            'precio' => $producto->precio,
+            'imagen' => $foto ? $foto->ruta_foto : null,
+            'url' => route('producto', $producto->id_producto),
+        ];
+    }));
+})->name('api.buscar');
+
 /*
 |--------------------------------------------------------------------------
 | 🔐 GOOGLE OAUTH  ← AÑADIDO

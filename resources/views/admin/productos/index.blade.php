@@ -38,10 +38,9 @@
             </button>
 
             {{-- ELIMINAR MASIVO --}}
-            <form method="POST" action="{{ route('admin.productos.destroyMultiple') }}" id="bulkDeleteForm" style="display:inline;">
+            <form id="bulkDeleteForm" style="display:inline;">
                 @csrf
-                @method('DELETE')
-                <button type="submit" onclick="return confirm('¿Estás seguro de eliminar los productos seleccionados?')" style="background:#ef4444;color:white;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
+                <button type="button" id="bulkDeleteBtn" style="background:#ef4444;color:white;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
                     🗑 Eliminar seleccionados
                 </button>
             </form>
@@ -254,19 +253,48 @@
         console.log('IDs seleccionados:', selected);
     }
 
-    // Los checkboxes viven en la tabla, FUERA del <form id="bulkDeleteForm">,
-    // así que antes de enviar el formulario inyectamos manualmente un input
-    // oculto por cada producto marcado.
-    const bulkDeleteForm = document.getElementById('bulkDeleteForm');
-    bulkDeleteForm.addEventListener('submit', function() {
-        bulkDeleteForm.querySelectorAll('input[name="productos[]"]').forEach(el => el.remove());
+    // Eliminar seleccionados vía fetch (evita depender del orden/timing de
+    // eventos nativos del <form>, y da feedback explícito si algo falla
+    // en vez de fallar en silencio).
+    document.getElementById('bulkDeleteBtn').addEventListener('click', function() {
+        const selectedIds = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(cb => cb.value);
 
-        document.querySelectorAll('.product-checkbox:checked').forEach(cb => {
-            const hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.name = 'productos[]';
-            hidden.value = cb.value;
-            bulkDeleteForm.appendChild(hidden);
+        if (selectedIds.length === 0) {
+            alert('Selecciona al menos un producto para eliminar.');
+            return;
+        }
+
+        if (!confirm(`¿Estás seguro de eliminar ${selectedIds.length} producto(s) seleccionado(s)?`)) {
+            return;
+        }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.textContent = 'Eliminando...';
+
+        const token = document.querySelector('#bulkDeleteForm input[name="_token"]').value;
+        const formData = new FormData();
+        formData.append('_token', token);
+        formData.append('_method', 'DELETE');
+        selectedIds.forEach(id => formData.append('productos[]', id));
+
+        fetch('{{ route('admin.productos.destroyMultiple') }}', {
+            method: 'POST',
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body: formData,
+        })
+        .then(async response => {
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error('HTTP ' + response.status + ': ' + text.slice(0, 300));
+            }
+            window.location.href = '{{ route('admin.productos.index') }}';
+        })
+        .catch(error => {
+            console.error('Error al eliminar productos:', error);
+            alert('Ocurrió un error al eliminar los productos:\n\n' + error.message);
+            btn.disabled = false;
+            btn.textContent = '🗑 Eliminar seleccionados';
         });
     });
 

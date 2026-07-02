@@ -398,8 +398,14 @@ class AdminProductoController extends Controller
                 $producto->delete();
             }
 
+            $mensaje = count($productos) . ' productos eliminados correctamente.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $mensaje]);
+            }
+
             return redirect()->route('admin.productos.index')
-                ->with('success', '✅ ' . count($productos) . ' productos eliminados correctamente.');
+                ->with('success', '✅ ' . $mensaje);
 
         } catch (\Exception $e) {
             \Log::error('Error al eliminar múltiples productos', [
@@ -407,6 +413,10 @@ class AdminProductoController extends Controller
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $e->getMessage()], 500);
+            }
 
             return redirect()->route('admin.productos.index')
                 ->with('error', '❌ Error al eliminar productos: ' . $e->getMessage());

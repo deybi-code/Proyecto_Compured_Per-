@@ -506,8 +506,6 @@
                                     OFERTA
                                 @endif
                             </span>
-                        @else
-                            <span class="badge-offer">OFERTA</span>
                         @endif
                         @if($producto->imagen ?? false)
                             <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" loading="lazy">
@@ -519,11 +517,13 @@
                     </div>
                     <div class="product-body">
                         <div class="product-name" title="{{ $producto->nombre }}">{{ Str::limit($producto->nombre, 45) }}</div>
-                        <div class="product-price" style="font-size:20px; margin-bottom:4px;">S/ {{ number_format($precioOferta, 2) }}</div>
                         @if($tieneDescuento)
-                            <div style="font-size:12px; color:var(--muted); text-decoration:line-through; margin-bottom:16px;">S/ {{ number_format($producto->precio, 2) }}</div>
+                            <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:16px;">
+                                <div class="product-price" style="font-size:22px; font-weight:900; color:var(--primary);">S/ {{ number_format($precioOferta, 2) }}</div>
+                                <div style="font-size:13px; color:var(--muted); text-decoration:line-through;">S/ {{ number_format($producto->precio, 2) }}</div>
+                            </div>
                         @else
-                            <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Precio regular</div>
+                            <div class="product-price" style="font-size:22px; margin-bottom:16px;">S/ {{ number_format($precioOferta, 2) }}</div>
                         @endif
                         <form action="{{ route('carrito.store') }}" method="POST" style="margin-top:auto;">
                             @csrf

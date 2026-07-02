@@ -294,42 +294,14 @@
     {{-- SLIDES PRINCIPALES --}}
     @php $slideIndex = 1; @endphp
     @foreach($anunciosPrincipal as $anuncio)
-        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center; gap:20px;">
+        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center;">
             @if($anuncio->imagen_url)
-                <div style="position:relative; width:850px; max-width:850px;">
+                <div style="position:relative; width:100%; max-width:1200px;">
                     <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; height:auto; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(0,82,204,0.12); box-shadow:0 20px 40px rgba(0,82,204,0.12);">
                     <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:10;">
                         <a href="/buscar" class="btn-mega" style="width:auto; padding:14px 40px; font-size:16px; background:linear-gradient(135deg, #f59e0b, #d97706); box-shadow:0 8px 25px rgba(245,158,11,0.4);">Descubrir más 🚀</a>
                     </div>
                 </div>
-            @endif
-
-            {{-- Carrusel de productos (oculto en móviles) --}}
-            @if(isset($productos) && $productos->count() > 0)
-            <div class="product-carousel" style="width:300px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
-                <div style="background:var(--card); border-radius:20px; padding:20px; border:2px solid rgba(0,82,204,0.12); box-shadow:0 20px 40px rgba(0,82,204,0.12); position:relative; min-height:350px; display:flex; flex-direction:column;">
-                    @foreach($productos as $index => $producto)
-                        <div x-show="currentProduct === {{ $index }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" style="display:flex; flex-direction:column; height:100%;">
-                            {{-- Imagen del producto --}}
-                            <div style="flex:1; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
-                                @if($producto->imagen ?? false)
-                                    <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" style="max-width:100%; max-height:150px; object-fit:contain;">
-                                @elseif($producto->fotos->first() ?? false)
-                                    <img src="{{ str_starts_with($producto->fotos->first()->ruta_foto, 'http') ? $producto->fotos->first()->ruta_foto : asset('storage/'.$producto->fotos->first()->ruta_foto) }}" alt="{{ $producto->nombre }}" style="max-width:100%; max-height:150px; object-fit:contain;">
-                                @else
-                                    <div style="font-size:60px; opacity:0.3;">💻</div>
-                                @endif
-                            </div>
-                            {{-- Nombre y precio --}}
-                            <div style="text-align:center;">
-                                <h3 style="font-size:14px; font-weight:700; color:var(--text); margin-bottom:8px; line-height:1.3;">{{ Str::limit($producto->nombre, 35) }}</h3>
-                                <p style="font-size:20px; font-weight:800; color:var(--primary); margin-bottom:12px;">S/ {{ number_format($producto->precio, 2) }}</p>
-                                <a href="/producto/{{ $producto->id_producto }}" class="btn-mega" style="width:100%; padding:10px; font-size:13px;">Ver detalles</a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
             @endif
         </div>
         @php $slideIndex++; @endphp
@@ -337,42 +309,14 @@
 
     {{-- SLIDES SECUNDARIOS --}}
     @foreach($anunciosSecundario as $anuncio)
-        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center; gap:20px;">
+        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center;">
             @if($anuncio->imagen_url)
-                <div style="position:relative; width:850px; max-width:850px;">
+                <div style="position:relative; width:100%; max-width:1200px;">
                     <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; height:auto; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(245,158,11,0.12); box-shadow:0 20px 40px rgba(245,158,11,0.12);">
                     <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:10;">
                         <a href="/buscar" class="btn-mega" style="width:auto; padding:14px 40px; font-size:16px; background:linear-gradient(135deg, #f59e0b, #d97706); box-shadow:0 8px 25px rgba(245,158,11,0.4);">Descubrir más 🚀</a>
                     </div>
                 </div>
-            @endif
-
-            {{-- Carrusel de productos (oculto en móviles) --}}
-            @if(isset($productos) && $productos->count() > 0)
-            <div class="product-carousel" style="width:300px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
-                <div style="background:var(--card); border-radius:20px; padding:20px; border:2px solid rgba(245,158,11,0.12); box-shadow:0 20px 40px rgba(245,158,11,0.12); position:relative; min-height:350px; display:flex; flex-direction:column;">
-                    @foreach($productos as $index => $producto)
-                        <div x-show="currentProduct === {{ $index }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" style="display:flex; flex-direction:column; height:100%;">
-                            {{-- Imagen del producto --}}
-                            <div style="flex:1; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
-                                @if($producto->imagen ?? false)
-                                    <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" style="max-width:100%; max-height:150px; object-fit:contain;">
-                                @elseif($producto->fotos->first() ?? false)
-                                    <img src="{{ str_starts_with($producto->fotos->first()->ruta_foto, 'http') ? $producto->fotos->first()->ruta_foto : asset('storage/'.$producto->fotos->first()->ruta_foto) }}" alt="{{ $producto->nombre }}" style="max-width:100%; max-height:150px; object-fit:contain;">
-                                @else
-                                    <div style="font-size:60px; opacity:0.3;">💻</div>
-                                @endif
-                            </div>
-                            {{-- Nombre y precio --}}
-                            <div style="text-align:center;">
-                                <h3 style="font-size:14px; font-weight:700; color:var(--text); margin-bottom:8px; line-height:1.3;">{{ Str::limit($producto->nombre, 35) }}</h3>
-                                <p style="font-size:20px; font-weight:800; color:var(--primary); margin-bottom:12px;">S/ {{ number_format($producto->precio, 2) }}</p>
-                                <a href="/producto/{{ $producto->id_producto }}" class="btn-mega" style="width:100%; padding:10px; font-size:13px;">Ver detalles</a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
             @endif
         </div>
         @php $slideIndex++; @endphp
@@ -380,42 +324,14 @@
 
     {{-- SLIDES LATERALES --}}
     @foreach($anunciosLateral as $anuncio)
-        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center; gap:20px;">
+        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center;">
             @if($anuncio->imagen_url)
-                <div style="position:relative; width:850px; max-width:850px;">
+                <div style="position:relative; width:100%; max-width:1200px;">
                     <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; height:auto; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(16,185,129,0.12); box-shadow:0 20px 40px rgba(16,185,129,0.12);">
                     <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:10;">
                         <a href="/buscar" class="btn-mega" style="width:auto; padding:14px 40px; font-size:16px; background:linear-gradient(135deg, #10b981, #059669); box-shadow:0 8px 25px rgba(16,185,129,0.4);">Descubrir más 🚀</a>
                     </div>
                 </div>
-            @endif
-
-            {{-- Carrusel de productos (oculto en móviles) --}}
-            @if(isset($productos) && $productos->count() > 0)
-            <div class="product-carousel" style="width:300px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
-                <div style="background:var(--card); border-radius:20px; padding:20px; border:2px solid rgba(16,185,129,0.12); box-shadow:0 20px 40px rgba(16,185,129,0.12); position:relative; min-height:350px; display:flex; flex-direction:column;">
-                    @foreach($productos as $index => $producto)
-                        <div x-show="currentProduct === {{ $index }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" style="display:flex; flex-direction:column; height:100%;">
-                            {{-- Imagen del producto --}}
-                            <div style="flex:1; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
-                                @if($producto->imagen ?? false)
-                                    <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" style="max-width:100%; max-height:150px; object-fit:contain;">
-                                @elseif($producto->fotos->first() ?? false)
-                                    <img src="{{ str_starts_with($producto->fotos->first()->ruta_foto, 'http') ? $producto->fotos->first()->ruta_foto : asset('storage/'.$producto->fotos->first()->ruta_foto) }}" alt="{{ $producto->nombre }}" style="max-width:100%; max-height:150px; object-fit:contain;">
-                                @else
-                                    <div style="font-size:60px; opacity:0.3;">💻</div>
-                                @endif
-                            </div>
-                            {{-- Nombre y precio --}}
-                            <div style="text-align:center;">
-                                <h3 style="font-size:14px; font-weight:700; color:var(--text); margin-bottom:8px; line-height:1.3;">{{ Str::limit($producto->nombre, 35) }}</h3>
-                                <p style="font-size:20px; font-weight:800; color:var(--primary); margin-bottom:12px;">S/ {{ number_format($producto->precio, 2) }}</p>
-                                <a href="/producto/{{ $producto->id_producto }}" class="btn-mega" style="width:100%; padding:10px; font-size:13px;">Ver detalles</a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
             @endif
         </div>
         @php $slideIndex++; @endphp
@@ -510,6 +426,9 @@
 
             @if(isset($productos) && $productos->count())
                 @foreach($productos as $producto)
+                @if(strtolower($producto->nombre) === 'prueba')
+                    @continue
+                @endif
                 <div class="glass-card" style="display:flex; flex-direction:column; border-top:4px solid var(--primary);">
                     <div class="product-img-wrap">
                         @if($producto->mostrar_inicio ?? false)

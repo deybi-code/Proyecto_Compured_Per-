@@ -18,10 +18,6 @@
                     Productos
                 </a>
 
-                <a href="{{ route('admin.ventas.index') }}">
-                    Ventas
-                </a>
-
                 <a href="{{ route('admin.anuncios.index') }}">
                     Anuncios
                 </a>
@@ -99,10 +95,6 @@
 
             <a href="{{ route('admin.productos.index') }}">
                 Productos
-            </a>
-
-            <a href="{{ route('admin.ventas.index') }}">
-                Ventas
             </a>
 
             <a href="{{ route('admin.anuncios.index') }}">

@@ -46,9 +46,9 @@
     </table>
 
     <div style="margin-top:20px;">
-        <a href="{{ route('admin.ventas.index') }}"
+        <a href="{{ route('admin.panel') }}"
            style="padding:8px 16px;background:#2563eb;color:white;border-radius:6px;text-decoration:none;">
-            ← Nueva Venta
+            ← Volver al Panel
         </a>
     </div>
 </div>

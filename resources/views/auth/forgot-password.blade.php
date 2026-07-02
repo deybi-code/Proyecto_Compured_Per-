@@ -6,9 +6,11 @@
     <title>Recuperar Contraseña - Compured Perú</title>
     <script>
         (function(){
+            // Por defecto siempre claro, salvo que el usuario haya elegido oscuro antes.
             const t = localStorage.getItem('theme');
-            if(t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+            if (t === 'dark') {
                 document.documentElement.setAttribute('data-theme','dark');
+                document.documentElement.classList.add('dark');
             }
         })();
     </script>

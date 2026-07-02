@@ -6,9 +6,11 @@
     <title>Registrarse - Compured Perú</title>
     <script>
         (function(){
+            // Por defecto siempre claro, salvo que el usuario haya elegido oscuro antes.
             const t = localStorage.getItem('theme');
-            if(t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+            if (t === 'dark') {
                 document.documentElement.setAttribute('data-theme','dark');
+                document.documentElement.classList.add('dark');
             }
         })();
     </script>
@@ -44,8 +46,9 @@
         .bg-circles span:nth-child(5) { width:30px; height:30px; left:90%; animation-duration:8s; animation-delay:2s; }
         @keyframes floatUp { 0% { transform:translateY(110vh) rotate(0deg); opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { transform:translateY(-10vh) rotate(720deg); opacity:0; } }
 
-        .theme-btn { position:fixed; top:20px; right:20px; z-index:100; background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2); color:white; border-radius:50%; width:44px; height:44px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.3s; font-size:18px; }
-        .theme-btn:hover { background:rgba(255,255,255,0.25); transform:scale(1.1); }
+        .theme-btn { position:fixed; top:20px; right:20px; z-index:100; display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:10px; background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.2); color:white; cursor:pointer; transition:background 0.2s ease, border-color 0.2s ease, transform 0.2s ease; }
+        .theme-btn:hover { background:rgba(255,255,255,0.2); }
+        .theme-btn svg { width:19px; height:19px; }
 
         .auth-card { position:relative; z-index:10; background:var(--card); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(59,130,246,0.2); border-top:4px solid var(--primary); border-radius:20px; padding:36px 44px; width:100%; max-width:480px; box-shadow:var(--shadow); animation:slideUp 0.5s cubic-bezier(0.34,1.56,0.64,1); }
         @keyframes slideUp { from { opacity:0; transform:translateY(30px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
@@ -97,7 +100,13 @@
 <div class="bg-circles"><span></span><span></span><span></span><span></span><span></span></div>
 
 <button class="theme-btn" onclick="toggleTheme()" title="Cambiar tema">
-    <span id="icon-moon">🌙</span><span id="icon-sun" style="display:none">☀️</span>
+    <svg id="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/>
+    </svg>
+    <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+        <path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/>
+    </svg>
 </button>
 
 <div class="auth-card">

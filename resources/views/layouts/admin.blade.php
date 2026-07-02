@@ -17,9 +17,11 @@
     <script>
         // Aplica el tema guardado antes de pintar (evita parpadeo)
         (function () {
+            // Tema por defecto: SIEMPRE claro, salvo que el usuario haya elegido
+            // oscuro antes (guardado en localStorage). Ya no se sigue el modo
+            // oscuro del sistema operativo.
             const saved = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = saved || (prefersDark ? 'dark' : 'light');
+            const theme = saved === 'dark' ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
@@ -38,8 +40,15 @@
             --accent: #3b82f6;
             --shadow: 0 25px 60px rgba(0,0,0,0.18);
             --error: #dc2626;
-            --sidebar-bg: #0f172a;
-            --sidebar-border: rgba(255,255,255,0.07);
+            --sidebar-bg: #ffffff;
+            --sidebar-border: #e2e8f0;
+            --sidebar-text: #475569;
+            --sidebar-text-hover: #1d4ed8;
+            --sidebar-label: #94a3b8;
+            --sidebar-hover-bg: rgba(29,78,216,0.08);
+            --sidebar-active-bg: rgba(29,78,216,0.1);
+            --sidebar-active-text: #1d4ed8;
+            --sidebar-active-border: #1d4ed8;
         }
         [data-theme="dark"] {
             --bg: #0a0f1e;
@@ -55,6 +64,13 @@
             --error: #f87171;
             --sidebar-bg: #020617;
             --sidebar-border: rgba(255,255,255,0.05);
+            --sidebar-text: #94a3b8;
+            --sidebar-text-hover: #ffffff;
+            --sidebar-label: #475569;
+            --sidebar-hover-bg: rgba(255,255,255,0.08);
+            --sidebar-active-bg: rgba(59,130,246,0.18);
+            --sidebar-active-text: #93c5fd;
+            --sidebar-active-border: #3b82f6;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -182,7 +198,7 @@
 
         .sidebar-section-label {
             font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
-            text-transform: uppercase; color: #475569;
+            text-transform: uppercase; color: var(--sidebar-label);
             padding: 4px 10px; margin: 14px 0 6px;
         }
         .sidebar-section-label:first-child { margin-top: 0; }
@@ -190,15 +206,15 @@
         .sidebar-link {
             display: flex; align-items: center; gap: 10px;
             padding: 10px 12px; border-radius: 10px;
-            color: #94a3b8; font-size: 13.5px; font-weight: 600;
+            color: var(--sidebar-text); font-size: 13.5px; font-weight: 600;
             text-decoration: none; margin-bottom: 2px;
             transition: background 0.18s, color 0.18s;
         }
-        .sidebar-link:hover { background: rgba(255,255,255,0.08); color: white; }
+        .sidebar-link:hover { background: var(--sidebar-hover-bg); color: var(--sidebar-text-hover); }
         .sidebar-link.active {
-            background: rgba(59,130,246,0.18);
-            color: #93c5fd;
-            border-left: 3px solid #3b82f6;
+            background: var(--sidebar-active-bg);
+            color: var(--sidebar-active-text);
+            border-left: 3px solid var(--sidebar-active-border);
             padding-left: 9px;
         }
         .sidebar-link svg { width: 17px; height: 17px; flex-shrink: 0; }

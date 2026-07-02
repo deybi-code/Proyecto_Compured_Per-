@@ -19,9 +19,13 @@
     <script>
         // Aplica el tema guardado antes de pintar la página (evita parpadeo)
         (function () {
+            // El tema por defecto es SIEMPRE claro. Solo se activa oscuro
+            // si el usuario lo eligió explícitamente antes (guardado en localStorage).
+            // Antes se usaba prefers-color-scheme del sistema operativo, lo que
+            // hacía que el sitio se viera oscuro "sin motivo" en dispositivos
+            // con el modo oscuro activado a nivel de SO.
             const saved = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = saved || (prefersDark ? 'dark' : 'light');
+            const theme = saved === 'dark' ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>

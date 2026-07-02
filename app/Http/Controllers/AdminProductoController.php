@@ -443,13 +443,23 @@ class AdminProductoController extends Controller
 
         try {
             $archivo = $request->file('archivo_excel');
+
+            \Log::info('Iniciando importación de Excel', [
+                'archivo' => $archivo->getClientOriginalName(),
+                'tamaño' => $archivo->getSize(),
+                'tipo' => $archivo->getMimeType(),
+            ]);
+
             $spreadsheet = IOFactory::load($archivo->getPathname());
             $hoja = $spreadsheet->getActiveSheet();
             $filas = $hoja->toArray();
 
+            \Log::info('Filas leídas del Excel', ['total_filas' => count($filas)]);
+
             // Eliminar cabecera si existe
             if (count($filas) > 0 && strtolower($filas[0][0] ?? '') === 'nombre') {
                 array_shift($filas);
+                \Log::info('Cabecera eliminada');
             }
 
             $importados = 0;
@@ -470,9 +480,18 @@ class AdminProductoController extends Controller
                 $precioDescuento = ! empty($fila[6]) ? floatval($fila[6]) : null;
                 $porcentajeDescuento = ! empty($fila[7]) ? floatval($fila[7]) : null;
 
+                \Log::info('Procesando fila', [
+                    'fila' => $index + 2,
+                    'nombre' => $nombre,
+                    'precio' => $precio,
+                    'stock' => $stock,
+                    'categoria' => $categoriaNombre,
+                ]);
+
                 // Validaciones básicas
                 if (empty($nombre) || $precio <= 0 || $stock < 0) {
-                    $errores[] = 'Fila '.($index + 2).': Datos incompletos o inválidos';
+                    $errores[] = 'Fila '.($index + 2).': Datos incompletos o inválidos (nombre: '.$nombre.', precio: '.$precio.', stock: '.$stock.')';
+                    \Log::warning('Validación fallida en fila', ['fila' => $index + 2, 'errores' => $errores]);
 
                     continue;
                 }
@@ -484,6 +503,7 @@ class AdminProductoController extends Controller
                         'nombre_categoria' => $categoriaNombre ?: 'General',
                         'descripcion' => 'Categoría creada por importación',
                     ]);
+                    \Log::info('Categoría creada', ['categoria' => $categoriaNombre]);
                 }
 
                 // Crear producto
@@ -501,6 +521,7 @@ class AdminProductoController extends Controller
                 ]);
 
                 $importados++;
+                \Log::info('Producto importado', ['nombre' => $nombre, 'id' => $nombre]);
             }
 
             $mensaje = "✅ Se importaron {$importados} productos correctamente.";
@@ -508,10 +529,17 @@ class AdminProductoController extends Controller
                 $mensaje .= ' ⚠️ '.count($errores).' errores: '.implode('; ', array_slice($errores, 0, 3));
             }
 
+            \Log::info('Importación completada', ['importados' => $importados, 'errores' => count($errores)]);
+
             return redirect()->route('admin.productos.index')
                 ->with('success', $mensaje);
 
         } catch (\Exception $e) {
+            \Log::error('Error al importar Excel', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return redirect()->route('admin.productos.index')
                 ->with('error', '❌ Error al importar: '.$e->getMessage());
         }

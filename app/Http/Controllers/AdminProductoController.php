@@ -283,20 +283,36 @@ class AdminProductoController extends Controller
     // ─────────────────────────────────────────────
     public function destroy($id)
     {
-        $producto = Producto::findOrFail($id);
+        try {
+            $producto = Producto::with('fotos')->findOrFail($id);
 
-        // Eliminar imagen principal de Cloudinary
-        $this->eliminarDeCloudinary($producto->imagen);
+            // Eliminar imagen principal de Cloudinary si existe
+            if ($producto->imagen) {
+                $this->eliminarDeCloudinary($producto->imagen);
+            }
 
-        // Eliminar fotos adicionales de Cloudinary
-        foreach ($producto->fotos as $foto) {
-            $this->eliminarDeCloudinary($foto->ruta_foto);
+            // Eliminar fotos adicionales de Cloudinary
+            foreach ($producto->fotos as $foto) {
+                if ($foto->ruta_foto) {
+                    $this->eliminarDeCloudinary($foto->ruta_foto);
+                }
+            }
+
+            $producto->delete();
+
+            return redirect()->route('admin.productos.index')
+                ->with('success', '✅ Producto eliminado correctamente.');
+
+        } catch (\Exception $e) {
+            \Log::error('Error al eliminar producto', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('admin.productos.index')
+                ->with('error', '❌ Error al eliminar producto: '.$e->getMessage());
         }
-
-        $producto->delete();
-
-        return redirect()->route('admin.productos.index')
-            ->with('success', '✅ Producto eliminado correctamente.');
     }
 
     // ─────────────────────────────────────────────

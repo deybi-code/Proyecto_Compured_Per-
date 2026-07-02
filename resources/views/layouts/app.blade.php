@@ -35,7 +35,7 @@
 
         <!-- Page Content -->
         <main>
-            {{ $slot }} <!-- O @yield('content') según tu configuración original -->
+            @yield('content')
         </main>
     </div>
 

@@ -261,11 +261,12 @@
         .cp-search-container {
             position: relative;
             display: flex;
-            flex-direction: column;
+            align-items: center;
         }
 
         .cp-search-container input {
             padding: 8px 12px;
+            padding-right: 40px;
             border: 1px solid var(--border);
             border-radius: 8px;
             outline: none;
@@ -279,6 +280,26 @@
         .cp-search-container input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .cp-search-submit {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted);
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s ease, background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cp-search-submit:hover {
+            color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
         }
 
         .cp-search-dropdown {
@@ -404,8 +425,23 @@
         .cp-search-container-mobile input {
             width: 100%;
             padding: 14px 16px;
+            padding-right: 50px; /* Space for search button */
             font-size: 16px; /* Prevents zoom on iOS */
             border-radius: 12px;
+        }
+
+        .cp-search-container-mobile .cp-search-submit {
+            right: 12px;
+            padding: 8px;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px; /* 48px minimum tap target */
+        }
+
+        .cp-search-container-mobile .cp-search-submit svg {
+            width: 20px;
+            height: 20px;
         }
 
         .cp-search-dropdown-mobile {
@@ -516,6 +552,11 @@
                                value="{{ request('q') }}"
                                placeholder="🔍 Buscar productos..."
                                autocomplete="off">
+                        <button type="submit" class="cp-search-submit" aria-label="Buscar">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </button>
                         <div id="cp-mobile-search-dropdown" class="cp-search-dropdown cp-search-dropdown-mobile"></div>
                     </div>
                 </form>
@@ -649,6 +690,11 @@
                                value="{{ request('q') }}"
                                placeholder="🔍 Buscar productos..."
                                autocomplete="off">
+                        <button type="submit" class="cp-search-submit" aria-label="Buscar">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </button>
                         <div id="cp-desktop-search-dropdown" class="cp-search-dropdown"></div>
                     </div>
                 </form>

@@ -305,6 +305,12 @@ class AdminProductoController extends Controller
         try {
             $producto = Producto::with('fotos')->findOrFail($id);
 
+            // Eliminar detalles de boleta asociados (ventas)
+            DB::table('detalle_boleta')->where('id_producto', $id)->delete();
+
+            // Eliminar fotos adicionales de la base de datos
+            DB::table('fotos_productos')->where('id_producto', $id)->delete();
+
             // Eliminar imagen principal de Cloudinary si existe
             if ($producto->imagen) {
                 $this->eliminarDeCloudinary($producto->imagen);
@@ -335,17 +341,26 @@ class AdminProductoController extends Controller
     }
 
     // ─────────────────────────────────────────────
-    // �️ ELIMINAR MÚLTIPLES PRODUCTOS
+    // 🗑️ ELIMINAR MÚLTIPLES PRODUCTOS
     // ─────────────────────────────────────────────
     public function destroyMultiple(Request $request)
     {
         $request->validate([
             'productos' => 'required|array',
-            'productos.*' => 'integer|exists:productos,id_producto',
+            'productos.*' => 'integer',
         ]);
 
         try {
-            $productos = Producto::with('fotos')->whereIn('id_producto', $request->productos)->get();
+            $productosIds = $request->productos;
+
+            // Eliminar detalles de boleta asociados
+            DB::table('detalle_boleta')->whereIn('id_producto', $productosIds)->delete();
+
+            // Eliminar fotos adicionales de la base de datos
+            DB::table('fotos_productos')->whereIn('id_producto', $productosIds)->delete();
+
+            // Obtener productos para eliminar imágenes de Cloudinary
+            $productos = Producto::with('fotos')->whereIn('id_producto', $productosIds)->get();
 
             foreach ($productos as $producto) {
                 // Eliminar imagen principal de Cloudinary si existe

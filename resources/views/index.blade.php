@@ -23,6 +23,12 @@
         z-index: 1;
         pointer-events: none;
     }
+    .hero-grid {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
     html.dark .hero-circles span,
     html[data-theme="dark"] .hero-circles span {
         background: rgba(38, 132, 255, 0.12);

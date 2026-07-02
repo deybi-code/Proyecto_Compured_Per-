@@ -23,6 +23,10 @@
         background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
         background-size: 40px 40px;
     }
+    .cat-hero {
+        position: relative;
+        z-index: 1;
+    }
     .cat-icon-wrap {
         position: relative; z-index: 2; width: 80px; height: 80px;
         background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);

@@ -981,6 +981,8 @@ html.dark .cp-bottom-nav {
   justify-content: center;
   text-decoration: none;
   color: var(--cp-gray-600);
+  position: relative;
+  z-index: 1001;
 }
 
 .cp-bottom-nav-item svg {
@@ -1031,15 +1033,17 @@ html.dark .cp-bottom-nav {
   box-shadow: 4px 0 24px rgba(0,82,204,0.15);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  pointer-events: none;
+}
+
+.cp-mobile-drawer.open {
+  transform: translateX(0);
+  pointer-events: auto;
 }
 
 html.dark .cp-mobile-drawer {
   background: var(--cp-dark-surface);
   box-shadow: 4px 0 24px rgba(0,0,0,0.5);
-}
-
-.cp-mobile-drawer.open {
-  transform: translateX(0);
 }
 
 .cp-mobile-drawer-overlay {
@@ -1050,10 +1054,12 @@ html.dark .cp-mobile-drawer {
   z-index: 1999;
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .cp-mobile-drawer-overlay.open {
   opacity: 1;
+  pointer-events: auto;
 }
 
 @media (max-width: 768px) {
@@ -1370,6 +1376,8 @@ html.dark .cp-mobile-icon-btn svg {
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     -webkit-user-select: none;
+    position: relative;
+    z-index: 10;
   }
   
   /* Eliminar hover effects en móvil para evitar conflictos con touch */
@@ -1390,6 +1398,16 @@ html.dark .cp-mobile-icon-btn svg {
   select,
   textarea {
     font-size: 16px !important;
+  }
+  
+  /* Asegurar que elementos interactivos tengan z-index superior */
+  .btn-mega,
+  .btn-outline-mega,
+  .btn-cart,
+  .qty-btn,
+  .tab-btn {
+    position: relative;
+    z-index: 10;
   }
 }
 

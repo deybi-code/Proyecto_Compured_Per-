@@ -15,9 +15,9 @@ COPY public/ public/
 RUN npm run build
 
 # ============================================================
-# Stage 2: PHP app (PHP 8.2 + Nginx + FPM)
+# Stage 2: PHP app (PHP 8.4 + Nginx + FPM)
 # ============================================================
-FROM php:8.2-fpm-alpine AS app
+FROM php:8.4-fpm-alpine AS app
 
 # Instalar dependencias del sistema
 RUN apk add --no-cache \

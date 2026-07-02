@@ -491,15 +491,40 @@
             <h2 class="section-title" style="margin-bottom:24px;"><span style="color:var(--accent);">🔥</span> Ofertas del día</h2>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:24px;" class="offers-grid">
                 @foreach($productos->take(4) as $producto)
+                @php
+                    $tieneDescuento = !is_null($producto->precio_descuento) && $producto->precio_descuento > 0;
+                    $precioOferta = $tieneDescuento ? $producto->precio_descuento : $producto->precio;
+                    $porcentajeDescuento = $tieneDescuento && !is_null($producto->porcentaje_descuento) ? $producto->porcentaje_descuento : null;
+                @endphp
                 <div class="glass-card" style="border-top:4px solid var(--primary);">
                     <div class="product-img-wrap">
-                        <span class="badge-offer">OFERTA</span>
-                        <img src="{{ asset('img/producto.webp') }}" alt="{{ $producto->nombre }}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%23EBF3FF%22 width=%22200%22 height=%22200%22/><text x=%22100%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2240%22>🖥️</text></svg>'">
+                        @if($tieneDescuento)
+                            <span class="badge-offer">
+                                @if($porcentajeDescuento)
+                                    -{{ number_format($porcentajeDescuento, 0) }}%
+                                @else
+                                    OFERTA
+                                @endif
+                            </span>
+                        @else
+                            <span class="badge-offer">OFERTA</span>
+                        @endif
+                        @if($producto->imagen ?? false)
+                            <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" loading="lazy">
+                        @elseif($producto->fotos->first() ?? false)
+                            <img src="{{ str_starts_with($producto->fotos->first()->ruta_foto, 'http') ? $producto->fotos->first()->ruta_foto : asset('storage/'.$producto->fotos->first()->ruta_foto) }}" alt="{{ $producto->nombre }}" loading="lazy">
+                        @else
+                            <img src="{{ asset('img/producto.webp') }}" alt="{{ $producto->nombre }}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%23EBF3FF%22 width=%22200%22 height=%22200%22/><text x=%22100%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2240%22>🖥️</text></svg>'">
+                        @endif
                     </div>
                     <div class="product-body">
                         <div class="product-name" title="{{ $producto->nombre }}">{{ Str::limit($producto->nombre, 45) }}</div>
-                        <div class="product-price" style="font-size:20px; margin-bottom:4px;">S/ {{ number_format($producto->precio * 0.9, 2) }}</div>
-                        <div style="font-size:12px; color:var(--muted); text-decoration:line-through; margin-bottom:16px;">S/ {{ number_format($producto->precio, 2) }}</div>
+                        <div class="product-price" style="font-size:20px; margin-bottom:4px;">S/ {{ number_format($precioOferta, 2) }}</div>
+                        @if($tieneDescuento)
+                            <div style="font-size:12px; color:var(--muted); text-decoration:line-through; margin-bottom:16px;">S/ {{ number_format($producto->precio, 2) }}</div>
+                        @else
+                            <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Precio regular</div>
+                        @endif
                         <form action="{{ route('carrito.store') }}" method="POST" style="margin-top:auto;">
                             @csrf
                             <input type="hidden" name="id_producto" value="{{ $producto->id_producto }}">

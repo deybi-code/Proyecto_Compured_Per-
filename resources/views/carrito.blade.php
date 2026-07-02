@@ -392,11 +392,27 @@
                                     @endif
                                 </div>
                                 <div style="flex:1; min-width:0;">
-                                    <div style="font-weight:700; font-size:14px; color:var(--text); line-height:1.4; margin-bottom:4px;">{{ $item['nombre'] }}</div>
-                                    <div style="font-size:12px; color:var(--muted); font-weight:600;">S/ {{ number_format($item['precio'],2) }} c/u &nbsp;·&nbsp; <span class="qty-pill">{{ $item['cantidad'] }}</span></div>
+                                    <div style="font-weight:700; font-size:14px; color:var(--text); line-height:1.4; margin-bottom:4px;">
+                                        {{ $item['nombre'] }}
+                                        @if($item['tiene_descuento'] ?? false)
+                                            <span style="display:inline-block; margin-left:8px; padding:2px 8px; background:linear-gradient(135deg, var(--primary), var(--accent)); color:white; font-size:10px; font-weight:800; border-radius:12px; text-transform:uppercase;">OFERTA</span>
+                                        @endif
+                                    </div>
+                                    @if($item['tiene_descuento'] ?? false)
+                                        <div style="font-size:12px; color:var(--muted); font-weight:600;">
+                                            <span style="text-decoration:line-through; opacity:0.7;">S/ {{ number_format($item['precio_original'],2) }}</span>
+                                            <span style="color:var(--primary); font-weight:800;"> S/ {{ number_format($item['precio'],2) }} c/u</span>
+                                            &nbsp;·&nbsp; <span class="qty-pill">{{ $item['cantidad'] }}</span>
+                                        </div>
+                                    @else
+                                        <div style="font-size:12px; color:var(--muted); font-weight:600;">S/ {{ number_format($item['precio'],2) }} c/u &nbsp;·&nbsp; <span class="qty-pill">{{ $item['cantidad'] }}</span></div>
+                                    @endif
                                 </div>
                                 <div style="text-align:right; flex-shrink:0;">
                                     <div style="font-weight:900; color:var(--primary); font-size:16px; font-family:'Segoe UI', sans-serif;">S/ {{ number_format($item['precio']*$item['cantidad'],2) }}</div>
+                                    @if($item['tiene_descuento'] ?? false)
+                                        <div style="font-size:11px; color:var(--success); font-weight:700;">Ahorras S/ {{ number_format(($item['precio_original'] - $item['precio']) * $item['cantidad'], 2) }}</div>
+                                    @endif
                                 </div>
                                 <button type="button" onclick="document.getElementById('delete-{{ $id }}').submit()" class="btn-danger-icon" title="Eliminar del carrito">
                                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>

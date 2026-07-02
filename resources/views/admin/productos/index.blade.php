@@ -41,6 +41,7 @@
             <form method="POST" action="{{ route('admin.productos.destroyMultiple') }}" id="bulkDeleteForm" style="display:inline;">
                 @csrf
                 @method('DELETE')
+                <input type="hidden" name="productos" id="selectedProductos" value="">
                 <button type="submit" onclick="return confirm('¿Estás seguro de eliminar los productos seleccionados?')" style="background:#ef4444;color:white;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
                     🗑 Eliminar seleccionados
                 </button>
@@ -229,6 +230,7 @@
     document.getElementById('selectAll').addEventListener('change', function() {
         const checkboxes = document.querySelectorAll('.product-checkbox');
         checkboxes.forEach(cb => cb.checked = this.checked);
+        updateSelectedProductos();
     });
 
     // Habilitar/deshabilitar botón de eliminación masiva
@@ -240,8 +242,18 @@
             const anyChecked = document.querySelectorAll('.product-checkbox:checked').length > 0;
             bulkDeleteBtn.disabled = !anyChecked;
             bulkDeleteBtn.style.opacity = anyChecked ? '1' : '0.5';
+            updateSelectedProductos();
         });
     });
+
+    // Actualizar campo oculto con IDs seleccionados
+    function updateSelectedProductos() {
+        const selected = [];
+        document.querySelectorAll('.product-checkbox:checked').forEach(cb => {
+            selected.push(cb.value);
+        });
+        document.getElementById('selectedProductos').value = JSON.stringify(selected);
+    }
 
     // Inicializar estado del botón
     bulkDeleteBtn.disabled = true;

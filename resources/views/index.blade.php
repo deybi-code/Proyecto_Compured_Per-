@@ -239,13 +239,17 @@
 </style>
 
 @php
-    $totalSlides = 1 + (isset($anuncios) ? $anuncios->count() : 0);
+    $anunciosPrincipal = isset($anuncios) ? $anuncios->where('posicion', 'principal') : collect();
+    $anunciosSecundario = isset($anuncios) ? $anuncios->where('posicion', 'secundario') : collect();
+    $anunciosLateral = isset($anuncios) ? $anuncios->where('posicion', 'lateral') : collect();
+    $totalSlides = 1 + $anunciosPrincipal->count() + $anunciosSecundario->count() + $anunciosLateral->count();
 @endphp
 
 <div class="hero-scene w-full" x-data="{ slide: 0 }" x-init="setInterval(() => slide = (slide + 1) % {{ $totalSlides }}, 3000)">
     <div class="hero-grid"></div>
     <div class="hero-circles"><span></span><span></span><span></span></div>
 
+    {{-- SLIDE 1: Fondo animado (fijo) --}}
     <div x-show="slide === 0" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="max-w-7xl mx-auto px-4 w-full z-10" style="padding:60px 20px; text-align:center;">
         <div class="hero-badge" style="display:inline-block; padding:6px 16px; border:1px solid rgba(0,82,204,0.18); font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase; border-radius:20px; margin-bottom:20px; backdrop-filter:blur(5px);">
             ✦ Tecnología Informática a tu Alcance ✦
@@ -260,9 +264,10 @@
         </div>
     </div>
 
-    @if(isset($anuncios) && $anuncios->count())
-        @foreach($anuncios as $i => $anuncio)
-        <div x-show="slide === {{ $i + 1 }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
+    {{-- SLIDES PRINCIPALES --}}
+    @php $slideIndex = 1; @endphp
+    @foreach($anunciosPrincipal as $anuncio)
+        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
             @if($anuncio->imagen_url)
                 <div style="flex:1; min-width:300px;">
                     <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:20px; border:4px solid rgba(0,82,204,0.12); box-shadow:0 20px 40px rgba(0,82,204,0.12);">
@@ -273,8 +278,40 @@
                 <a href="/buscar" class="btn-mega" style="width:auto; padding:12px 30px;">Descubrir más 🚀</a>
             </div>
         </div>
-        @endforeach
-    @endif
+        @php $slideIndex++; @endphp
+    @endforeach
+
+    {{-- SLIDES SECUNDARIOS --}}
+    @foreach($anunciosSecundario as $anuncio)
+        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
+            @if($anuncio->imagen_url)
+                <div style="flex:1; min-width:300px;">
+                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:20px; border:4px solid rgba(245,158,11,0.12); box-shadow:0 20px 40px rgba(245,158,11,0.12);">
+                </div>
+            @endif
+            <div class="hero-slide-panel" style="flex:1; min-width:300px; padding:40px; backdrop-filter:blur(10px); border-radius:20px;">
+                <h2 class="hero-title" style="font-family:'Rajdhani',sans-serif; font-size:2.5rem; font-weight:800; margin-bottom:16px; line-height:1.2;">{{ $anuncio->titulo }}</h2>
+                <a href="/buscar" class="btn-mega" style="width:auto; padding:12px 30px; background:linear-gradient(135deg, #f59e0b, #d97706);">Descubrir más 🚀</a>
+            </div>
+        </div>
+        @php $slideIndex++; @endphp
+    @endforeach
+
+    {{-- SLIDES LATERALES --}}
+    @foreach($anunciosLateral as $anuncio)
+        <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
+            @if($anuncio->imagen_url)
+                <div style="flex:1; min-width:300px;">
+                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:20px; border:4px solid rgba(16,185,129,0.12); box-shadow:0 20px 40px rgba(16,185,129,0.12);">
+                </div>
+            @endif
+            <div class="hero-slide-panel" style="flex:1; min-width:300px; padding:40px; backdrop-filter:blur(10px); border-radius:20px;">
+                <h2 class="hero-title" style="font-family:'Rajdhani',sans-serif; font-size:2.5rem; font-weight:800; margin-bottom:16px; line-height:1.2;">{{ $anuncio->titulo }}</h2>
+                <a href="/buscar" class="btn-mega" style="width:auto; padding:12px 30px; background:linear-gradient(135deg, #10b981, #059669);">Descubrir más 🚀</a>
+            </div>
+        </div>
+        @php $slideIndex++; @endphp
+    @endforeach
 </div>
 
 <div style="max-width:1280px; margin:0 auto 40px auto; padding:0 16px;">

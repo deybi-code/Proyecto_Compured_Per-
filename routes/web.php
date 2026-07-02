@@ -338,6 +338,7 @@ Route::middleware(['auth', 'es_admin'])
         // 📢 ANUNCIOS
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');
         Route::post('/anuncios', [AdminAnuncioController::class, 'store'])->name('anuncios.store');
+        Route::put('/anuncios', [AdminAnuncioController::class, 'update'])->name('anuncios.update');
         Route::delete('/anuncios/{id}', [AdminAnuncioController::class, 'destroy'])->name('anuncios.destroy');
 
         // 📸 FOTOS INDIVIDUALES DE PRODUCTOS

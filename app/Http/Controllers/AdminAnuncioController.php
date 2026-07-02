@@ -90,24 +90,64 @@ class AdminAnuncioController extends Controller
     {
         $request->validate([
             'titulo' => 'required|string|max:100',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'imagenes.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'posicion' => 'required|in:principal,secundario,lateral',
         ]);
 
-        // Subir a Cloudinary en vez de disco local
-        $url = $this->subirACloudinary($request->file('imagen'));
+        // Subir la primera imagen a Cloudinary
+        $url = null;
+        if ($request->hasFile('imagenes') && count($request->file('imagenes')) > 0) {
+            $url = $this->subirACloudinary($request->file('imagenes')[0]);
+        }
 
         if (!$url) {
             return back()->with('error', 'No se pudo subir la imagen. Intenta de nuevo.');
         }
 
-        DB::table('anuncios')->insert([
+        $id = DB::table('anuncios')->insertGetId([
             'titulo'     => $request->titulo,
             'imagen_url' => $url,
-            'posicion'   => $request->posicion ?? 'principal',
+            'posicion'   => $request->posicion,
             'activo'     => 1,
         ]);
 
+        // Subir imágenes adicionales (si hay más de una)
+        if ($request->hasFile('imagenes') && count($request->file('imagenes')) > 1) {
+            for ($i = 1; $i < count($request->file('imagenes')); $i++) {
+                $urlExtra = $this->subirACloudinary($request->file('imagenes')[$i]);
+                if ($urlExtra) {
+                    DB::table('anuncios')->insert([
+                        'titulo'     => $request->titulo . ' (imagen ' . ($i + 1) . ')',
+                        'imagen_url' => $urlExtra,
+                        'posicion'   => $request->posicion,
+                        'activo'     => 1,
+                    ]);
+                }
+            }
+        }
+
         return back()->with('success', 'Anuncio publicado correctamente.');
+    }
+
+    // ─────────────────────────────────────────────
+    // ✏️ ACTUALIZAR ANUNCIO
+    // ─────────────────────────────────────────────
+    public function update(Request $request)
+    {
+        $request->validate([
+            'id_anuncio' => 'required|integer|exists:anuncios,id_anuncio',
+            'titulo' => 'required|string|max:100',
+            'posicion' => 'required|in:principal,secundario,lateral',
+        ]);
+
+        DB::table('anuncios')
+            ->where('id_anuncio', $request->id_anuncio)
+            ->update([
+                'titulo' => $request->titulo,
+                'posicion' => $request->posicion,
+            ]);
+
+        return back()->with('success', 'Anuncio actualizado correctamente.');
     }
 
     // ─────────────────────────────────────────────

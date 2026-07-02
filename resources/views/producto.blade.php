@@ -412,23 +412,58 @@
                 <div style="display:grid; grid-template-columns:3fr 2fr; gap:32px;" class="comments-grid">
                     <div>
                         <h3>💬 Reseñas de Clientes</h3>
-                        <div class="comment-empty">
-                            <div class="icon">💬</div>
-                            <p style="font-weight:700; color:var(--text); margin-bottom:6px;">Aún no hay reseñas</p>
-                            <p style="font-size:13px;">¡Sé el primero en opinar sobre este producto!</p>
-                        </div>
+                        @if($producto && $producto->resenas->count() > 0)
+                            <div style="display:flex; flex-direction:column; gap:16px;">
+                                @foreach($producto->resenas as $resena)
+                                    <div style="background:var(--input-bg); padding:16px; border-radius:12px; border:1px solid var(--border);">
+                                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                                            <div style="width:40px; height:40px; background:linear-gradient(135deg, var(--primary), #2563eb); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:14px;">
+                                                {{ strtoupper(substr($resena->user->name ?? 'U', 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <div style="font-weight:700; color:var(--text); font-size:14px;">{{ $resena->user->name ?? 'Usuario' }}</div>
+                                                <div style="color:#fbbf24; font-size:14px;">{{ str_repeat('★', $resena->calificacion) }}{{ str_repeat('☆', 5 - $resena->calificacion) }}</div>
+                                            </div>
+                                        </div>
+                                        <p style="color:var(--muted); font-size:14px; line-height:1.6;">{{ $resena->comentario }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="comment-empty">
+                                <div class="icon">💬</div>
+                                <p style="font-weight:700; color:var(--text); margin-bottom:6px;">Aún no hay reseñas</p>
+                                <p style="font-size:13px;">¡Sé el primero en opinar sobre este producto!</p>
+                            </div>
+                        @endif
                     </div>
                     <div>
                         <h3 style="font-size:15px;">Escribe tu reseña</h3>
-                        <div style="margin-bottom:12px;">
-                            <label style="font-size:12px; font-weight:700; color:var(--muted); display:block; margin-bottom:6px;">Tu calificación</label>
-                            <div style="font-size:24px; cursor:pointer; color:#d1d5db;">★★★★★</div>
-                        </div>
-                        <textarea class="cp-textarea" placeholder="Comparte tu experiencia con este producto..." style="margin-bottom:12px;"></textarea>
-                        <button class="btn-comment">
-                            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                            Publicar reseña
-                        </button>
+                        @auth
+                            <form action="{{ route('resenas.store') }}" method="POST" x-data="{ rating: 5 }">
+                                @csrf
+                                <input type="hidden" name="producto_id" value="{{ $producto->id_producto }}">
+                                <div style="margin-bottom:12px;">
+                                    <label style="font-size:12px; font-weight:700; color:var(--muted); display:block; margin-bottom:6px;">Tu calificación</label>
+                                    <div style="font-size:24px; cursor:pointer; display:flex; gap:4px;">
+                                        <template x-for="i in 5">
+                                            <span @click="rating = i" :style="`color: ${i <= rating ? '#fbbf24' : '#d1d5db'}; cursor: pointer;`">★</span>
+                                        </template>
+                                    </div>
+                                    <input type="hidden" name="calificacion" x-model="rating">
+                                </div>
+                                <textarea class="cp-textarea" name="comentario" placeholder="Comparte tu experiencia con este producto..." style="margin-bottom:12px;" required minlength="10" maxlength="500"></textarea>
+                                <button type="submit" class="btn-comment">
+                                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                    Publicar reseña
+                                </button>
+                            </form>
+                        @else
+                            <div style="background:var(--input-bg); padding:20px; border-radius:12px; border:1px solid var(--border); text-align:center;">
+                                <p style="color:var(--muted); font-size:14px; margin-bottom:12px;">Debes iniciar sesión para dejar una reseña.</p>
+                                <a href="{{ route('login') }}" style="display:inline-block; padding:10px 20px; background:linear-gradient(135deg, var(--primary), #2563eb); color:white; font-weight:700; border-radius:10px; text-decoration:none;">Iniciar sesión</a>
+                            </div>
+                        @endauth
                     </div>
                 </div>
             </div>

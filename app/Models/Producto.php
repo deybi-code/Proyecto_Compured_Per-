@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model
 {
-    protected $table        = 'productos';
-    protected $primaryKey   = 'id_producto';
-    public    $timestamps   = false;
+    protected $table = 'productos';
+
+    protected $primaryKey = 'id_producto';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'nombre',
@@ -40,5 +42,10 @@ class Producto extends Model
     public function fotos()
     {
         return $this->hasMany(FotoProducto::class, 'id_producto', 'id_producto');
+    }
+
+    public function resenas()
+    {
+        return $this->hasMany(Resena::class, 'producto_id', 'id_producto')->where('aprobado', true);
     }
 }

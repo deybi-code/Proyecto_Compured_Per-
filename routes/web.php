@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FotoProductoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ResenaController;
 use App\Http\Controllers\VentasController;
 use App\Models\Boleta;
 use App\Models\Categoria;
@@ -58,7 +59,7 @@ Route::get('/categoria/{slug?}', function ($slug = null) {
 })->name('categoria');
 
 Route::get('/producto/{id?}', function ($id = null) {
-    $producto = $id ? Producto::with(['fotos', 'categoria'])->findOrFail($id) : null;
+    $producto = $id ? Producto::with(['fotos', 'categoria', 'resenas.user'])->findOrFail($id) : null;
     $categorias = Categoria::all();
 
     // Productos relacionados: misma categoría, excluyendo el actual, máx 4
@@ -181,6 +182,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // 💬 Reseñas de productos
+    Route::post('/resenas', [ResenaController::class, 'store'])->name('resenas.store');
 });
 
 /*

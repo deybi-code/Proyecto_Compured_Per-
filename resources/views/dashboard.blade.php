@@ -90,6 +90,75 @@
         color: var(--success); border-radius: 12px; padding: 16px 20px; font-size: 14px;
         font-weight: 600; margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
     }
+
+    /* ===== MOBILE FIXES FOR DASHBOARD ===== */
+    @media (max-width: 768px) {
+        .dashboard-wrapper {
+            padding-bottom: 100px;
+        }
+        .max-w-7xl.mx-auto {
+            flex-direction: column;
+        }
+        aside {
+            width: 100%;
+        }
+        .stat-card {
+            padding: 20px;
+        }
+        .stat-value {
+            font-size: 28px;
+        }
+        .glass-card {
+            padding: 20px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .cp-table {
+            font-size: 13px;
+        }
+        .cp-table th,
+        .cp-table td {
+            padding: 12px 10px;
+        }
+        /* Convert table to cards on very small screens */
+        @media (max-width: 480px) {
+            .cp-table {
+                display: block;
+            }
+            .cp-table thead {
+                display: none;
+            }
+            .cp-table tbody,
+            .cp-table tr,
+            .cp-table td {
+                display: block;
+                width: 100%;
+            }
+            .cp-table tr {
+                margin-bottom: 16px;
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 16px;
+                background: var(--input-bg);
+            }
+            .cp-table td {
+                text-align: left;
+                padding: 8px 0;
+                border: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .cp-table td::before {
+                content: attr(data-label);
+                font-weight: 700;
+                color: var(--muted);
+                margin-right: 12px;
+                font-size: 12px;
+            }
+        }
+    }
 </style>
 
 <div class="dashboard-wrapper">
@@ -211,18 +280,18 @@
                         <tbody>
                             @forelse($pedidos as $p)
                             <tr>
-                                <td style="font-weight:800; color:var(--primary);">#{{ $p->id_boleta }}</td>
-                                <td style="color:var(--muted); font-size:13px; font-weight:600;">{{ \Carbon\Carbon::parse($p->fecha_venta)->format('d/m/Y') }}</td>
-                                <td style="font-weight:800; font-size:15px; color:var(--text);">S/ {{ number_format($p->total_pago,2) }}</td>
-                                <td style="font-size:13px; font-weight:600; color:var(--muted);">
+                                <td data-label="N° Boleta" style="font-weight:800; color:var(--primary);">#{{ $p->id_boleta }}</td>
+                                <td data-label="Fecha" style="color:var(--muted); font-size:13px; font-weight:600;">{{ \Carbon\Carbon::parse($p->fecha_venta)->format('d/m/Y') }}</td>
+                                <td data-label="Total" style="font-weight:800; font-size:15px; color:var(--text);">S/ {{ number_format($p->total_pago,2) }}</td>
+                                <td data-label="Método de Pago" style="font-size:13px; font-weight:600; color:var(--muted);">
                                     <span style="background:var(--input-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--border);">{{ $p->metodo_pago ?? '—' }}</span>
                                 </td>
-                                <td>
+                                <td data-label="Estado">
                                     <span class="status-badge {{ $p->estado_pedido === 'Pagado' ? 'status-green' : ($p->estado_pedido === 'Enviado' ? 'status-blue' : 'status-yellow') }}">
                                         {{ $p->estado_pedido }}
                                     </span>
                                 </td>
-                                <td>
+                                <td data-label="Acciones">
                                     <a href="{{ route('boletas.mia', $p->id_boleta) }}" style="font-size:12px; font-weight:800; color:var(--primary); white-space:nowrap;">
                                         🧾 Ver boleta
                                     </a>

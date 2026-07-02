@@ -454,30 +454,32 @@
 </div>
 
 <script>
-    // ── TEMA (mismo script que el home) ──────────────────────────────
+    // ── TEMA (sincronizado con el home) ──────────────────────────────
     const htmlRoot    = document.documentElement;
     const toggleBtn   = document.getElementById('cp-theme-toggle');
     const iconSun     = document.getElementById('cp-icon-sun');
     const iconMoon    = document.getElementById('cp-icon-moon');
 
-    function applyTheme(theme) {
-        htmlRoot.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-        if (theme === 'dark') {
-            iconSun.style.display  = 'none';
-            iconMoon.style.display = 'block';
-        } else {
-            iconSun.style.display  = 'block';
-            iconMoon.style.display = 'none';
-        }
+    function syncThemeIcon() {
+        const isDark = htmlRoot.getAttribute('data-theme') === 'dark';
+        iconSun.style.display  = isDark ? 'none' : 'block';
+        iconMoon.style.display = isDark ? 'block' : 'none';
     }
 
-    // Aplicar el tema actual al cargar
-    applyTheme(localStorage.getItem('theme') || 'light');
+    // Aplicar el tema guardado al cargar
+    const savedTheme = localStorage.getItem('theme') || localStorage.getItem('cpTheme') || 'light';
+    htmlRoot.setAttribute('data-theme', savedTheme);
+    htmlRoot.classList.toggle('dark', savedTheme === 'dark');
+    syncThemeIcon();
 
-    toggleBtn.addEventListener('click', () => {
-        const current = htmlRoot.getAttribute('data-theme');
-        applyTheme(current === 'dark' ? 'light' : 'dark');
+    toggleBtn?.addEventListener('click', function () {
+        const isDark = htmlRoot.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        htmlRoot.setAttribute('data-theme', newTheme);
+        htmlRoot.classList.toggle('dark', newTheme === 'dark');
+        localStorage.setItem('theme', newTheme);
+        localStorage.setItem('cpTheme', newTheme);
+        syncThemeIcon();
     });
 
     // ── MENÚ MOBILE ───────────────────────────────────────────────────

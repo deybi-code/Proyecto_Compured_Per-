@@ -182,7 +182,13 @@
         @forelse($productos ?? [] as $index => $p)
         <div class="glass-card animate-card" style="animation-delay: {{ 0.2 + ($index * 0.05) }}s;">
             <div class="product-img-wrap">
-                <img src="{{ asset('img/producto.webp') }}" alt="{{ $p->nombre }}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%23EBF3FF%22 width=%22200%22 height=%22200%22/><text x=%22100%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2240%22>💻</text></svg>'">
+                @if($p->imagen ?? false)
+                    <img src="{{ str_starts_with($p->imagen, 'http') ? $p->imagen : asset('storage/'.$p->imagen) }}" alt="{{ $p->nombre }}" loading="lazy">
+                @elseif($p->fotos->first() ?? false)
+                    <img src="{{ str_starts_with($p->fotos->first()->ruta_foto, 'http') ? $p->fotos->first()->ruta_foto : asset('storage/'.$p->fotos->first()->ruta_foto) }}" alt="{{ $p->nombre }}" loading="lazy">
+                @else
+                    <img src="{{ asset('img/producto.webp') }}" alt="{{ $p->nombre }}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%23EBF3FF%22 width=%22200%22 height=%22200%22/><text x=%22100%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2240%22>💻</text></svg>'">
+                @endif
             </div>
             <div class="product-body">
                 <div class="product-name" title="{{ $p->nombre }}">{{ Str::limit($p->nombre, 50) }}</div>

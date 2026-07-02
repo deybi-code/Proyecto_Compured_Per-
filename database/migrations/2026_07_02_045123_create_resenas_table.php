@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('resenas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
-            $table->integer('calificacion')->default(5);
-            $table->text('comentario');
-            $table->boolean('aprobado')->default(true);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('resenas')) {
+            Schema::create('resenas', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->foreignId('producto_id')->constrained('productos')->onDelete('cascade');
+                $table->integer('calificacion')->default(5);
+                $table->text('comentario');
+                $table->boolean('aprobado')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

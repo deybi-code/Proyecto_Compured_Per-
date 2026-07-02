@@ -37,6 +37,8 @@ RUN apk add --no-cache \
     mysql-client
 
 # Instalar extensiones PHP
+# NOTA: opcache ya viene precompilado en la imagen base, no es necesario compilarlo
+ENV MAKEFLAGS="-j1"
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install \
         pdo_mysql \
@@ -47,8 +49,9 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         gd \
         xml \
         intl \
-        opcache \
-        zip
+        zip \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/*
 
 # Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

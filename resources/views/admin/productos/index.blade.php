@@ -252,7 +252,10 @@
         document.querySelectorAll('.product-checkbox:checked').forEach(cb => {
             selected.push(cb.value);
         });
-        document.getElementById('selectedProductos').value = JSON.stringify(selected);
+        const hiddenField = document.getElementById('selectedProductos');
+        if (hiddenField) {
+            hiddenField.value = JSON.stringify(selected);
+        }
     }
 
     // Inicializar estado del botón

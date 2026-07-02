@@ -358,8 +358,15 @@ class AdminProductoController extends Controller
                     ->with('error', '❌ No se seleccionaron productos para eliminar.');
             }
 
-            // Convertir a enteros
-            $productosIds = array_map('intval', $productosIds);
+            // Convertir a enteros y filtrar valores inválidos
+            $productosIds = array_filter(array_map('intval', $productosIds), function($id) {
+                return $id > 0;
+            });
+
+            if (empty($productosIds)) {
+                return redirect()->route('admin.productos.index')
+                    ->with('error', '❌ IDs de productos inválidos.');
+            }
 
             // Eliminar detalles de boleta asociados
             DB::table('detalle_boleta')->whereIn('id_producto', $productosIds)->delete();

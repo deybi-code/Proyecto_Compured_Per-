@@ -90,15 +90,17 @@ class AdminAnuncioController extends Controller
     {
         $request->validate([
             'titulo' => 'required|string|max:100',
-            'imagenes.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'imagenes.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'posicion' => 'required|in:principal,secundario,lateral',
         ]);
 
-        // Subir la primera imagen a Cloudinary
-        $url = null;
-        if ($request->hasFile('imagenes') && count($request->file('imagenes')) > 0) {
-            $url = $this->subirACloudinary($request->file('imagenes')[0]);
+        // Verificar que se haya subido al menos una imagen
+        if (!$request->hasFile('imagenes') || count($request->file('imagenes')) === 0) {
+            return back()->with('error', 'Debes subir al menos una imagen para el anuncio.');
         }
+
+        // Subir la primera imagen a Cloudinary
+        $url = $this->subirACloudinary($request->file('imagenes')[0]);
 
         if (!$url) {
             return back()->with('error', 'No se pudo subir la imagen. Intenta de nuevo.');
@@ -112,7 +114,7 @@ class AdminAnuncioController extends Controller
         ]);
 
         // Subir imágenes adicionales (si hay más de una)
-        if ($request->hasFile('imagenes') && count($request->file('imagenes')) > 1) {
+        if (count($request->file('imagenes')) > 1) {
             for ($i = 1; $i < count($request->file('imagenes')); $i++) {
                 $urlExtra = $this->subirACloudinary($request->file('imagenes')[$i]);
                 if ($urlExtra) {

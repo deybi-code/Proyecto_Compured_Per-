@@ -27,10 +27,6 @@
            style="background:linear-gradient(to bottom, #0066cc, #0056b3); color:white; padding:14px 22px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; box-shadow:0 6px 15px -3px rgba(0,86,179,0.4); border:1px solid #004494; display:flex; align-items:center; gap:8px;">
             <span style="font-size:18px;">📦</span> Productos
         </a>
-        <a href="{{ route('admin.ventas.index') }}"
-           style="background:linear-gradient(to bottom, #a6ea00, #9ad800); color:#064e3b; padding:14px 22px; border-radius:10px; text-decoration:none; font-weight:800; font-size:15px; box-shadow:0 6px 15px -3px rgba(154,216,0,0.4); border:1px solid #86bc00; display:flex; align-items:center; gap:8px;">
-            <span style="font-size:18px;">💰</span> Ventas
-        </a>
         <a href="{{ route('admin.anuncios.index') }}"
            style="background:linear-gradient(to bottom, #f59e0b, #d97706); color:white; padding:14px 22px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; box-shadow:0 6px 15px -3px rgba(245,158,11,0.4); border:1px solid #b45309; display:flex; align-items:center; gap:8px;">
             <span style="font-size:18px;">📢</span> Anuncios
@@ -129,7 +125,7 @@
                 <div style="background:#0284c7; width:12px; height:12px; border-radius:50%;"></div>
                 <h3 class="title-text" style="margin:0; font-size:18px; font-weight:700;">Ventas del día</h3>
             </div>
-            <p class="title-text" style="font-size:42px; font-weight:900; margin:0 0 10px 0; letter-spacing:-1px;">S/ 0.00</p>
+            <p class="title-text" style="font-size:42px; font-weight:900; margin:0 0 10px 0; letter-spacing:-1px;">S/ {{ number_format($ventasDelDia ?? 0, 2) }}</p>
             <div style="background:var(--bg-card); padding:10px 15px; border-radius:8px; border:1px solid var(--border-color);">
                 <p class="muted-text" style="margin:0; font-size:14px; font-weight:600;">(Próxima integración gráfica)</p>
             </div>
@@ -173,13 +169,6 @@
                 </div>
                 <span class="muted-text">→</span>
             </a>
-            <a href="{{ route('admin.ventas.index') }}"
-               style="background:var(--bg-hover); color:var(--text-main); padding:16px 20px; border-radius:12px; text-decoration:none; font-weight:700; font-size:16px; border:2px solid var(--border-color); display:flex; align-items:center; justify-content:space-between;">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <span style="background:rgba(132, 204, 22, 0.15); color:#65a30d; padding:8px; border-radius:8px;">💰</span> Ver Ventas
-                </div>
-                <span class="muted-text">→</span>
-            </a>
         </div>
     </div>
 
@@ -212,13 +201,6 @@
                     <div style="background:var(--bg-hover); padding:15px; border-radius:12px; width:100%; border:1px solid var(--border-color);">
                         <p class="main-text" style="margin:0; font-weight:600; font-size:15px;">Productos sincronizados</p>
                         <p class="muted-text" style="margin:5px 0 0 0; font-size:12px;">Base de datos actualizada</p>
-                    </div>
-                </li>
-                <li style="display:flex; align-items:flex-start; gap:15px; position:relative;">
-                    <div style="background:rgba(245, 158, 11, 0.15); color:#f59e0b; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-weight:bold; z-index:1;">⚡</div>
-                    <div style="background:rgba(245, 158, 11, 0.05); padding:15px; border-radius:12px; width:100%; border:1px dashed #fcd34d;">
-                        <p style="margin:0; color:#d97706; font-weight:700; font-size:15px;">Próximamente: estadísticas en tiempo real</p>
-                        <p style="margin:5px 0 0 0; color:#b45309; font-size:12px;">En desarrollo</p>
                     </div>
                 </li>
             </ul>

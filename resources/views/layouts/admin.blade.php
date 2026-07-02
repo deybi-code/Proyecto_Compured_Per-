@@ -323,9 +323,6 @@
             <a href="{{ route('admin.productos.index') }}" class="{{ request()->routeIs('admin.productos.*') ? 'active' : '' }}">
                 Productos
             </a>
-            <a href="{{ route('admin.ventas.index') }}" class="{{ request()->routeIs('admin.ventas.*') ? 'active' : '' }}">
-                Ventas
-            </a>
             <a href="{{ route('admin.anuncios.index') }}" class="{{ request()->routeIs('admin.anuncios.*') ? 'active' : '' }}">
                 Anuncios
             </a>
@@ -376,7 +373,6 @@
     <div class="cp-mobile-menu" id="cp-mobile-menu">
         <a href="{{ route('admin.panel') }}">🏠 Panel</a>
         <a href="{{ route('admin.productos.index') }}">📦 Productos</a>
-        <a href="{{ route('admin.ventas.index') }}">💰 Ventas</a>
         <a href="{{ route('admin.anuncios.index') }}">📢 Anuncios</a>
         <form method="POST" action="{{ route('logout') }}" style="margin:0;">
             @csrf
@@ -410,14 +406,6 @@
             Productos
         </a>
 
-        <div class="sidebar-section-label">Comercial</div>
-        <a href="{{ route('admin.ventas.index') }}"
-           class="sidebar-link {{ request()->routeIs('admin.ventas.*') ? 'active' : '' }}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
-            Ventas
-        </a>
 
         <a href="{{ route('admin.anuncios.index') }}"
            class="sidebar-link {{ request()->routeIs('admin.anuncios.*') ? 'active' : '' }}">

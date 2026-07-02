@@ -300,7 +300,18 @@
             <div class="cp-drawer-header">
                 <div class="cp-drawer-brand">COMPURED PERÚ</div>
             </div>
-            
+
+            {{-- Mobile Search --}}
+            <div style="padding: 0 20px 16px;">
+                <form method="GET" action="{{ route('buscar') }}" style="display:flex;">
+                    <input type="text"
+                           name="q"
+                           value="{{ request('q') }}"
+                           placeholder="🔍 Buscar productos..."
+                           style="width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;outline:none;font-size:14px;background:var(--input-bg);color:var(--text);">
+                </form>
+            </div>
+
             <div class="cp-drawer-section">
                 <div class="cp-drawer-section-title">Navegación</div>
                 <a href="{{ route('home') }}" class="cp-drawer-item">
@@ -423,6 +434,15 @@
             </div>
 
             <div class="cp-nav-actions">
+                {{-- Buscador --}}
+                <form method="GET" action="{{ route('buscar') }}" style="display:flex;">
+                    <input type="text"
+                           name="q"
+                           value="{{ request('q') }}"
+                           placeholder="🔍 Buscar..."
+                           style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;outline:none;min-width:200px;font-size:14px;background:var(--input-bg);color:var(--text);">
+                </form>
+
                 {{-- Toggle de tema --}}
                 <button type="button" class="cp-icon-btn" id="cp-theme-toggle" title="Cambiar tema">
                     {{-- Sol --}}

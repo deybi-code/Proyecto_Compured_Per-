@@ -10,7 +10,6 @@ use App\Http\Controllers\FotoProductoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ResenaController;
-use App\Http\Controllers\VentasController;
 use App\Models\Boleta;
 use App\Models\Categoria;
 use App\Models\Producto;
@@ -198,9 +197,6 @@ Route::middleware(['auth', 'es_vendedor'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/ventas', [VentasController::class, 'index'])->name('ventas.index');
-        Route::post('/ventas', [VentasController::class, 'store'])->name('ventas.store');
-
         Route::get('/boletas/{id}', [BoletaController::class, 'show'])->name('boletas.show');
     });
 
@@ -220,12 +216,14 @@ Route::middleware(['auth', 'es_admin'])
             $totalProductos = Producto::count();
             $stockBajo = Producto::where('stock', '<=', 5)->count();
             $productosActivos = Producto::where('mostrar_inicio', 1)->count();
+            $ventasDelDia = Boleta::whereDate('fecha_venta', today())->sum('total_pago');
 
-            return view('admin.panel', compact('totalProductos', 'stockBajo', 'productosActivos'));
+            return view('admin.panel', compact('totalProductos', 'stockBajo', 'productosActivos', 'ventasDelDia'));
         })->name('panel');
 
         // 📦 PRODUCTOS
         Route::resource('productos', AdminProductoController::class);
+        Route::post('/productos/importar', [AdminProductoController::class, 'importarExcel'])->name('productos.importar');
 
         // 📢 ANUNCIOS
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');

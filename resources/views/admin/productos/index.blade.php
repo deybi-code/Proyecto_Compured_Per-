@@ -16,9 +16,14 @@
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
 
-            {{-- BUSCADOR (UI) --}}
-            <input type="text" placeholder="🔎 Buscar producto..."
-                   style="padding:8px;border:1px solid #ddd;border-radius:8px; outline:none;">
+            {{-- BUSCADOR --}}
+            <form method="GET" action="{{ route('admin.productos.index') }}" style="display:flex;">
+                <input type="text"
+                       name="search"
+                       value="{{ request('search') }}"
+                       placeholder="🔎 Buscar producto..."
+                       style="padding:8px;border:1px solid #ddd;border-radius:8px; outline:none; min-width:200px;">
+            </form>
 
             {{-- BOTÓN CREAR --}}
             <a href="{{ route('admin.productos.create') }}"
@@ -27,7 +32,8 @@
             </a>
 
             {{-- IMPORT EXCEL --}}
-            <button style="background:#9ad800;color:#000;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
+            <button onclick="document.getElementById('importModal').style.display='flex'"
+                    style="background:#9ad800;color:#000;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
                 ⬆ Importar Excel
             </button>
 
@@ -147,13 +153,8 @@
                     ✏️ Editar
                 </a>
 
-                {{-- MODAL EDIT (UI FUTURO) --}}
-                <button style="background:#6366f1;color:white;padding:6px 10px;border:none;border-radius:6px; cursor: pointer;">
-                    ⚡ Modal
-                </button>
-
                 {{-- ELIMINAR --}}
-                <form method="POST" action="{{ route('admin.productos.destroy', $p) }}">
+                <form method="POST" action="{{ route('admin.productos.destroy', $p) }}" style="display:inline;">
                     @csrf
                     @method('DELETE')
                     <button onclick="return confirm('¿Eliminar producto?')"
@@ -182,6 +183,38 @@
         Aquí se integrará slider tipo MercadoLibre / Amazon
     </p>
 
+</div>
+
+{{-- MODAL IMPORTAR EXCEL --}}
+<div id="importModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:white;padding:30px;border-radius:12px;max-width:500px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+        <h2 style="margin:0 0 20px 0;color:#0056b3;">📊 Importar Productos desde Excel</h2>
+        <p style="color:#6b7280;margin-bottom:20px;">
+            Formato esperado: Nombre, Precio, Stock, Marca, Categoría, Detalles (opcional)
+        </p>
+        <form method="POST" action="{{ route('admin.productos.importar') }}" enctype="multipart/form-data">
+            @csrf
+            <div style="margin-bottom:20px;">
+                <label style="display:block;font-weight:600;margin-bottom:8px;">Archivo Excel (.xlsx, .xls, .csv)</label>
+                <input type="file"
+                       name="archivo_excel"
+                       accept=".xlsx,.xls,.csv"
+                       required
+                       style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+                <button type="button"
+                        onclick="document.getElementById('importModal').style.display='none'"
+                        style="background:#6b7280;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        style="background:#9ad800;color:#000;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:600;">
+                    Importar
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
 @endsection

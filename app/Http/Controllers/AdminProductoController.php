@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Producto;
 use App\Models\Categoria;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class AdminProductoController extends Controller
 {
@@ -14,13 +15,13 @@ class AdminProductoController extends Controller
     // ─────────────────────────────────────────────
     private function subirACloudinary($archivo, $carpeta = 'compuredperu/productos')
     {
-        $cloudName  = env('CLOUDINARY_CLOUD_NAME');
-        $apiKey     = env('CLOUDINARY_API_KEY');
-        $apiSecret  = env('CLOUDINARY_API_SECRET');
+        $cloudName = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey = env('CLOUDINARY_API_KEY');
+        $apiSecret = env('CLOUDINARY_API_SECRET');
 
-        $timestamp  = time();
-        $params     = "folder={$carpeta}&timestamp={$timestamp}{$apiSecret}";
-        $signature  = sha1($params);
+        $timestamp = time();
+        $params = "folder={$carpeta}&timestamp={$timestamp}{$apiSecret}";
+        $signature = sha1($params);
 
         $url = "https://api.cloudinary.com/v1_1/{$cloudName}/image/upload";
 
@@ -29,11 +30,11 @@ class AdminProductoController extends Controller
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, [
-            'file'      => new \CURLFile($archivo->getRealPath(), $archivo->getMimeType(), $archivo->getClientOriginalName()),
-            'api_key'   => $apiKey,
+            'file' => new \CURLFile($archivo->getRealPath(), $archivo->getMimeType(), $archivo->getClientOriginalName()),
+            'api_key' => $apiKey,
             'timestamp' => $timestamp,
             'signature' => $signature,
-            'folder'    => $carpeta,
+            'folder' => $carpeta,
         ]);
 
         $response = curl_exec($ch);
@@ -50,18 +51,22 @@ class AdminProductoController extends Controller
     // ─────────────────────────────────────────────
     private function eliminarDeCloudinary($url)
     {
-        if (!$url || !str_contains($url, 'cloudinary.com')) return;
+        if (! $url || ! str_contains($url, 'cloudinary.com')) {
+            return;
+        }
 
         $cloudName = env('CLOUDINARY_CLOUD_NAME');
-        $apiKey    = env('CLOUDINARY_API_KEY');
+        $apiKey = env('CLOUDINARY_API_KEY');
         $apiSecret = env('CLOUDINARY_API_SECRET');
 
         // Extraer el public_id de la URL de Cloudinary
         // Ejemplo URL: https://res.cloudinary.com/dwea7sfmc/image/upload/v123/compuredperu/productos/abc123.jpg
         preg_match('/upload\/(?:v\d+\/)?(.+)\.\w+$/', $url, $matches);
-        if (empty($matches[1])) return;
+        if (empty($matches[1])) {
+            return;
+        }
 
-        $publicId  = $matches[1];
+        $publicId = $matches[1];
         $timestamp = time();
         $signature = sha1("public_id={$publicId}&timestamp={$timestamp}{$apiSecret}");
 
@@ -73,7 +78,7 @@ class AdminProductoController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, [
             'public_id' => $publicId,
-            'api_key'   => $apiKey,
+            'api_key' => $apiKey,
             'timestamp' => $timestamp,
             'signature' => $signature,
         ]);
@@ -85,9 +90,21 @@ class AdminProductoController extends Controller
     // ─────────────────────────────────────────────
     // 📋 LISTAR
     // ─────────────────────────────────────────────
-    public function index()
+    public function index(Request $request)
     {
-        $productos = Producto::with('categoria')->orderBy('id_producto', 'desc')->get();
+        $query = Producto::with('categoria')->orderBy('id_producto', 'desc');
+
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nombre', 'like', "%{$search}%")
+                    ->orWhere('marca', 'like', "%{$search}%")
+                    ->orWhere('id_producto', 'like', "%{$search}%");
+            });
+        }
+
+        $productos = $query->get();
+
         return view('admin.productos.index', compact('productos'));
     }
 
@@ -97,6 +114,7 @@ class AdminProductoController extends Controller
     public function create()
     {
         $categorias = Categoria::orderBy('nombre_categoria')->get();
+
         return view('admin.productos.create', compact('categorias'));
     }
 
@@ -106,14 +124,14 @@ class AdminProductoController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nombre'            => 'required|string|max:150',
-            'precio'            => 'required|numeric|min:0',
-            'stock'             => 'required|integer|min:0',
-            'marca'             => 'required|string|max:50',
-            'id_categoria'      => 'required|integer|exists:categorias,id_categoria',
+            'nombre' => 'required|string|max:150',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'marca' => 'required|string|max:50',
+            'id_categoria' => 'required|integer|exists:categorias,id_categoria',
             'detalles_tecnicos' => 'nullable|string',
-            'mostrar_inicio'    => 'nullable|in:0,1',
-            'imagen_principal'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'mostrar_inicio' => 'nullable|in:0,1',
+            'imagen_principal' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $data['mostrar_inicio'] = $request->has('mostrar_inicio') ? 1 : 0;
@@ -122,7 +140,9 @@ class AdminProductoController extends Controller
         // Imagen principal → Cloudinary
         if ($request->hasFile('imagen_principal')) {
             $url = $this->subirACloudinary($request->file('imagen_principal'));
-            if ($url) $data['imagen'] = $url;
+            if ($url) {
+                $data['imagen'] = $url;
+            }
         }
 
         $producto = Producto::create($data);
@@ -133,9 +153,9 @@ class AdminProductoController extends Controller
                 $url = $this->subirACloudinary($request->file($campo));
                 if ($url) {
                     DB::table('fotos_productos')->insert([
-                        'id_producto'  => $producto->id_producto,
-                        'ruta_foto'    => $url,
-                        'es_principal' => ($i === 0 && !isset($data['imagen'])) ? 1 : 0,
+                        'id_producto' => $producto->id_producto,
+                        'ruta_foto' => $url,
+                        'es_principal' => ($i === 0 && ! isset($data['imagen'])) ? 1 : 0,
                     ]);
                 }
             }
@@ -151,6 +171,7 @@ class AdminProductoController extends Controller
     public function show($id)
     {
         $producto = Producto::with(['categoria', 'fotos'])->findOrFail($id);
+
         return view('admin.productos.show', compact('producto'));
     }
 
@@ -159,8 +180,9 @@ class AdminProductoController extends Controller
     // ─────────────────────────────────────────────
     public function edit($id)
     {
-        $producto   = Producto::with('fotos')->findOrFail($id);
+        $producto = Producto::with('fotos')->findOrFail($id);
         $categorias = Categoria::orderBy('nombre_categoria')->get();
+
         return view('admin.productos.edit', compact('producto', 'categorias'));
     }
 
@@ -172,13 +194,13 @@ class AdminProductoController extends Controller
         $producto = Producto::findOrFail($id);
 
         $data = $request->validate([
-            'nombre'            => 'required|string|max:150',
-            'precio'            => 'required|numeric|min:0',
-            'stock'             => 'required|integer|min:0',
-            'marca'             => 'required|string|max:50',
-            'id_categoria'      => 'required|integer|exists:categorias,id_categoria',
+            'nombre' => 'required|string|max:150',
+            'precio' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'marca' => 'required|string|max:50',
+            'id_categoria' => 'required|integer|exists:categorias,id_categoria',
             'detalles_tecnicos' => 'nullable|string',
-            'mostrar_inicio'    => 'nullable|in:0,1',
+            'mostrar_inicio' => 'nullable|in:0,1',
         ]);
 
         $data['mostrar_inicio'] = $request->has('mostrar_inicio') ? 1 : 0;
@@ -191,8 +213,8 @@ class AdminProductoController extends Controller
                 $url = $this->subirACloudinary($foto);
                 if ($url) {
                     DB::table('fotos_productos')->insert([
-                        'id_producto'  => $producto->id_producto,
-                        'ruta_foto'    => $url,
+                        'id_producto' => $producto->id_producto,
+                        'ruta_foto' => $url,
                         'es_principal' => 0,
                     ]);
                 }
@@ -222,5 +244,86 @@ class AdminProductoController extends Controller
 
         return redirect()->route('admin.productos.index')
             ->with('success', '✅ Producto eliminado correctamente.');
+    }
+
+    // ─────────────────────────────────────────────
+    // 📊 IMPORTAR EXCEL
+    // ─────────────────────────────────────────────
+    public function importarExcel(Request $request)
+    {
+        $request->validate([
+            'archivo_excel' => 'required|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            $archivo = $request->file('archivo_excel');
+            $spreadsheet = IOFactory::load($archivo->getPathname());
+            $hoja = $spreadsheet->getActiveSheet();
+            $filas = $hoja->toArray();
+
+            // Eliminar cabecera si existe
+            if (count($filas) > 0 && strtolower($filas[0][0] ?? '') === 'nombre') {
+                array_shift($filas);
+            }
+
+            $importados = 0;
+            $errores = [];
+
+            foreach ($filas as $index => $fila) {
+                // Validar que tenga datos mínimos
+                if (empty($fila[0])) {
+                    continue; // Saltar filas vacías
+                }
+
+                $nombre = trim($fila[0] ?? '');
+                $precio = floatval($fila[1] ?? 0);
+                $stock = intval($fila[2] ?? 0);
+                $marca = trim($fila[3] ?? '');
+                $categoriaNombre = trim($fila[4] ?? '');
+                $detalles = trim($fila[5] ?? '');
+
+                // Validaciones básicas
+                if (empty($nombre) || $precio <= 0 || $stock < 0) {
+                    $errores[] = 'Fila '.($index + 2).': Datos incompletos o inválidos';
+
+                    continue;
+                }
+
+                // Buscar o crear categoría
+                $categoria = Categoria::where('nombre_categoria', $categoriaNombre)->first();
+                if (! $categoria) {
+                    $categoria = Categoria::create([
+                        'nombre_categoria' => $categoriaNombre ?: 'General',
+                        'descripcion' => 'Categoría creada por importación',
+                    ]);
+                }
+
+                // Crear producto
+                Producto::create([
+                    'nombre' => $nombre,
+                    'precio' => $precio,
+                    'stock' => $stock,
+                    'marca' => $marca ?: 'Sin marca',
+                    'id_categoria' => $categoria->id_categoria,
+                    'detalles_tecnicos' => $detalles,
+                    'mostrar_inicio' => 0,
+                    'fecha_registro' => now(),
+                ]);
+
+                $importados++;
+            }
+
+            $mensaje = "✅ Se importaron {$importados} productos correctamente.";
+            if (count($errores) > 0) {
+                $mensaje .= ' ⚠️ '.count($errores).' errores: '.implode('; ', array_slice($errores, 0, 3));
+            }
+
+            return redirect()->route('admin.productos.index')
+                ->with('success', $mensaje);
+
+        } catch (\Exception $e) {
+            return redirect()->route('admin.productos.index')
+                ->with('error', '❌ Error al importar: '.$e->getMessage());
+        }
     }
 }

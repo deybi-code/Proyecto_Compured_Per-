@@ -331,9 +331,12 @@ Route::middleware(['auth', 'es_admin'])
         })->name('panel');
 
         // 📦 PRODUCTOS
-        Route::resource('productos', AdminProductoController::class);
+        // IMPORTANTE: las rutas específicas van ANTES de Route::resource(),
+        // porque resource() registra DELETE /productos/{producto} y, si se
+        // registra primero, "multiple" se interpreta como un id de producto.
         Route::post('/productos/importar', [AdminProductoController::class, 'importarExcel'])->name('productos.importar');
         Route::delete('/productos/multiple', [AdminProductoController::class, 'destroyMultiple'])->name('productos.destroyMultiple');
+        Route::resource('productos', AdminProductoController::class);
 
         // 📢 ANUNCIOS
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');

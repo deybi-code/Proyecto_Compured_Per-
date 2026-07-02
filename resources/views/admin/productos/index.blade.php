@@ -254,6 +254,22 @@
         console.log('IDs seleccionados:', selected);
     }
 
+    // Los checkboxes viven en la tabla, FUERA del <form id="bulkDeleteForm">,
+    // así que antes de enviar el formulario inyectamos manualmente un input
+    // oculto por cada producto marcado.
+    const bulkDeleteForm = document.getElementById('bulkDeleteForm');
+    bulkDeleteForm.addEventListener('submit', function() {
+        bulkDeleteForm.querySelectorAll('input[name="productos[]"]').forEach(el => el.remove());
+
+        document.querySelectorAll('.product-checkbox:checked').forEach(cb => {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'productos[]';
+            hidden.value = cb.value;
+            bulkDeleteForm.appendChild(hidden);
+        });
+    });
+
     // Inicializar estado del botón
     bulkDeleteBtn.disabled = true;
     bulkDeleteBtn.style.opacity = '0.5';

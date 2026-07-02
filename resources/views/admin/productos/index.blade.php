@@ -10,7 +10,7 @@
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
 
         <div>
-            <h1 style="color: #0056b3;">📦 Gestión de Productos</h1>
+            <h1 style="color: #0056b3;">Gestión de Productos</h1>
             <p style="color:#6b7280;">Administra productos, stock, imágenes y precios</p>
         </div>
 
@@ -40,6 +40,7 @@
             {{-- ELIMINAR MASIVO --}}
             <form method="POST" action="{{ route('admin.productos.destroyMultiple') }}" id="bulkDeleteForm" style="display:inline;">
                 @csrf
+                @method('DELETE')
                 <button type="submit" onclick="return confirm('¿Estás seguro de eliminar los productos seleccionados?')" style="background:#ef4444;color:white;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
                     🗑 Eliminar seleccionados
                 </button>
@@ -96,7 +97,7 @@
 
     @foreach($productos as $p)
 
-        <tr style="border-bottom:1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#fdfdfd'">
+        <tr style="border-bottom:1px solid var(--border); transition: background 0.2s;" class="product-row">
 
             {{-- CHECK --}}
             <td data-label="Seleccionar"><input type="checkbox" name="productos[]" value="{{ $p->id_producto }}" class="product-checkbox"></td>
@@ -246,4 +247,10 @@
     bulkDeleteBtn.disabled = true;
     bulkDeleteBtn.style.opacity = '0.5';
 </script>
+
+<style>
+    .product-row:hover {
+        background: var(--input-bg);
+    }
+</style>
 @endpush

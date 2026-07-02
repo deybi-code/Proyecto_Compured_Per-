@@ -25,7 +25,7 @@
     <div style="display:flex; gap:15px; flex-wrap:wrap; position:relative; z-index:1;">
         <a href="{{ route('admin.productos.index') }}"
            style="background:linear-gradient(to bottom, #0066cc, #0056b3); color:white; padding:14px 22px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; box-shadow:0 6px 15px -3px rgba(0,86,179,0.4); border:1px solid #004494; display:flex; align-items:center; gap:8px;">
-            <span style="font-size:18px;">📦</span> Productos
+            Productos
         </a>
         <a href="{{ route('admin.anuncios.index') }}"
            style="background:linear-gradient(to bottom, #f59e0b, #d97706); color:white; padding:14px 22px; border-radius:10px; text-decoration:none; font-weight:700; font-size:15px; box-shadow:0 6px 15px -3px rgba(245,158,11,0.4); border:1px solid #b45309; display:flex; align-items:center; gap:8px;">
@@ -41,7 +41,7 @@
         <div style="position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(to right, #0056b3, #3b82f6);"></div>
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-                <h3 class="muted-text" style="font-size:14px; margin:0 0 10px 0; text-transform:uppercase; letter-spacing:1px; font-weight:700;">📦 Productos</h3>
+                <h3 class="muted-text" style="font-size:14px; margin:0 0 10px 0; text-transform:uppercase; letter-spacing:1px; font-weight:700;">Productos</h3>
                 <h1 class="main-text" style="margin:0; font-size:42px; font-weight:900;">{{ \App\Models\Producto::count() }}</h1>
             </div>
             <div style="background:var(--icon-bg); padding:12px; border-radius:12px; color:var(--icon-color);">

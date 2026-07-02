@@ -82,7 +82,7 @@
 
     <thead style="background:#f8fafc; border-bottom: 2px solid #e2e8f0;">
         <tr style="text-align: left; color: #374151;">
-            <th><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes()"></th>
+            <th><input type="checkbox" id="selectAll"></th>
             <th>Imagen</th>
             <th>Producto</th>
             <th>Precio</th>
@@ -99,7 +99,7 @@
         <tr style="border-bottom:1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#fdfdfd'">
 
             {{-- CHECK --}}
-            <td data-label="Seleccionar"><input type="checkbox"></td>
+            <td data-label="Seleccionar"><input type="checkbox" name="productos[]" value="{{ $p->id_producto }}" class="product-checkbox"></td>
 
             {{-- IMAGEN CORREGIDA --}}
             <td data-label="Imagen">
@@ -221,3 +221,29 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    // Seleccionar/deseleccionar todos
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+
+    // Habilitar/deshabilitar botón de eliminación masiva
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    const bulkDeleteBtn = document.querySelector('#bulkDeleteForm button');
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            const anyChecked = document.querySelectorAll('.product-checkbox:checked').length > 0;
+            bulkDeleteBtn.disabled = !anyChecked;
+            bulkDeleteBtn.style.opacity = anyChecked ? '1' : '0.5';
+        });
+    });
+
+    // Inicializar estado del botón
+    bulkDeleteBtn.disabled = true;
+    bulkDeleteBtn.style.opacity = '0.5';
+</script>
+@endpush

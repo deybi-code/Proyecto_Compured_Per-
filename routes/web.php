@@ -333,6 +333,7 @@ Route::middleware(['auth', 'es_admin'])
         // 📦 PRODUCTOS
         Route::resource('productos', AdminProductoController::class);
         Route::post('/productos/importar', [AdminProductoController::class, 'importarExcel'])->name('productos.importar');
+        Route::delete('/productos/multiple', [AdminProductoController::class, 'destroyMultiple'])->name('productos.destroyMultiple');
 
         // 📢 ANUNCIOS
         Route::get('/anuncios', [AdminAnuncioController::class, 'index'])->name('anuncios.index');

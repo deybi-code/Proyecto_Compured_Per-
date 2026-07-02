@@ -316,7 +316,51 @@ class AdminProductoController extends Controller
     }
 
     // ─────────────────────────────────────────────
-    // 📊 IMPORTAR EXCEL
+    // �️ ELIMINAR MÚLTIPLES PRODUCTOS
+    // ─────────────────────────────────────────────
+    public function destroyMultiple(Request $request)
+    {
+        $request->validate([
+            'productos' => 'required|array',
+            'productos.*' => 'integer|exists:productos,id_producto',
+        ]);
+
+        try {
+            $productos = Producto::with('fotos')->whereIn('id_producto', $request->productos)->get();
+
+            foreach ($productos as $producto) {
+                // Eliminar imagen principal de Cloudinary si existe
+                if ($producto->imagen) {
+                    $this->eliminarDeCloudinary($producto->imagen);
+                }
+
+                // Eliminar fotos adicionales de Cloudinary
+                foreach ($producto->fotos as $foto) {
+                    if ($foto->ruta_foto) {
+                        $this->eliminarDeCloudinary($foto->ruta_foto);
+                    }
+                }
+
+                $producto->delete();
+            }
+
+            return redirect()->route('admin.productos.index')
+                ->with('success', '✅ ' . count($productos) . ' productos eliminados correctamente.');
+
+        } catch (\Exception $e) {
+            \Log::error('Error al eliminar múltiples productos', [
+                'productos' => $request->productos,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('admin.productos.index')
+                ->with('error', '❌ Error al eliminar productos: ' . $e->getMessage());
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // �📊 IMPORTAR EXCEL
     // ─────────────────────────────────────────────
     public function importarExcel(Request $request)
     {

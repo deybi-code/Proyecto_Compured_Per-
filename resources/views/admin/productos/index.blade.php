@@ -38,9 +38,12 @@
             </button>
 
             {{-- ELIMINAR MASIVO --}}
-            <button style="background:#ef4444;color:white;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
-                🗑 Eliminar seleccionados
-            </button>
+            <form method="POST" action="{{ route('admin.productos.destroyMultiple') }}" id="bulkDeleteForm" style="display:inline;">
+                @csrf
+                <button type="submit" onclick="return confirm('¿Estás seguro de eliminar los productos seleccionados?')" style="background:#ef4444;color:white;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
+                    🗑 Eliminar seleccionados
+                </button>
+            </form>
 
         </div>
 
@@ -79,7 +82,7 @@
 
     <thead style="background:#f8fafc; border-bottom: 2px solid #e2e8f0;">
         <tr style="text-align: left; color: #374151;">
-            <th><input type="checkbox"></th>
+            <th><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes()"></th>
             <th>Imagen</th>
             <th>Producto</th>
             <th>Precio</th>

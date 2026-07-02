@@ -88,6 +88,11 @@
         .cat-sidebar-title { padding: 12px 16px; font-size: 13px; }
         .cat-item { padding: 12px 16px; font-size: 13px; }
 
+        /* Ocultar carrusel de productos en móviles */
+        .product-carousel {
+            display: none !important;
+        }
+
         /* Responsive anuncios */
         .hero-scene [x-show^="slide"] > div > div {
             max-width: 100% !important;
@@ -272,17 +277,50 @@
     <div class="hero-circles"><span></span><span></span><span></span></div>
 
     {{-- SLIDE 1: Fondo animado (fijo) --}}
-    <div x-show="slide === 0" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="max-w-7xl mx-auto px-4 w-full z-10" style="padding:60px 20px; text-align:center;">
-        <div class="hero-badge" style="display:inline-block; padding:6px 16px; border:1px solid rgba(0,82,204,0.18); font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase; border-radius:20px; margin-bottom:20px; backdrop-filter:blur(5px);">
-            ✦ Tecnología Informática a tu Alcance ✦
-        </div>
-        <h1 class="hero-headline" style="font-family:'Rajdhani',sans-serif; font-size:clamp(2rem, 5vw, 3.5rem); font-weight:800; line-height:1.15; margin-bottom:20px;">
-            Computadoras, Laptops<br><span class="hero-accent">y Accesorios en TRUJILLO</span>
-        </h1>
-        <p class="hero-subline" style="font-size:16px; max-width:600px; margin:0 auto 30px auto;">Los mejores precios en tecnología informática con calidad garantizada. Envíos seguros a todo el Perú.</p>
-        <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
-            <a href="/categoria/computadoras" class="btn-mega" style="width:auto; padding:14px 32px;">🔥 Ver computadoras</a>
-            <a href="/categoria/laptops" class="btn-outline-mega">💻 Ver laptops</a>
+    <div x-show="slide === 0" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="max-w-7xl mx-auto px-4 w-full z-10" style="padding:60px 20px;">
+        <div style="display:flex; gap:40px; align-items:center; flex-wrap:wrap;">
+            {{-- Contenido principal --}}
+            <div style="flex:1; min-width:300px; text-align:center;">
+                <div class="hero-badge" style="display:inline-block; padding:6px 16px; border:1px solid rgba(0,82,204,0.18); font-size:12px; font-weight:800; letter-spacing:2px; text-transform:uppercase; border-radius:20px; margin-bottom:20px; backdrop-filter:blur(5px);">
+                    ✦ Tecnología Informática a tu Alcance ✦
+                </div>
+                <h1 class="hero-headline" style="font-family:'Rajdhani',sans-serif; font-size:clamp(2rem, 5vw, 3.5rem); font-weight:800; line-height:1.15; margin-bottom:20px;">
+                    Computadoras, Laptops<br><span class="hero-accent">y Accesorios en TRUJILLO</span>
+                </h1>
+                <p class="hero-subline" style="font-size:16px; max-width:600px; margin:0 auto 30px auto;">Los mejores precios en tecnología informática con calidad garantizada. Envíos seguros a todo el Perú.</p>
+                <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+                    <a href="/categoria/computadoras" class="btn-mega" style="width:auto; padding:14px 32px;">🔥 Ver computadoras</a>
+                    <a href="/categoria/laptops" class="btn-outline-mega">💻 Ver laptops</a>
+                </div>
+            </div>
+
+            {{-- Carrusel de productos (oculto en móviles) --}}
+            @if(isset($productos) && $productos->count() > 0)
+            <div class="product-carousel" style="flex:1; min-width:300px; max-width:400px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
+                <div style="background:var(--card); border-radius:20px; padding:20px; border:2px solid rgba(0,82,204,0.12); box-shadow:0 20px 40px rgba(0,82,204,0.12); position:relative; min-height:350px; display:flex; flex-direction:column;">
+                    @foreach($productos as $index => $producto)
+                        <div x-show="currentProduct === {{ $index }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" style="display:flex; flex-direction:column; height:100%;">
+                            {{-- Imagen del producto --}}
+                            <div style="flex:1; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
+                                @if($producto->imagen ?? false)
+                                    <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" style="max-width:100%; max-height:180px; object-fit:contain;">
+                                @elseif($producto->fotos->first() ?? false)
+                                    <img src="{{ str_starts_with($producto->fotos->first()->ruta_foto, 'http') ? $producto->fotos->first()->ruta_foto : asset('storage/'.$producto->fotos->first()->ruta_foto) }}" alt="{{ $producto->nombre }}" style="max-width:100%; max-height:180px; object-fit:contain;">
+                                @else
+                                    <div style="font-size:60px; opacity:0.3;">💻</div>
+                                @endif
+                            </div>
+                            {{-- Nombre y precio --}}
+                            <div style="text-align:center;">
+                                <h3 style="font-size:16px; font-weight:700; color:var(--text); margin-bottom:8px; line-height:1.3;">{{ Str::limit($producto->nombre, 40) }}</h3>
+                                <p style="font-size:24px; font-weight:800; color:var(--primary); margin-bottom:12px;">S/ {{ number_format($producto->precio, 2) }}</p>
+                                <a href="/producto/{{ $producto->id_producto }}" class="btn-mega" style="width:100%; padding:12px; font-size:14px;">Ver detalles</a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 

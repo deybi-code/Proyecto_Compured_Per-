@@ -9,18 +9,64 @@
 
         <div class="relative z-10">
             <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
-                Resultados para: <span class="text-blue-200">"{{ request('q') }}"</span>
+                Resultados para: <span class="text-blue-200">"{{ $q }}"</span>
             </h1>
             <p class="text-blue-100 font-medium mb-8">
-                {{ isset($productos) ? $productos->count() : 0 }} productos encontrados en nuestra tienda
+                {{ $productos->count() }} productos encontrados en nuestra tienda
             </p>
 
             {{-- Buscador Corregido (Encuadrado y proporcional) --}}
-            <form method="GET" action="{{ url()->current() }}" class="relative max-w-lg mx-auto">
-                <input type="text" name="q" value="{{ request('q') }}"
+            <form method="GET" action="{{ route('buscar') }}" class="relative max-w-lg mx-auto">
+                <input type="text" name="q" value="{{ $q }}"
                     class="w-full pl-12 pr-4 py-4 rounded-full bg-white/10 border border-white/20 text-white placeholder-blue-200 focus:outline-none focus:ring-4 focus:ring-blue-400/30 backdrop-blur-md transition-all text-lg"
                     placeholder="Buscar otro producto...">
                 <span class="absolute left-5 top-1/2 -translate-y-1/2 text-blue-200 text-xl">🔎</span>
+            </form>
+        </div>
+    </div>
+
+    {{-- Filtros y Ordenamiento --}}
+    <div class="max-w-7xl mx-auto mb-8">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
+            <form method="GET" action="{{ route('buscar') }}">
+                <input type="hidden" name="q" value="{{ $q }}">
+                <div class="flex flex-wrap gap-4 items-center justify-between">
+                    {{-- Ordenamiento por Precio --}}
+                    <div class="flex items-center gap-3">
+                        <span class="font-semibold text-gray-700 dark:text-gray-300">Ordenar por:</span>
+                        <select name="orden" onchange="this.form.submit()" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="relevancia" {{ $orden === 'relevancia' ? 'selected' : '' }}>Relevancia</option>
+                            <option value="precio_asc" {{ $orden === 'precio_asc' ? 'selected' : '' }}>Precio: Menor a Mayor</option>
+                            <option value="precio_desc" {{ $orden === 'precio_desc' ? 'selected' : '' }}>Precio: Mayor a Menor</option>
+                        </select>
+                    </div>
+
+                    {{-- Filtro de Stock --}}
+                    <div class="flex items-center gap-3">
+                        <span class="font-semibold text-gray-700 dark:text-gray-300">Stock:</span>
+                        <select name="stock" onchange="this.form.submit()" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="" {{ $stock === '' ? 'selected' : '' }}>Todos</option>
+                            <option value="con_stock" {{ $stock === 'con_stock' ? 'selected' : '' }}>Con Stock</option>
+                            <option value="sin_stock" {{ $stock === 'sin_stock' ? 'selected' : '' }}>Sin Stock</option>
+                        </select>
+                    </div>
+
+                    {{-- Filtro de Marca --}}
+                    <div class="flex items-center gap-3">
+                        <span class="font-semibold text-gray-700 dark:text-gray-300">Marca:</span>
+                        <select name="marca" onchange="this.form.submit()" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Todas</option>
+                            @foreach($marcas as $m)
+                            <option value="{{ $m }}" {{ $marca === $m ? 'selected' : '' }}>{{ $m }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Limpiar Filtros --}}
+                    <a href="{{ route('buscar', ['q' => $q]) }}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                        Limpiar filtros
+                    </a>
+                </div>
             </form>
         </div>
     </div>

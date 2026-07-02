@@ -129,6 +129,55 @@
         </div>
     </div>
 
+    {{-- Filtros y Ordenamiento --}}
+    @if($categoria)
+    <div class="animate-card" style="animation-delay: 0.15s; margin-bottom: 32px;">
+        <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadow);">
+            <form method="GET" action="{{ route('categoria', $slug) }}">
+                <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;">
+                    {{-- Ordenamiento por Precio --}}
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-weight:700; color:var(--text); font-size:14px;">Ordenar por:</span>
+                        <select name="orden" onchange="this.form.submit()" style="padding:10px 16px; border:1px solid var(--border); border-radius:10px; background:var(--input-bg); color:var(--text); font-size:14px; outline:none; cursor:pointer;">
+                            <option value="relevancia" {{ $orden === 'relevancia' ? 'selected' : '' }}>Relevancia</option>
+                            <option value="precio_asc" {{ $orden === 'precio_asc' ? 'selected' : '' }}>Precio: Menor a Mayor</option>
+                            <option value="precio_desc" {{ $orden === 'precio_desc' ? 'selected' : '' }}>Precio: Mayor a Menor</option>
+                        </select>
+                    </div>
+
+                    {{-- Filtro de Stock --}}
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-weight:700; color:var(--text); font-size:14px;">Stock:</span>
+                        <select name="stock" onchange="this.form.submit()" style="padding:10px 16px; border:1px solid var(--border); border-radius:10px; background:var(--input-bg); color:var(--text); font-size:14px; outline:none; cursor:pointer;">
+                            <option value="" {{ $stock === '' ? 'selected' : '' }}>Todos</option>
+                            <option value="con_stock" {{ $stock === 'con_stock' ? 'selected' : '' }}>Con Stock</option>
+                            <option value="sin_stock" {{ $stock === 'sin_stock' ? 'selected' : '' }}>Sin Stock</option>
+                        </select>
+                    </div>
+
+                    {{-- Filtro de Marca --}}
+                    @if($marcas->count() > 0)
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-weight:700; color:var(--text); font-size:14px;">Marca:</span>
+                        <select name="marca" onchange="this.form.submit()" style="padding:10px 16px; border:1px solid var(--border); border-radius:10px; background:var(--input-bg); color:var(--text); font-size:14px; outline:none; cursor:pointer;">
+                            <option value="">Todas</option>
+                            @foreach($marcas as $m)
+                            <option value="{{ $m }}" {{ $marca === $m ? 'selected' : '' }}>{{ $m }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
+
+                    {{-- Limpiar Filtros --}}
+                    <a href="{{ route('categoria', $slug) }}" style="color:var(--primary); font-weight:600; font-size:14px; text-decoration:none;">
+                        Limpiar filtros
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
     <div class="products-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:24px;">
         @forelse($productos ?? [] as $index => $p)
         <div class="glass-card animate-card" style="animation-delay: {{ 0.2 + ($index * 0.05) }}s;">

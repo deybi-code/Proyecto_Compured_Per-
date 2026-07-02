@@ -36,13 +36,11 @@
                     <div style="margin-top:24px;padding-top:20px;border-top:1px solid #DFE1E6" class="dark:border-gray-700">
                         <h3 style="font-weight:700;font-size:0.92rem;color:#172B4D;margin-bottom:14px" class="dark:text-white">Método de pago</h3>
                         <div style="display:flex;flex-direction:column;gap:10px">
-                            @foreach(['Transferencia bancaria' => '🏦', 'Yape / Plin' => '📱', 'Tarjeta de crédito/débito' => '💳', 'Pago contra entrega' => '🤝'] as $method => $icon)
                             <label style="display:flex;align-items:center;gap:12px;padding:14px;border:2px solid #DFE1E6;border-radius:8px;cursor:pointer;transition:border-color 0.2s" class="dark:border-gray-700 hover:border-blue-400">
-                                <input type="radio" name="metodo_pago" value="{{ $method }}" style="accent-color:#0052CC" {{ $loop->first ? 'checked' : '' }}>
-                                <span style="font-size:1.1rem">{{ $icon }}</span>
-                                <span style="font-weight:600;font-size:0.88rem;color:#172B4D" class="dark:text-gray-200">{{ $method }}</span>
+                                <input type="radio" name="metodo_pago" value="Tarjeta de crédito/débito" checked style="accent-color:#0052CC">
+                                <span style="font-size:1.1rem">💳</span>
+                                <span style="font-weight:600;font-size:0.88rem;color:#172B4D" class="dark:text-gray-200">Tarjeta de crédito/débito</span>
                             </label>
-                            @endforeach
                         </div>
                     </div>
 

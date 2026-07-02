@@ -40,11 +40,12 @@ class LiveSearch {
       }
     });
 
-    // Hide dropdown on escape key
+    // Hide dropdown on escape key, allow Enter to submit form
     this.input.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.hideDropdown();
       }
+      // Enter key will naturally submit the form since input is wrapped in form
     });
 
     // Show dropdown on focus if there's a query

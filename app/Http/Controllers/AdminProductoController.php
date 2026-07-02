@@ -19,6 +19,16 @@ class AdminProductoController extends Controller
         $apiKey = env('CLOUDINARY_API_KEY');
         $apiSecret = env('CLOUDINARY_API_SECRET');
 
+        // Verificar que las credenciales estén configuradas
+        if (!$cloudName || !$apiKey || !$apiSecret) {
+            \Log::error('Cloudinary credentials not configured', [
+                'cloud_name' => $cloudName ? 'SET' : 'MISSING',
+                'api_key' => $apiKey ? 'SET' : 'MISSING',
+                'api_secret' => $apiSecret ? 'SET' : 'MISSING',
+            ]);
+            return null;
+        }
+
         $timestamp = time();
         $params = "folder={$carpeta}&timestamp={$timestamp}{$apiSecret}";
         $signature = sha1($params);
@@ -38,12 +48,40 @@ class AdminProductoController extends Controller
         ]);
 
         $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
+
+        if ($curlError) {
+            \Log::error('Cloudinary cURL error', ['error' => $curlError]);
+            return null;
+        }
+
+        if ($httpCode !== 200) {
+            \Log::error('Cloudinary API error', [
+                'http_code' => $httpCode,
+                'response' => $response,
+            ]);
+            return null;
+        }
 
         $data = json_decode($response, true);
 
-        // Retorna la URL segura de Cloudinary o null si falló
-        return $data['secure_url'] ?? null;
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            \Log::error('Cloudinary JSON decode error', [
+                'error' => json_last_error_msg(),
+                'response' => $response,
+            ]);
+            return null;
+        }
+
+        if (!isset($data['secure_url'])) {
+            \Log::error('Cloudinary response missing secure_url', ['data' => $data]);
+            return null;
+        }
+
+        // Retorna la URL segura de Cloudinary
+        return $data['secure_url'];
     }
 
     // ─────────────────────────────────────────────
@@ -142,12 +180,17 @@ class AdminProductoController extends Controller
             $url = $this->subirACloudinary($request->file('imagen_principal'));
             if ($url) {
                 $data['imagen'] = $url;
+            } else {
+                \Log::warning('Failed to upload main image to Cloudinary', [
+                    'producto' => $data['nombre'],
+                ]);
             }
         }
 
         $producto = Producto::create($data);
 
         // Imágenes adicionales → Cloudinary → tabla fotos_productos
+        $imagenesSubidas = 0;
         foreach (['imagen_1', 'imagen_2', 'imagen_3', 'imagen_4'] as $i => $campo) {
             if ($request->hasFile($campo)) {
                 $url = $this->subirACloudinary($request->file($campo));
@@ -157,12 +200,22 @@ class AdminProductoController extends Controller
                         'ruta_foto' => $url,
                         'es_principal' => ($i === 0 && ! isset($data['imagen'])) ? 1 : 0,
                     ]);
+                    $imagenesSubidas++;
+                } else {
+                    \Log::warning("Failed to upload additional image {$campo} to Cloudinary", [
+                        'producto_id' => $producto->id_producto,
+                    ]);
                 }
             }
         }
 
+        $mensaje = '✅ Producto creado correctamente.';
+        if ($imagenesSubidas > 0) {
+            $mensaje .= " ({$imagenesSubidas} imágenes subidas)";
+        }
+
         return redirect()->route('admin.productos.index')
-            ->with('success', '✅ Producto creado correctamente.');
+            ->with('success', $mensaje);
     }
 
     // ─────────────────────────────────────────────

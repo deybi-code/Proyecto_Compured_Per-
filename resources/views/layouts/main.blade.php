@@ -508,15 +508,17 @@
 
             {{-- Mobile Search --}}
             <div style="padding: 0 20px 16px;">
-                <div class="cp-search-container cp-search-container-mobile">
-                    <input type="text"
-                           id="cp-mobile-search-input"
-                           name="q"
-                           value="{{ request('q') }}"
-                           placeholder="🔍 Buscar productos..."
-                           autocomplete="off">
-                    <div id="cp-mobile-search-dropdown" class="cp-search-dropdown cp-search-dropdown-mobile"></div>
-                </div>
+                <form method="GET" action="{{ route('buscar') }}" class="cp-search-form">
+                    <div class="cp-search-container cp-search-container-mobile">
+                        <input type="text"
+                               id="cp-mobile-search-input"
+                               name="q"
+                               value="{{ request('q') }}"
+                               placeholder="🔍 Buscar productos..."
+                               autocomplete="off">
+                        <div id="cp-mobile-search-dropdown" class="cp-search-dropdown cp-search-dropdown-mobile"></div>
+                    </div>
+                </form>
             </div>
 
             <div class="cp-drawer-section">
@@ -639,15 +641,17 @@
 
             <div class="cp-nav-actions">
                 {{-- Buscador Predictivo --}}
-                <div class="cp-search-container">
-                    <input type="text"
-                           id="cp-desktop-search-input"
-                           name="q"
-                           value="{{ request('q') }}"
-                           placeholder="🔍 Buscar productos..."
-                           autocomplete="off">
-                    <div id="cp-desktop-search-dropdown" class="cp-search-dropdown"></div>
-                </div>
+                <form method="GET" action="{{ route('buscar') }}" class="cp-search-form">
+                    <div class="cp-search-container">
+                        <input type="text"
+                               id="cp-desktop-search-input"
+                               name="q"
+                               value="{{ request('q') }}"
+                               placeholder="🔍 Buscar productos..."
+                               autocomplete="off">
+                        <div id="cp-desktop-search-dropdown" class="cp-search-dropdown"></div>
+                    </div>
+                </form>
 
                 {{-- Toggle de tema --}}
                 <button type="button" class="cp-icon-btn" id="cp-theme-toggle" title="Cambiar tema">

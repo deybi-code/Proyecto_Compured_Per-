@@ -40,21 +40,63 @@ Route::get('/', function () {
     return view('index', compact('productos', 'categorias', 'anuncios'));
 })->name('home');
 
-Route::get('/categoria/{slug?}', function ($slug = null) {
+Route::get('/categoria/{slug?}', function (Request $request, $slug = null) {
     $categorias = Categoria::all();
     $productos = collect();
+    $categoria = null;
+
+    $orden = $request->input('orden', 'relevancia');
+    $stock = $request->input('stock', '');
+    $marca = $request->input('marca', '');
 
     if ($slug) {
-        $cat = $categorias->first(fn ($c) => Str::slug($c->nombre_categoria) === $slug
-        );
+        $cat = $categorias->first(fn ($c) => Str::slug($c->nombre_categoria) === $slug);
         if ($cat) {
-            $productos = Producto::with('fotos')
-                ->where('id_categoria', $cat->id_categoria)
-                ->get();
+            $categoria = $cat;
+            $query = Producto::with('fotos')->where('id_categoria', $cat->id_categoria);
+
+            // Filtro de stock
+            if ($stock === 'con_stock') {
+                $query->where('stock', '>', 0);
+            } elseif ($stock === 'sin_stock') {
+                $query->where('stock', '<=', 0);
+            }
+
+            // Filtro de marca
+            if ($marca) {
+                $query->where('marca', 'like', "%{$marca}%");
+            }
+
+            // Ordenamiento
+            switch ($orden) {
+                case 'precio_asc':
+                    $query->orderBy('precio', 'asc');
+                    break;
+                case 'precio_desc':
+                    $query->orderBy('precio', 'desc');
+                    break;
+                default:
+                    $query->orderBy('fecha_registro', 'desc');
+                    break;
+            }
+
+            $productos = $query->get();
         }
     }
 
-    return view('categoria', compact('categorias', 'productos', 'slug'));
+    // Obtener marcas únicas de la categoría para el filtro
+    $marcas = collect();
+    if ($categoria) {
+        $marcas = Producto::select('marca')
+            ->where('id_categoria', $categoria->id_categoria)
+            ->whereNotNull('marca')
+            ->where('marca', '!=', '')
+            ->distinct()
+            ->orderBy('marca')
+            ->pluck('marca');
+    }
+
+    return view('categoria', compact('categorias', 'productos', 'slug', 'categoria', 'orden', 'stock', 'marca', 'marcas'));
 })->name('categoria');
 
 Route::get('/producto/{id?}', function ($id = null) {
@@ -112,21 +154,57 @@ Route::get('/seguimiento', function (Request $request) {
 
 Route::get('/buscar', function (Request $request) {
     $q = $request->input('q', '');
-    $productos = collect();
+    $orden = $request->input('orden', 'relevancia'); // relevancia, precio_asc, precio_desc
+    $stock = $request->input('stock', ''); // '', con_stock, sin_stock
+    $marca = $request->input('marca', '');
+
+    $query = Producto::with('fotos');
 
     if (strlen(trim($q)) >= 2) {
-        $productos = Producto::with('fotos')
-            ->where(function ($query) use ($q) {
-                $query->where('nombre', 'like', "%{$q}%")
-                    ->orWhere('marca', 'like', "%{$q}%")
-                    ->orWhere('detalles_tecnicos', 'like', "%{$q}%");
-            })
-            ->get();
+        $query->where(function ($query) use ($q) {
+            $query->where('nombre', 'like', "%{$q}%")
+                ->orWhere('marca', 'like', "%{$q}%")
+                ->orWhere('detalles_tecnicos', 'like', "%{$q}%");
+        });
     }
 
+    // Filtro de stock
+    if ($stock === 'con_stock') {
+        $query->where('stock', '>', 0);
+    } elseif ($stock === 'sin_stock') {
+        $query->where('stock', '<=', 0);
+    }
+
+    // Filtro de marca
+    if ($marca) {
+        $query->where('marca', 'like', "%{$marca}%");
+    }
+
+    // Ordenamiento
+    switch ($orden) {
+        case 'precio_asc':
+            $query->orderBy('precio', 'asc');
+            break;
+        case 'precio_desc':
+            $query->orderBy('precio', 'desc');
+            break;
+        default:
+            $query->orderBy('fecha_registro', 'desc');
+            break;
+    }
+
+    $productos = $query->get();
     $categorias = Categoria::all();
 
-    return view('buscar', compact('productos', 'categorias', 'q'));
+    // Obtener marcas únicas para el filtro
+    $marcas = Producto::select('marca')
+        ->whereNotNull('marca')
+        ->where('marca', '!=', '')
+        ->distinct()
+        ->orderBy('marca')
+        ->pluck('marca');
+
+    return view('buscar', compact('productos', 'categorias', 'q', 'orden', 'stock', 'marca', 'marcas'));
 })->name('buscar');
 
 // 🔍 API para búsqueda predictiva (autocomplete)

@@ -254,9 +254,28 @@ class AdminProductoController extends Controller
             'id_categoria' => 'required|integer|exists:categorias,id_categoria',
             'detalles_tecnicos' => 'nullable|string',
             'mostrar_inicio' => 'nullable|in:0,1',
+            'imagen_principal' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $data['mostrar_inicio'] = $request->has('mostrar_inicio') ? 1 : 0;
+
+        // Imagen principal → Cloudinary (si se envió una nueva)
+        if ($request->hasFile('imagen_principal')) {
+            // Eliminar imagen anterior de Cloudinary si existe
+            if ($producto->imagen) {
+                $this->eliminarDeCloudinary($producto->imagen);
+            }
+
+            // Subir nueva imagen a Cloudinary
+            $url = $this->subirACloudinary($request->file('imagen_principal'));
+            if ($url) {
+                $data['imagen'] = $url;
+            } else {
+                \Log::warning('Failed to upload main image to Cloudinary during update', [
+                    'producto_id' => $producto->id_producto,
+                ]);
+            }
+        }
 
         $producto->update($data);
 

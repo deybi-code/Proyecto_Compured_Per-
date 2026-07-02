@@ -3,18 +3,6 @@
 @section('content')
 
 <style>
-    /* Variables sincronizadas con el ecosistema (Login, Index, Dashboard, etc.) */
-    :root {
-        --bg: #f0f4ff; --card: rgba(255,255,255,0.92); --text: #0f172a; --muted: #64748b;
-        --border: #cbd5e1; --input-bg: #f8fafc; --primary: #1d4ed8; --primary-hover: #1e40af;
-        --accent: #3b82f6; --shadow: 0 25px 60px rgba(0,0,0,0.18);
-    }
-    [data-theme="dark"] {
-        --bg: #0a0f1e; --card: rgba(15,23,42,0.93); --text: #f1f5f9; --muted: #94a3b8;
-        --border: #1e3a5f; --input-bg: #0f172a; --primary: #3b82f6; --primary-hover: #2563eb;
-        --accent: #60a5fa; --shadow: 0 25px 60px rgba(0,0,0,0.6);
-    }
-
     @keyframes fadeUp {
         from { opacity: 0; transform: translateY(30px) scale(0.95); }
         to { opacity: 1; transform: translateY(0) scale(1); }
@@ -24,11 +12,10 @@
     /* Hero header */
     .hero-scene {
         position: relative; overflow: hidden;
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 70%, #0f172a 100%);
+        background: var(--pub-hero-gradient);
         padding: 60px 20px; text-align: center; border-radius: 0 0 40px 40px;
         box-shadow: var(--shadow); margin-bottom: 40px;
     }
-    [data-theme="dark"] .hero-scene { background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e3a5f 70%, #020617 100%); }
 
     .hero-grid {
         position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -72,7 +59,7 @@
     <div class="hero-grid"></div>
     <div style="position:relative; z-index:2;">
         <div style="font-size:40px; margin-bottom:16px; animation:floatIcon 3s ease-in-out infinite;">⚖️</div>
-        <h1 style="font-family:'Segoe UI',sans-serif; font-size:clamp(2rem, 4vw, 3rem); font-weight:900; color:white; line-height:1.2; margin-bottom:12px; text-shadow:0 10px 30px rgba(0,0,0,0.3);">
+        <h1 class="hero-title" style="font-family:'Rajdhani',sans-serif; font-size:clamp(2rem, 4vw, 3rem); font-weight:900; line-height:1.2; margin-bottom:12px;">
             Términos y Condiciones
         </h1>
         <p style="color:rgba(255,255,255,0.7); font-size:16px; font-weight:500;">

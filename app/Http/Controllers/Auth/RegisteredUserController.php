@@ -28,30 +28,27 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-public function store(Request $request): RedirectResponse
-{
-    // 1. Validamos usando los nombres reales de los inputs del formulario
-    //    (el formulario envía "nombre_completo", no "name")
-    $request->validate([
-        'nombre_completo' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:usuarios,correo'], // Apunta a tu tabla 'usuarios' y columna 'correo'
-        'password' => ['required', 'confirmed', Rules\Password::defaults()],
-    ]);
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'nombre_completo' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:usuarios,correo'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
 
-    // 2. Mapeamos las variables a las columnas reales de tu tabla 'usuarios'
-    $user = User::create([
-        'nombre_completo' => $request->nombre_completo,
-        'correo'          => $request->email,
-        'password'        => Hash::make($request->password), // Encriptación correcta para Laravel
-        'rol'             => 'normal',                       // Soluciona el NOT NULL de la DB
-        'preferencia_tema'=> 'light',                        // Soluciona el NOT NULL de la DB
-    ]);
+        $user = User::create([
+            'nombre_completo' => $request->nombre_completo,
+            'correo' => $request->email,
+            'password' => Hash::make($request->password),
+            'rol' => 'cliente',
+            'preferencia_tema' => 'light',
+            'fecha_registro' => now(),
+        ]);
 
-    event(new Registered($user));
+        event(new Registered($user));
 
-    Auth::login($user);
+        Auth::login($user);
 
-    // Te loguea y te manda directo al Home con el mensaje de éxito
-    return redirect('/')->with('status', '¡Registro exitoso! Bienvenido a Compured Perú.');
-}
+        return redirect('/')->with('status', '¡Registro exitoso! Bienvenido a Compured Perú.');
+    }
 }

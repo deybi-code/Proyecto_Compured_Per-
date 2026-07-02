@@ -5,19 +5,6 @@
 @section('content')
 
 <style>
-    :root {
-        --bg: #f0f4ff; --card: rgba(255,255,255,0.97); --text: #0f172a; --muted: #64748b;
-        --border: #e2e8f0; --input-bg: #f8fafc; --primary: #1d4ed8; --primary-hover: #1e40af;
-        --accent: #3b82f6; --shadow: 0 8px 32px rgba(0,0,0,0.10);
-        --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
-    }
-    [data-theme="dark"] {
-        --bg: #0a0f1e; --card: rgba(15,23,42,0.97); --text: #f1f5f9; --muted: #94a3b8;
-        --border: #1e3a5f; --input-bg: #0f172a; --primary: #3b82f6; --primary-hover: #2563eb;
-        --accent: #60a5fa; --shadow: 0 8px 32px rgba(0,0,0,0.4);
-        --success: #34d399; --warning: #fbbf24; --danger: #f87171;
-    }
-
     @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
     .anim { animation: fadeUp 0.5s ease forwards; opacity:0; }
 

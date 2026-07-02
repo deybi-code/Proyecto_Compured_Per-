@@ -6,8 +6,7 @@
     <title>Recuperar Contraseña - Compured Perú</title>
     <script>
         (function(){
-            // Por defecto siempre claro, salvo que el usuario haya elegido oscuro antes.
-            const t = localStorage.getItem('theme');
+            const t = localStorage.getItem('theme') || localStorage.getItem('cpTheme');
             if (t === 'dark') {
                 document.documentElement.setAttribute('data-theme','dark');
                 document.documentElement.classList.add('dark');
@@ -16,15 +15,12 @@
     </script>
     @vite(['resources/css/app.css'])
     <style>
-        :root { --bg:#f0f4ff; --card:rgba(255,255,255,0.92); --text:#0f172a; --muted:#64748b; --border:#cbd5e1; --input-bg:#f8fafc; --primary:#1d4ed8; --accent:#3b82f6; --shadow:0 25px 60px rgba(0,0,0,0.18); --error:#dc2626; --success:#16a34a; }
-        [data-theme="dark"] { --bg:#0a0f1e; --card:rgba(15,23,42,0.93); --text:#f1f5f9; --muted:#94a3b8; --border:#1e3a5f; --input-bg:#0f172a; --primary:#3b82f6; --accent:#60a5fa; --shadow:0 25px 60px rgba(0,0,0,0.6); --error:#f87171; --success:#4ade80; }
         *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-        body { font-family:'Segoe UI',system-ui,sans-serif; background-color:var(--bg); color:var(--text); display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; position:relative; overflow:hidden; transition:background-color 0.4s,color 0.4s; }
-        .bg-scene { position:fixed; inset:0; z-index:0; background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 40%,#1d4ed8 70%,#0f172a 100%); }
-        [data-theme="dark"] .bg-scene { background:linear-gradient(135deg,#020617 0%,#0f172a 40%,#1e3a5f 70%,#020617 100%); }
-        .bg-grid { position:fixed; inset:0; z-index:0; pointer-events:none; background-image:linear-gradient(rgba(59,130,246,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.05) 1px,transparent 1px); background-size:50px 50px; }
+        body { font-family:'Inter','Segoe UI',system-ui,sans-serif; background-color:var(--bg); color:var(--text); display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; position:relative; overflow:hidden; transition:background-color 0.4s,color 0.4s; }
+        .bg-scene { position:fixed; inset:0; z-index:0; background:var(--pub-hero-gradient); }
+        .bg-grid { position:fixed; inset:0; z-index:0; pointer-events:none; background-image:linear-gradient(var(--pub-hero-grid) 1px,transparent 1px),linear-gradient(90deg,var(--pub-hero-grid) 1px,transparent 1px); background-size:50px 50px; }
         .bg-circles { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
-        .bg-circles span { position:absolute; border-radius:50%; background:rgba(59,130,246,0.1); animation:floatUp linear infinite; }
+        .bg-circles span { position:absolute; border-radius:50%; background:rgba(0,82,204,0.1); animation:floatUp linear infinite; }
         .bg-circles span:nth-child(1){width:80px;height:80px;left:10%;animation-duration:13s;}
         .bg-circles span:nth-child(2){width:40px;height:40px;left:40%;animation-duration:9s;animation-delay:2s;}
         .bg-circles span:nth-child(3){width:60px;height:60px;left:70%;animation-duration:11s;animation-delay:4s;}

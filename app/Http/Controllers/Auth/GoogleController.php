@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
@@ -36,19 +36,20 @@ class GoogleController extends Controller
                 ['correo' => $googleUser->getEmail()],
                 // Crear o actualizar con los campos reales
                 [
-                    'nombre_completo'  => $googleUser->getName(),
-                    'password'         => Hash::make(uniqid()),  // password dummy (login es via Google)
-                    'rol'              => 'cliente',
+                    'nombre_completo' => $googleUser->getName(),
+                    'password' => Hash::make(uniqid()),
+                    'rol' => 'cliente',
                     'preferencia_tema' => 'light',
+                    'fecha_registro' => now(),
                 ]
             );
 
             Auth::login($user);
 
-            return redirect('/')->with('success', '¡Bienvenido, ' . $user->nombre_completo . '!');
+            return redirect('/')->with('success', '¡Bienvenido, '.$user->nombre_completo.'!');
 
         } catch (\Exception $e) {
-            return redirect('/login')->with('error', 'No se pudo iniciar sesión con Google: ' . $e->getMessage());
+            return redirect('/login')->with('error', 'No se pudo iniciar sesión con Google: '.$e->getMessage());
         }
     }
 }

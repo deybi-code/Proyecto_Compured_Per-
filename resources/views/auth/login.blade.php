@@ -7,8 +7,7 @@
     {{-- Sincronización inmediata del tema (evita flash) --}}
     <script>
         (function(){
-            // Por defecto siempre claro, salvo que el usuario haya elegido oscuro antes.
-            const t = localStorage.getItem('theme');
+            const t = localStorage.getItem('theme') || localStorage.getItem('cpTheme');
             if (t === 'dark') {
                 document.documentElement.setAttribute('data-theme','dark');
                 document.documentElement.classList.add('dark');
@@ -17,36 +16,10 @@
     </script>
     @vite(['resources/css/app.css'])
     <style>
-        :root {
-            --bg: #f0f4ff;
-            --card: rgba(255,255,255,0.92);
-            --text: #0f172a;
-            --muted: #64748b;
-            --border: #cbd5e1;
-            --input-bg: #f8fafc;
-            --primary: #1d4ed8;
-            --primary-hover: #1e40af;
-            --accent: #3b82f6;
-            --shadow: 0 25px 60px rgba(0,0,0,0.18);
-            --error: #dc2626;
-        }
-        [data-theme="dark"] {
-            --bg: #0a0f1e;
-            --card: rgba(15,23,42,0.93);
-            --text: #f1f5f9;
-            --muted: #94a3b8;
-            --border: #1e3a5f;
-            --input-bg: #0f172a;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --accent: #60a5fa;
-            --shadow: 0 25px 60px rgba(0,0,0,0.6);
-            --error: #f87171;
-        }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { height: 100%; }
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             display: flex;
@@ -59,15 +32,10 @@
             transition: background-color 0.4s, color 0.4s;
         }
 
-        /* Fondo animado con circuitos */
         .bg-scene {
             position: fixed; inset: 0; z-index: 0;
-            background:
-                linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 70%, #0f172a 100%);
+            background: var(--pub-hero-gradient);
             transition: all 0.4s;
-        }
-        [data-theme="dark"] .bg-scene {
-            background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e3a5f 70%, #020617 100%);
         }
 
         /* Partículas SVG animadas de fondo */
@@ -77,7 +45,7 @@
         .bg-circles span {
             position: absolute;
             border-radius: 50%;
-            background: rgba(59,130,246,0.12);
+            background: rgba(0, 82, 204, 0.1);
             animation: floatUp linear infinite;
         }
         .bg-circles span:nth-child(1)  { width:80px;  height:80px;  left:10%; animation-duration:12s; animation-delay:0s; }

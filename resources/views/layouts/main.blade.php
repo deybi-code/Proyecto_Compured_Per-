@@ -17,32 +17,19 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script>
-        // Aplica el tema guardado antes de pintar la página (evita parpadeo)
         (function () {
-            // El tema por defecto es SIEMPRE claro. Solo se activa oscuro
-            // si el usuario lo eligió explícitamente antes (guardado en localStorage).
-            // Antes se usaba prefers-color-scheme del sistema operativo, lo que
-            // hacía que el sitio se viera oscuro "sin motivo" en dispositivos
-            // con el modo oscuro activado a nivel de SO.
-            const saved = localStorage.getItem('theme');
+            const saved = localStorage.getItem('theme') || localStorage.getItem('cpTheme');
             const theme = saved === 'dark' ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', theme);
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         })();
     </script>
 
     <style>
-        :root {
-            --bg: #f0f4ff; --card: rgba(255,255,255,0.92); --text: #0f172a; --muted: #64748b;
-            --border: #cbd5e1; --input-bg: #f8fafc; --primary: #1d4ed8; --primary-hover: #1e40af;
-            --accent: #3b82f6; --shadow: 0 25px 60px rgba(0,0,0,0.18); --error: #dc2626;
-        }
-        [data-theme="dark"] {
-            --bg: #0a0f1e; --card: rgba(15,23,42,0.93); --text: #f1f5f9; --muted: #94a3b8;
-            --border: #1e3a5f; --input-bg: #0f172a; --primary: #3b82f6; --primary-hover: #2563eb;
-            --accent: #60a5fa; --shadow: 0 25px 60px rgba(0,0,0,0.6); --error: #f87171;
-        }
-
-        * { box-sizing: border-box; }
         body {
             margin: 0;
             background: var(--bg);
@@ -55,9 +42,13 @@
 
         .cp-navbar {
             position: sticky; top: 0; z-index: 50;
-            background: var(--card);
+            background: #ffffff;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
+        }
+        html.dark .cp-navbar,
+        html[data-theme="dark"] .cp-navbar {
+            background: var(--card);
         }
         .cp-navbar-inner {
             max-width: 1280px; margin: 0 auto; padding: 14px 20px;
@@ -100,8 +91,8 @@
             padding: 14px 18px; border-radius: 12px; font-size: 14px; font-weight: 600;
             margin-bottom: 12px; animation: cpFlashIn 0.3s ease;
         }
-        .cp-flash-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #059669; }
-        .cp-flash-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--error); }
+        .cp-flash-success { background: rgba(140, 198, 63, 0.12); border: 1px solid rgba(140, 198, 63, 0.35); color: var(--cp-green-dark, #6EA82E); }
+        .cp-flash-error { background: rgba(0, 82, 204, 0.08); border: 1px solid rgba(0, 58, 153, 0.22); color: var(--cp-blue-dark, #003A99); }
         @keyframes cpFlashIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
         .cp-cart-badge {
@@ -143,9 +134,13 @@
         }
 
         .cp-footer {
-            background: var(--card); border-top: 1px solid var(--border);
+            background: #ffffff; border-top: 1px solid var(--border);
             margin-top: 60px; padding: 36px 20px 24px;
             color: var(--muted); font-size: 13px;
+        }
+        html.dark .cp-footer,
+        html[data-theme="dark"] .cp-footer {
+            background: var(--card);
         }
         .cp-footer-inner { max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
         .cp-footer a { color: var(--muted); }
@@ -179,7 +174,7 @@
         }
         .cp-user-dropdown svg { width: 17px; height: 17px; flex-shrink: 0; }
         .cp-user-dropdown a:hover, .cp-user-dropdown button:hover { background: var(--input-bg); }
-        .cp-user-dropdown button.danger { color: var(--error); }
+        .cp-user-dropdown button.danger { color: var(--cp-blue-dark, #003A99); }
         .cp-user-dropdown .divider { height: 1px; background: var(--border); margin: 4px 2px; }
     </style>
 
@@ -235,7 +230,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3.4v5.4c0 5-3.2 8-7.5 9.7-4.3-1.7-7.5-4.7-7.5-9.7V5.9L12 2.5z"/></svg>
                             Panel Admin
                         </a>
-                    @elseif($rol === 'vendedor')
+                    @elseif(in_array($rol, ['vendedor', 'ventas'], true))
                         <a href="{{ route('admin.ventas.index') }}" class="cp-btn-primary">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
                             Panel de Ventas
@@ -259,7 +254,7 @@
                             <div class="cp-user-dropdown-header">
                                 <div class="name">{{ auth()->user()->nombre_completo ?? 'Mi cuenta' }}</div>
                                 <span class="role">
-                                    {{ $rol === 'admin' ? 'Administrador' : ($rol === 'vendedor' ? 'Vendedor' : 'Cliente') }}
+                                    {{ $rol === 'admin' ? 'Administrador' : (in_array($rol, ['vendedor', 'ventas'], true) ? 'Vendedor' : 'Cliente') }}
                                 </span>
                             </div>
 
@@ -277,7 +272,7 @@
                                     Anuncios
                                 </a>
                                 <div class="divider"></div>
-                            @elseif($rol === 'vendedor')
+                            @elseif(in_array($rol, ['vendedor', 'ventas'], true))
                                 <a href="{{ route('admin.ventas.index') }}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
                                     Panel de Ventas
@@ -287,7 +282,7 @@
 
                             <a href="{{ route('dashboard') }}">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
-                                {{ $rol === 'admin' || $rol === 'vendedor' ? 'Mis Compras' : 'Panel de Usuario' }}
+                                {{ in_array($rol, ['admin', 'vendedor', 'ventas'], true) ? 'Mis Compras' : 'Panel de Usuario' }}
                             </a>
 
                             <a href="{{ route('profile.edit') }}">
@@ -331,10 +326,10 @@
                     <a href="{{ route('admin.productos.index') }}">Panel Admin (Productos)</a>
                     <a href="{{ route('admin.ventas.index') }}">Ventas</a>
                     <a href="{{route('admin.anuncios.index') }}">Anuncios</a>
-                @elseif($rolMobile === 'vendedor')
+                @elseif(in_array($rolMobile, ['vendedor', 'ventas'], true))
                     <a href="{{ route('admin.ventas.index') }}">Panel de Ventas</a>
                 @endif
-                <a href="{{ route('dashboard') }}">{{ in_array($rolMobile, ['admin','vendedor']) ? 'Mis Compras' : 'Panel de Usuario' }}</a>
+                <a href="{{ route('dashboard') }}">{{ in_array($rolMobile, ['admin', 'vendedor', 'ventas'], true) ? 'Mis Compras' : 'Panel de Usuario' }}</a>
                 <a href="{{ route('profile.edit') }}">Editar Perfil</a>
                 <form method="POST" action="{{ route('logout') }}" style="margin:0">
                     @csrf
@@ -393,6 +388,8 @@
             const newTheme = isDark ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
+            localStorage.setItem('cpTheme', newTheme);
+            document.documentElement.classList.toggle('dark', newTheme === 'dark');
             syncThemeIcon();
         });
 

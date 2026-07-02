@@ -3,18 +3,6 @@
 @section('content')
 
 <style>
-    /* Variables sincronizadas con Login, Index y Dashboard */
-    :root {
-        --bg: #f0f4ff; --card: rgba(255,255,255,0.92); --text: #0f172a; --muted: #64748b;
-        --border: #cbd5e1; --input-bg: #f8fafc; --primary: #1d4ed8; --primary-hover: #1e40af;
-        --accent: #3b82f6; --shadow: 0 25px 60px rgba(0,0,0,0.18); --success: #10b981;
-    }
-    [data-theme="dark"] {
-        --bg: #0a0f1e; --card: rgba(15,23,42,0.93); --text: #f1f5f9; --muted: #94a3b8;
-        --border: #1e3a5f; --input-bg: #0f172a; --primary: #3b82f6; --primary-hover: #2563eb;
-        --accent: #60a5fa; --shadow: 0 25px 60px rgba(0,0,0,0.6); --success: #34d399;
-    }
-
     /* Animaciones Generales */
     @keyframes fadeUp {
         from { opacity: 0; transform: translateY(30px) scale(0.95); }
@@ -25,11 +13,10 @@
     /* Banner de Categoría Hero */
     .cat-hero {
         position: relative; overflow: hidden;
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 70%, #0f172a 100%);
+        background: var(--pub-hero-gradient);
         border-radius: 20px; box-shadow: var(--shadow); transition: all 0.4s;
         padding: 40px; display: flex; align-items: center; gap: 24px; margin-bottom: 40px;
     }
-    [data-theme="dark"] .cat-hero { background: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e3a5f 70%, #020617 100%); }
 
     .cat-bg-grid {
         position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -108,10 +95,10 @@
         <div class="cat-bg-grid"></div>
         <div class="cat-icon-wrap">🖥️</div>
         <div style="position:relative; z-index:2;">
-            <h1 style="font-family:'Segoe UI',sans-serif; font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:900; color:white; line-height:1.2; margin-bottom:8px; text-shadow:0 4px 10px rgba(0,0,0,0.3);">
+            <h1 class="hero-title" style="font-family:'Rajdhani',sans-serif; font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:900; line-height:1.2; margin-bottom:8px;">
                 {{ isset($categoria) ? $categoria->nombre_categoria : 'Categoría' }}
             </h1>
-            <div style="display:inline-block; padding:4px 12px; background:rgba(255,255,255,0.15); backdrop-filter:blur(5px); border-radius:20px; border:1px solid rgba(255,255,255,0.2); color:white; font-size:13px; font-weight:700; letter-spacing:1px;">
+            <div class="hero-badge" style="display:inline-block; padding:4px 12px; backdrop-filter:blur(5px); border-radius:20px; font-size:13px; font-weight:700; letter-spacing:1px;">
                 ⭐ {{ isset($productos) ? $productos->count() : 0 }} productos disponibles
             </div>
         </div>

@@ -3,27 +3,13 @@
 @section('content')
 
 <style>
-    /* Variables sincronizadas con Login e Index */
-    :root {
-        --bg: #f0f4ff; --card: rgba(255,255,255,0.92); --text: #0f172a; --muted: #64748b;
-        --border: #cbd5e1; --input-bg: #f8fafc; --primary: #1d4ed8; --primary-hover: #1e40af;
-        --accent: #3b82f6; --shadow: 0 25px 60px rgba(0,0,0,0.18);
-        --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --info: #3b82f6;
-    }
-    [data-theme="dark"] {
-        --bg: #0a0f1e; --card: rgba(15,23,42,0.93); --text: #f1f5f9; --muted: #94a3b8;
-        --border: #1e3a5f; --input-bg: #0f172a; --primary: #3b82f6; --primary-hover: #2563eb;
-        --accent: #60a5fa; --shadow: 0 25px 60px rgba(0,0,0,0.6);
-        --success: #34d399; --warning: #fbbf24; --danger: #f87171; --info: #60a5fa;
-    }
-
     /* Fondo base unificado sutil */
     .dashboard-wrapper {
         position: relative; min-height: calc(100vh - 200px); padding-bottom: 60px;
     }
     .dash-bg-grid {
         position: fixed; inset: 0; z-index: 0; pointer-events: none;
-        background-image: linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+        background-image: linear-gradient(rgba(0,82,204,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,82,204,0.04) 1px, transparent 1px);
         background-size: 50px 50px;
     }
 
@@ -31,7 +17,7 @@
     .glass-card {
         position: relative; z-index: 10;
         background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(59,130,246,0.15); border-radius: 20px;
+        border: 1px solid rgba(0,82,204,0.14); border-radius: 20px;
         box-shadow: var(--shadow); transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
         color: var(--text); overflow: hidden;
     }

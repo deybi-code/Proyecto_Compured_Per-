@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasFactory, Notifiable;
 
     protected $table = 'usuarios';
+
     protected $primaryKey = 'id_usuario';
 
     /**
@@ -26,6 +28,7 @@ class User extends Authenticatable
         'password',
         'rol',
         'preferencia_tema',
+        'fecha_registro',
     ];
 
     protected $hidden = [
@@ -52,5 +55,23 @@ class User extends Authenticatable
     public function getEmailAttribute()
     {
         return $this->attributes['correo'] ?? null;
+    }
+
+    public function getEmailForPasswordReset(): string
+    {
+        return (string) ($this->attributes['correo'] ?? '');
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function rolesVendedor(): array
+    {
+        return ['admin', 'vendedor', 'ventas'];
+    }
+
+    public function tieneRolVendedor(): bool
+    {
+        return in_array(strtolower(trim($this->rol ?? '')), self::rolesVendedor(), true);
     }
 }

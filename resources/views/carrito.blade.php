@@ -3,29 +3,10 @@
 @section('content')
 
 <style>
-    /* Variables y diseño base sincronizado con Home / Login */
-    :root {
-        --bg: #f0f4ff; --card: rgba(255,255,255,0.92); --text: #0f172a; --muted: #64748b;
-        --border: #cbd5e1; --input-bg: #f8fafc; --primary: #1d4ed8; --primary-hover: #1e40af;
-        --accent: #3b82f6; --shadow: 0 25px 60px rgba(0,0,0,0.18);
-        --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
-        --surface-2: #ffffff;
-    }
-    [data-theme="dark"] {
-        --bg: #060a14; --card: rgba(13,20,38,0.94); --text: #f1f5f9; --muted: #8fa1bd;
-        --border: #1c2c4a; --input-bg: #0a1226; --primary: #3b82f6; --primary-hover: #2563eb;
-        --accent: #60a5fa; --shadow: 0 30px 70px rgba(0,0,0,0.65);
-        --success: #34d399; --warning: #fbbf24; --danger: #f87171;
-        --surface-2: #0d1426;
-    }
-
     /* ===== Hero compacto ===== */
     .hero-scene {
         position: relative; overflow: hidden;
-        background: linear-gradient(135deg, #0b1120 0%, #14204a 45%, #1d4ed8 100%);
-    }
-    [data-theme="dark"] .hero-scene {
-        background: linear-gradient(135deg, #020617 0%, #0a1128 45%, #16264d 100%);
+        background: var(--pub-hero-gradient);
     }
     .hero-grid {
         position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -232,9 +213,9 @@
     /* Breadcrumb superior slim */
     .modern-breadcrumb {
         display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600;
-        color: rgba(255,255,255,0.6);
+        color: var(--muted);
     }
-    .modern-breadcrumb a { color: rgba(255,255,255,0.85); text-decoration: none; }
+    .modern-breadcrumb a { color: var(--primary); text-decoration: none; }
     .modern-breadcrumb a:hover { text-decoration: underline; }
 
     /* ===== Resumen sticky ===== */
@@ -263,7 +244,7 @@
         <nav class="modern-breadcrumb" style="margin-bottom:10px;">
             <a href="/">Inicio</a><span>›</span><span style="color:#fff;">Carrito de compras</span>
         </nav>
-        <h1 style="font-family:'Segoe UI',sans-serif; font-size:clamp(1.5rem, 3.2vw, 2.1rem); font-weight:800; color:white; line-height:1.2;">
+        <h1 class="hero-title" style="font-family:'Rajdhani',sans-serif; font-size:clamp(1.5rem, 3.2vw, 2.1rem); font-weight:800; line-height:1.2;">
             Finalizar Compra <span style="color:var(--accent);">🛒</span>
         </h1>
     </div>
@@ -283,6 +264,7 @@
     @php
         $total = collect($carrito)->sum(fn($i) => $i['precio'] * $i['cantidad']);
         $rolUsuario = auth()->check() ? auth()->user()->rol : 'cliente';
+        $puedeCobrarEfectivo = auth()->check() && auth()->user()->tieneRolVendedor();
     @endphp
 
     <div
@@ -554,7 +536,7 @@
                                     <h3>Método de Pago</h3>
                                     <div class="sub">Elige cómo quieres pagar</div>
                                 </div>
-                                @if($rolUsuario === 'admin' || $rolUsuario === 'ventas')
+                                @if($puedeCobrarEfectivo)
                                     <span class="role-chip">✓ {{ strtoupper($rolUsuario) }}</span>
                                 @endif
                             </div>
@@ -594,7 +576,7 @@
                                     <div style="font-size:11px; color:var(--muted); font-weight:600; margin-top:8px;">Después de confirmar tu pedido, envíanos el voucher para validar el pago.</div>
                                 </div>
 
-                                @if($rolUsuario === 'admin' || $rolUsuario === 'ventas')
+                                @if($puedeCobrarEfectivo)
                                 <label class="pay-option" :style="metodo_pago === 'efectivo' ? 'border-color:var(--success); background:rgba(16,185,129,0.06);' : ''">
                                     <input type="radio" name="metodo_pago_radio" value="efectivo" x-model="metodo_pago">
                                     <div class="pay-icon">💵</div>

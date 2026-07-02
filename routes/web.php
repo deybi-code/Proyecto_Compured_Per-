@@ -1,19 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminAnuncioController;
+use App\Http\Controllers\AdminProductoController;
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\BoletaController;
+use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FotoProductoController;
+use App\Http\Controllers\PagoController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VentasController;
+use App\Models\Boleta;
+use App\Models\Categoria;
+use App\Models\Producto;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
-use App\Http\Controllers\{
-    DashboardController,
-    FotoProductoController,
-    CarritoController,
-    PagoController,
-    AdminProductoController,
-    VentasController,
-    AdminAnuncioController,
-    BoletaController,
-    ProfileController
-};
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,31 +25,30 @@ use App\Http\Controllers\{
 */
 
 Route::get('/', function () {
-    $productos  = \App\Models\Producto::with('fotos')
-                    ->where('mostrar_inicio', 1)
-                    ->orderBy('fecha_registro', 'desc')
-                    ->get();
+    $productos = Producto::with('fotos')
+        ->where('mostrar_inicio', 1)
+        ->orderBy('fecha_registro', 'desc')
+        ->get();
 
-    $categorias = \App\Models\Categoria::all();
+    $categorias = Categoria::all();
 
-    $anuncios   = DB::table('anuncios')
-                    ->where('activo', 1)
-                    ->orderBy('id_anuncio', 'desc')
-                    ->get();
+    $anuncios = DB::table('anuncios')
+        ->where('activo', 1)
+        ->orderBy('id_anuncio', 'desc')
+        ->get();
 
     return view('index', compact('productos', 'categorias', 'anuncios'));
 })->name('home');
 
 Route::get('/categoria/{slug?}', function ($slug = null) {
-    $categorias = \App\Models\Categoria::all();
-    $productos  = collect();
+    $categorias = Categoria::all();
+    $productos = collect();
 
     if ($slug) {
-        $cat = $categorias->first(fn($c) =>
-            \Illuminate\Support\Str::slug($c->nombre_categoria) === $slug
+        $cat = $categorias->first(fn ($c) => Str::slug($c->nombre_categoria) === $slug
         );
         if ($cat) {
-            $productos = \App\Models\Producto::with('fotos')
+            $productos = Producto::with('fotos')
                 ->where('id_categoria', $cat->id_categoria)
                 ->get();
         }
@@ -56,13 +58,13 @@ Route::get('/categoria/{slug?}', function ($slug = null) {
 })->name('categoria');
 
 Route::get('/producto/{id?}', function ($id = null) {
-    $producto   = $id ? \App\Models\Producto::with(['fotos', 'categoria'])->findOrFail($id) : null;
-    $categorias = \App\Models\Categoria::all();
+    $producto = $id ? Producto::with(['fotos', 'categoria'])->findOrFail($id) : null;
+    $categorias = Categoria::all();
 
     // Productos relacionados: misma categoría, excluyendo el actual, máx 4
     $relacionados = collect();
     if ($producto && $producto->id_categoria) {
-        $relacionados = \App\Models\Producto::with('fotos')
+        $relacionados = Producto::with('fotos')
             ->where('id_categoria', $producto->id_categoria)
             ->where('id_producto', '!=', $producto->id_producto)
             ->where('stock', '>', 0)
@@ -74,8 +76,8 @@ Route::get('/producto/{id?}', function ($id = null) {
     return view('producto', compact('producto', 'categorias', 'relacionados'));
 })->name('producto');
 
-Route::get('/nosotros', fn() => view('nosotros'))->name('nosotros');
-Route::get('/terminos', fn()  => view('terminos'))->name('terminos');
+Route::get('/nosotros', fn () => view('nosotros'))->name('nosotros');
+Route::get('/terminos', fn () => view('terminos'))->name('terminos');
 
 /*
 |--------------------------------------------------------------------------
@@ -83,13 +85,13 @@ Route::get('/terminos', fn()  => view('terminos'))->name('terminos');
 |--------------------------------------------------------------------------
 */
 
-Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
+Route::get('/seguimiento', function (Request $request) {
 
     $boleta = null;
-    $guia   = null;
+    $guia = null;
 
     if ($request->filled('boleta')) {
-        $boleta = \App\Models\Boleta::find($request->input('boleta'));
+        $boleta = Boleta::find($request->input('boleta'));
 
         if ($boleta) {
             $guia = DB::table('guias_remision')
@@ -108,19 +110,22 @@ Route::get('/seguimiento', function (\Illuminate\Http\Request $request) {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/buscar', function (\Illuminate\Http\Request $request) {
-    $q         = $request->input('q', '');
+Route::get('/buscar', function (Request $request) {
+    $q = $request->input('q', '');
     $productos = collect();
 
     if (strlen(trim($q)) >= 2) {
-        $productos = \App\Models\Producto::with('fotos')
-            ->where('nombre', 'like', "%{$q}%")
-            ->orWhere('marca', 'like', "%{$q}%")
-            ->orWhere('detalles_tecnicos', 'like', "%{$q}%")
+        $productos = Producto::with('fotos')
+            ->where(function ($query) use ($q) {
+                $query->where('nombre', 'like', "%{$q}%")
+                    ->orWhere('marca', 'like', "%{$q}%")
+                    ->orWhere('detalles_tecnicos', 'like', "%{$q}%");
+            })
             ->get();
     }
 
-    $categorias = \App\Models\Categoria::all();
+    $categorias = Categoria::all();
+
     return view('buscar', compact('productos', 'categorias', 'q'));
 })->name('buscar');
 
@@ -130,10 +135,10 @@ Route::get('/buscar', function (\Illuminate\Http\Request $request) {
 |--------------------------------------------------------------------------
 */
 
-Route::get('auth/google', [\App\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle'])
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])
     ->name('google.redirect');
 
-Route::get('auth/google/callback', [\App\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback'])
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])
     ->name('google.callback');
 
 /*
@@ -146,7 +151,7 @@ Route::get('/carrito', [CarritoController::class, 'index'])->name('carrito.index
 Route::post('/carrito', [CarritoController::class, 'store'])->name('carrito.store');
 Route::delete('/carrito/{id}', [CarritoController::class, 'destroy'])->name('carrito.destroy');
 
-Route::get('/checkout', fn() => view('pago'))->name('checkout');
+Route::get('/checkout', fn () => view('pago'))->name('checkout');
 
 /*
 |--------------------------------------------------------------------------
@@ -208,9 +213,10 @@ Route::middleware(['auth', 'es_admin'])
 
         // 📊 PANEL ADMIN
         Route::get('/panel', function () {
-            $totalProductos   = \App\Models\Producto::count();
-            $stockBajo        = \App\Models\Producto::where('stock', '<=', 5)->count();
-            $productosActivos = \App\Models\Producto::where('mostrar_inicio', 1)->count();
+            $totalProductos = Producto::count();
+            $stockBajo = Producto::where('stock', '<=', 5)->count();
+            $productosActivos = Producto::where('mostrar_inicio', 1)->count();
+
             return view('admin.panel', compact('totalProductos', 'stockBajo', 'productosActivos'));
         })->name('panel');
 

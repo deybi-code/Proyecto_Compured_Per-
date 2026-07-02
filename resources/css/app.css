@@ -950,3 +950,226 @@ html.dark ::-webkit-scrollbar-thumb:hover { background: var(--cp-blue); }
 
 /* Fix for Alpine.js cloak */
 [x-cloak] { display: none !important; }
+
+/* ===== COMPURED — SISTEMA PÚBLICO (MODO CLARO + OSCURO) ===== */
+:root,
+html:not(.dark):not([data-theme="dark"]) {
+  --pub-bg: var(--cp-gray-50);
+  --pub-card: #ffffff;
+  --pub-text: var(--cp-gray-800);
+  --pub-muted: var(--cp-gray-600);
+  --pub-border: var(--cp-gray-200);
+  --pub-input-bg: #fafbfc;
+  --pub-primary: var(--cp-blue);
+  --pub-primary-hover: var(--cp-blue-dark);
+  --pub-accent: var(--cp-blue-light);
+  --pub-shadow: 0 12px 40px rgba(0, 82, 204, 0.1);
+  --pub-success: var(--cp-green);
+  --pub-success-dark: var(--cp-green-dark);
+  --pub-hero-gradient: linear-gradient(135deg, #ffffff 0%, #ebf3ff 28%, #c5daff 55%, var(--cp-blue-light) 82%, var(--cp-blue) 100%);
+  --pub-hero-grid: rgba(0, 82, 204, 0.07);
+  --pub-hero-title: var(--cp-gray-800);
+  --pub-hero-subtitle: var(--cp-gray-600);
+  --pub-hero-accent: var(--cp-blue);
+  --pub-feature-bg: linear-gradient(180deg, var(--cp-gray-50) 0%, #ebf3ff 100%);
+  --pub-feature-card-bg: #ffffff;
+  --pub-feature-card-border: rgba(0, 82, 204, 0.12);
+  --pub-feature-title: var(--cp-gray-800);
+  --pub-feature-text: var(--cp-gray-600);
+
+  --bg: var(--pub-bg);
+  --card: var(--pub-card);
+  --text: var(--pub-text);
+  --muted: var(--pub-muted);
+  --border: var(--pub-border);
+  --input-bg: var(--pub-input-bg);
+  --primary: var(--pub-primary);
+  --primary-hover: var(--pub-primary-hover);
+  --accent: var(--pub-accent);
+  --shadow: var(--pub-shadow);
+  --success: var(--pub-success);
+}
+
+html.dark,
+html[data-theme="dark"] {
+  --pub-bg: var(--cp-dark-bg);
+  --pub-card: rgba(22, 27, 34, 0.93);
+  --pub-text: #c9d1d9;
+  --pub-muted: #8b949e;
+  --pub-border: var(--cp-dark-border);
+  --pub-input-bg: var(--cp-dark-card);
+  --pub-primary: var(--cp-blue-light);
+  --pub-primary-hover: var(--cp-blue);
+  --pub-accent: var(--cp-blue-light);
+  --pub-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  --pub-success: var(--cp-green);
+  --pub-success-dark: var(--cp-green-dark);
+  --pub-hero-gradient: linear-gradient(135deg, #020617 0%, #0f172a 40%, #1e3a5f 70%, #020617 100%);
+  --pub-hero-grid: rgba(255, 255, 255, 0.05);
+  --pub-hero-title: #ffffff;
+  --pub-hero-subtitle: rgba(255, 255, 255, 0.72);
+  --pub-hero-accent: var(--cp-blue-light);
+  --pub-feature-bg: linear-gradient(135deg, var(--cp-navy) 0%, var(--cp-blue-dark) 50%, var(--cp-blue) 100%);
+  --pub-feature-card-bg: rgba(255, 255, 255, 0.05);
+  --pub-feature-card-border: rgba(255, 255, 255, 0.1);
+  --pub-feature-title: #ffffff;
+  --pub-feature-text: rgba(255, 255, 255, 0.65);
+
+  --bg: var(--pub-bg);
+  --card: var(--pub-card);
+  --text: var(--pub-text);
+  --muted: var(--pub-muted);
+  --border: var(--pub-border);
+  --input-bg: var(--pub-input-bg);
+  --primary: var(--pub-primary);
+  --primary-hover: var(--pub-primary-hover);
+  --accent: var(--pub-accent);
+  --shadow: var(--pub-shadow);
+  --success: var(--pub-success);
+}
+
+.hero-scene,
+.cat-hero,
+.bg-scene {
+  background: var(--pub-hero-gradient);
+  transition: background 0.4s ease;
+}
+
+.hero-scene .hero-grid,
+.cat-hero .cat-bg-grid,
+.cat-bg-grid,
+.bg-scene + .bg-grid,
+.hero-grid {
+  background-image:
+    linear-gradient(var(--pub-hero-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--pub-hero-grid) 1px, transparent 1px);
+}
+
+html:not(.dark):not([data-theme="dark"]) .hero-scene h1,
+html:not(.dark):not([data-theme="dark"]) .hero-scene h2,
+html:not(.dark):not([data-theme="dark"]) .cat-hero h1,
+html:not(.dark):not([data-theme="dark"]) .hero-scene .hero-title,
+html:not(.dark):not([data-theme="dark"]) .hero-scene .hero-headline {
+  color: var(--pub-hero-title);
+  text-shadow: none;
+}
+
+html:not(.dark):not([data-theme="dark"]) .hero-scene p,
+html:not(.dark):not([data-theme="dark"]) .cat-hero p,
+html:not(.dark):not([data-theme="dark"]) .hero-scene .hero-subline {
+  color: var(--pub-hero-subtitle);
+}
+
+html:not(.dark):not([data-theme="dark"]) .hero-scene .hero-accent,
+html:not(.dark):not([data-theme="dark"]) .hero-scene .hero-accent span {
+  color: var(--pub-hero-accent);
+}
+
+html.dark .hero-scene h1,
+html.dark .hero-scene h2,
+html.dark .cat-hero h1,
+html[data-theme="dark"] .hero-scene h1,
+html[data-theme="dark"] .hero-scene h2,
+html[data-theme="dark"] .cat-hero h1,
+html.dark .hero-scene .hero-title,
+html[data-theme="dark"] .hero-scene .hero-title {
+  color: #ffffff;
+}
+
+html.dark .hero-scene p,
+html.dark .cat-hero p,
+html[data-theme="dark"] .hero-scene p,
+html[data-theme="dark"] .cat-hero p {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.features-strip {
+  background: var(--pub-feature-bg);
+}
+
+.feature-card {
+  background: var(--pub-feature-card-bg);
+  border: 1px solid var(--pub-feature-card-border);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+}
+
+.feature-card .feature-title {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--pub-feature-title);
+  margin-bottom: 6px;
+}
+
+.feature-card .feature-text {
+  font-size: 13px;
+  color: var(--pub-feature-text);
+}
+
+html:not(.dark):not([data-theme="dark"]) .btn-outline-mega {
+  border-color: var(--cp-blue);
+  color: var(--cp-blue) !important;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+html:not(.dark):not([data-theme="dark"]) .btn-outline-mega:hover {
+  background: rgba(0, 82, 204, 0.08);
+  border-color: var(--cp-blue-dark);
+}
+
+html:not(.dark):not([data-theme="dark"]) .glass-card {
+  background: #ffffff;
+  border-color: rgba(0, 82, 204, 0.14);
+  box-shadow: var(--pub-shadow);
+}
+
+html:not(.dark):not([data-theme="dark"]) .hero-scene .hero-badge {
+  background: rgba(0, 82, 204, 0.08);
+  border-color: rgba(0, 82, 204, 0.18);
+  color: var(--cp-blue-dark);
+}
+
+html:not(.dark):not([data-theme="dark"]) .hero-scene .hero-slide-panel {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(0, 82, 204, 0.14);
+}
+
+html:not(.dark):not([data-theme="dark"]) .hero-scene .hero-slide-panel h2 {
+  color: var(--cp-gray-800);
+}
+
+html:not(.dark):not([data-theme="dark"]) .badge-offer {
+  background: var(--cp-blue);
+}
+
+html:not(.dark):not([data-theme="dark"]) .cp-flash-success {
+  background: rgba(140, 198, 63, 0.12);
+  border-color: rgba(140, 198, 63, 0.35);
+  color: var(--cp-green-dark);
+}
+
+html:not(.dark):not([data-theme="dark"]) .cp-flash-error {
+  background: rgba(0, 82, 204, 0.08);
+  border-color: rgba(0, 58, 153, 0.25);
+  color: var(--cp-blue-dark);
+}
+
+html:not(.dark):not([data-theme="dark"]) .theme-btn {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 82, 204, 0.18);
+  color: var(--cp-blue);
+}
+
+html:not(.dark):not([data-theme="dark"]) .cat-hero .cat-icon-wrap {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(0, 82, 204, 0.14);
+  box-shadow: 0 10px 25px rgba(0, 82, 204, 0.08);
+}
+
+html.dark .theme-btn,
+html[data-theme="dark"] .theme-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}

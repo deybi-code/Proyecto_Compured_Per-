@@ -9,27 +9,33 @@ window.Alpine = Alpine;
 Alpine.start();
 
 // ===== COMPURED PERÚ - DARK MODE =====
-window.toggleDark = function() {
+function applyCpTheme(theme) {
   const html = document.documentElement;
-  const isDark = html.classList.toggle('dark');
-  localStorage.setItem('cpTheme', isDark ? 'dark' : 'light');
-  // Actualizar ícono del botón si existe
+  const isDark = theme === 'dark';
+  html.classList.toggle('dark', isDark);
+  html.setAttribute('data-theme', theme);
+  localStorage.setItem('cpTheme', theme);
+  localStorage.setItem('theme', theme);
   const icon = document.getElementById('theme-icon');
   if (icon) {
     icon.textContent = isDark ? '☀️' : '🌙';
   }
+  const iconSun = document.getElementById('cp-icon-sun');
+  const iconMoon = document.getElementById('cp-icon-moon');
+  if (iconSun && iconMoon) {
+    iconSun.style.display = isDark ? 'none' : 'block';
+    iconMoon.style.display = isDark ? 'block' : 'none';
+  }
+}
+
+window.toggleDark = function() {
+  const isDark = document.documentElement.classList.contains('dark');
+  applyCpTheme(isDark ? 'light' : 'dark');
 };
 
-// Inicializar al cargar
 document.addEventListener('DOMContentLoaded', function() {
-  const savedTheme = localStorage.getItem('cpTheme') || 'light';
-  if (savedTheme === 'dark') {
-    document.documentElement.classList.add('dark');
-  }
-  const icon = document.getElementById('theme-icon');
-  if (icon) {
-    icon.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
-  }
+  const savedTheme = localStorage.getItem('theme') || localStorage.getItem('cpTheme') || 'light';
+  applyCpTheme(savedTheme === 'dark' ? 'dark' : 'light');
 
   // Animaciones de entrada para tarjetas
   const cards = document.querySelectorAll('.product-card');

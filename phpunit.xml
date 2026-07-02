@@ -31,6 +31,6 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
-        <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="APP_KEY" value="base64:Jyuxf2Ew901XzH0eCYN0NALpjhF5mdga5whjXKPxTvQ="/>
     </php>
 </phpunit>

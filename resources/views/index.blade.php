@@ -296,7 +296,7 @@
     @foreach($anunciosPrincipal as $anuncio)
         <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center; gap:20px;">
             @if($anuncio->imagen_url)
-                <div style="position:relative; flex:1; max-width:70%;">
+                <div style="position:relative; width:850px; max-width:850px;">
                     <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; height:auto; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(0,82,204,0.12); box-shadow:0 20px 40px rgba(0,82,204,0.12);">
                     <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:10;">
                         <a href="/buscar" class="btn-mega" style="width:auto; padding:14px 40px; font-size:16px; background:linear-gradient(135deg, #f59e0b, #d97706); box-shadow:0 8px 25px rgba(245,158,11,0.4);">Descubrir más 🚀</a>
@@ -306,7 +306,7 @@
 
             {{-- Carrusel de productos (oculto en móviles) --}}
             @if(isset($productos) && $productos->count() > 0)
-            <div class="product-carousel" style="flex:0 0 280px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
+            <div class="product-carousel" style="width:300px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
                 <div style="background:var(--card); border-radius:20px; padding:20px; border:2px solid rgba(0,82,204,0.12); box-shadow:0 20px 40px rgba(0,82,204,0.12); position:relative; min-height:350px; display:flex; flex-direction:column;">
                     @foreach($productos as $index => $producto)
                         <div x-show="currentProduct === {{ $index }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" style="display:flex; flex-direction:column; height:100%;">
@@ -339,7 +339,7 @@
     @foreach($anunciosSecundario as $anuncio)
         <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center; gap:20px;">
             @if($anuncio->imagen_url)
-                <div style="position:relative; flex:1; max-width:70%;">
+                <div style="position:relative; width:850px; max-width:850px;">
                     <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; height:auto; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(245,158,11,0.12); box-shadow:0 20px 40px rgba(245,158,11,0.12);">
                     <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:10;">
                         <a href="/buscar" class="btn-mega" style="width:auto; padding:14px 40px; font-size:16px; background:linear-gradient(135deg, #f59e0b, #d97706); box-shadow:0 8px 25px rgba(245,158,11,0.4);">Descubrir más 🚀</a>
@@ -349,7 +349,7 @@
 
             {{-- Carrusel de productos (oculto en móviles) --}}
             @if(isset($productos) && $productos->count() > 0)
-            <div class="product-carousel" style="flex:0 0 280px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
+            <div class="product-carousel" style="width:300px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
                 <div style="background:var(--card); border-radius:20px; padding:20px; border:2px solid rgba(245,158,11,0.12); box-shadow:0 20px 40px rgba(245,158,11,0.12); position:relative; min-height:350px; display:flex; flex-direction:column;">
                     @foreach($productos as $index => $producto)
                         <div x-show="currentProduct === {{ $index }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" style="display:flex; flex-direction:column; height:100%;">
@@ -382,7 +382,7 @@
     @foreach($anunciosLateral as $anuncio)
         <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; justify-content:center; align-items:center; gap:20px;">
             @if($anuncio->imagen_url)
-                <div style="position:relative; flex:1; max-width:70%;">
+                <div style="position:relative; width:850px; max-width:850px;">
                     <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; height:auto; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(16,185,129,0.12); box-shadow:0 20px 40px rgba(16,185,129,0.12);">
                     <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); z-index:10;">
                         <a href="/buscar" class="btn-mega" style="width:auto; padding:14px 40px; font-size:16px; background:linear-gradient(135deg, #10b981, #059669); box-shadow:0 8px 25px rgba(16,185,129,0.4);">Descubrir más 🚀</a>
@@ -392,7 +392,7 @@
 
             {{-- Carrusel de productos (oculto en móviles) --}}
             @if(isset($productos) && $productos->count() > 0)
-            <div class="product-carousel" style="flex:0 0 280px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
+            <div class="product-carousel" style="width:300px;" x-data="{ currentProduct: 0 }" x-init="setInterval(() => currentProduct = (currentProduct + 1) % {{ $productos->count() }}, 3000)">
                 <div style="background:var(--card); border-radius:20px; padding:20px; border:2px solid rgba(16,185,129,0.12); box-shadow:0 20px 40px rgba(16,185,129,0.12); position:relative; min-height:350px; display:flex; flex-direction:column;">
                     @foreach($productos as $index => $producto)
                         <div x-show="currentProduct === {{ $index }}" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100" style="display:flex; flex-direction:column; height:100%;">

@@ -56,6 +56,11 @@
                 <label style="display:block;font-weight:600;color:#374151;margin-bottom:8px;">Imágenes del anuncio (máximo 3)</label>
                 <input type="file" name="imagenes[]" accept="image/*" multiple
                        style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;">
+                <div style="background:#fef3c7;border:1px solid #fcd34d;padding:10px;border-radius:6px;margin-top:8px;">
+                    <p style="font-size:12px;color:#92400e;margin:0;">
+                        <strong>💡 Tamaño recomendado:</strong> 1200x450px (ancho x alto) para mejor visualización en desktop. En móviles se ajustará automáticamente.
+                    </p>
+                </div>
                 <p style="font-size:12px;color:#6b7280;margin-top:5px;">Formatos: jpeg, png, jpg, gif, webp — máx. 2MB cada una</p>
             </div>
 
@@ -159,12 +164,33 @@
 
 @push('scripts')
 <script>
-function editarAnuncio(id, titulo, posicion) {
-    document.getElementById('editId').value = id;
-    document.getElementById('editTitulo').value = titulo;
-    document.getElementById('editPosicion').value = posicion;
-    document.getElementById('editModal').style.display = 'flex';
-}
+document.addEventListener('DOMContentLoaded', function() {
+    window.editarAnuncio = function(id, titulo, posicion) {
+        const editId = document.getElementById('editId');
+        const editTitulo = document.getElementById('editTitulo');
+        const editPosicion = document.getElementById('editPosicion');
+        const editModal = document.getElementById('editModal');
+
+        if (editId && editTitulo && editPosicion && editModal) {
+            editId.value = id;
+            editTitulo.value = titulo;
+            editPosicion.value = posicion;
+            editModal.style.display = 'flex';
+        } else {
+            console.error('No se encontraron los elementos del modal de edición');
+        }
+    };
+
+    // Cerrar modal al hacer clic fuera
+    const editModal = document.getElementById('editModal');
+    if (editModal) {
+        editModal.addEventListener('click', function(e) {
+            if (e.target === editModal) {
+                editModal.style.display = 'none';
+            }
+        });
+    }
+});
 </script>
 @endpush
 

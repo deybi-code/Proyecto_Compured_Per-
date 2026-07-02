@@ -95,6 +95,13 @@
         .product-body { padding: 16px; }
         .btn-mega, .btn-outline-mega { padding: 14px 16px; font-size: 15px; }
     }
+    
+    /* Grid de productos responsivo */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 24px;
+    }
 </style>
 
 <div class="max-w-7xl mx-auto px-4 py-8" style="min-height: calc(100vh - 200px);">
@@ -118,7 +125,7 @@
         </div>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:24px;">
+    <div class="products-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:24px;">
         @forelse($productos ?? [] as $index => $p)
         <div class="glass-card animate-card" style="animation-delay: {{ 0.2 + ($index * 0.05) }}s;">
             <div class="product-img-wrap">

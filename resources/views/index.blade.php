@@ -287,7 +287,7 @@
 
 <div style="max-width:1280px; margin:0 auto; padding:0 16px 60px 16px; display:flex; flex-wrap:wrap; gap:30px;">
 
-    <aside style="width:260px; flex-shrink:0;" class="hidden md:block" id="desktop-sidebar">
+    <aside style="width:260px; flex-shrink:0;" class="cat-sidebar hidden md:block" id="desktop-sidebar">
         <div class="glass-card" style="padding:0; margin-bottom:24px; border-top:4px solid var(--primary);">
             <div class="cat-sidebar-title">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:inline; margin-right:8px; vertical-align:-3px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -355,7 +355,7 @@
             <a href="/buscar" style="font-size:13px; color:var(--primary); font-weight:700; text-decoration:none;">Ver catálogo completo →</a>
         </div>
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:24px;">
+        <div class="products-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:24px;">
 
             @if(isset($productos) && $productos->count())
                 @foreach($productos as $producto)

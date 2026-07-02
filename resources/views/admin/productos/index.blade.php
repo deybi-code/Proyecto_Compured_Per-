@@ -69,7 +69,7 @@
 {{-- TABLA --}}
 <div class="card" style="margin-top:15px;overflow-x:auto; padding: 0;">
 
-<table width="100%" cellpadding="15" style="border-collapse:collapse;">
+<table class="table-responsive-card" width="100%" cellpadding="15" style="border-collapse:collapse;">
 
     <thead style="background:#f8fafc; border-bottom: 2px solid #e2e8f0;">
         <tr style="text-align: left; color: #374151;">
@@ -90,10 +90,10 @@
         <tr style="border-bottom:1px solid #f1f5f9; transition: background 0.2s;" onmouseover="this.style.background='#fdfdfd'">
 
             {{-- CHECK --}}
-            <td><input type="checkbox"></td>
+            <td data-label="Seleccionar"><input type="checkbox"></td>
 
             {{-- IMAGEN CORREGIDA --}}
-            <td>
+            <td data-label="Imagen">
                 @php $foto = $p->fotos->first(); @endphp
                 @if($foto)
                     <img src="{{ str_starts_with($foto->ruta_foto, 'http') ? $foto->ruta_foto : asset('storage/'.$foto->ruta_foto) }}"
@@ -104,7 +104,7 @@
             </td>
 
             {{-- NOMBRE --}}
-            <td>
+            <td data-label="Producto">
                 <strong style="color: #1e293b;">{{ $p->nombre }}</strong>
                 <div style="font-size:12px;color:#6b7280;">
                     ID: {{ $p->id_producto }}
@@ -112,10 +112,10 @@
             </td>
 
             {{-- PRECIO --}}
-            <td style="font-weight: 600;">S/ {{ number_format($p->precio, 2) }}</td>
+            <td data-label="Precio" style="font-weight: 600;">S/ {{ number_format($p->precio, 2) }}</td>
 
             {{-- STOCK --}}
-            <td>
+            <td data-label="Stock">
                 @if($p->stock <= 0)
                     <span style="color:red;font-weight:bold; background: #fee2e2; padding: 4px 8px; border-radius: 6px;">Agotado</span>
                 @elseif($p->stock < 5)
@@ -126,7 +126,7 @@
             </td>
 
             {{-- ESTADO --}}
-            <td>
+            <td data-label="Estado">
                 @if($p->stock > 0)
                     <span style="background:#dcfce7;color:#166534;padding:4px 8px;border-radius:6px; font-size: 0.85rem;">
                         Activo
@@ -139,7 +139,7 @@
             </td>
 
             {{-- ACCIONES --}}
-            <td style="display:flex;gap:6px;flex-wrap:wrap; align-items: center; margin-top: 5px;">
+            <td data-label="Acciones" style="display:flex;gap:6px;flex-wrap:wrap; align-items: center; margin-top: 5px;">
 
                 {{-- EDITAR --}}
                 <a href="{{ route('admin.productos.edit', $p) }}"

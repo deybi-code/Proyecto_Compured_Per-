@@ -98,6 +98,48 @@
         .cp-logo img { height: 38px; width: auto; }
 
         /* Links de navegación admin */
+
+        /* ===== MOBILE FIXES FOR ADMIN ===== */
+        @media (max-width: 768px) {
+            .cp-navbar-inner {
+                padding: 12px 16px;
+            }
+            .admin-sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                width: 280px;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+                background: var(--sidebar-bg);
+                border-right: 1px solid var(--sidebar-border);
+            }
+            .admin-sidebar.open {
+                left: 0;
+            }
+            .admin-sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            }
+            .admin-sidebar-overlay.open {
+                display: block;
+            }
+            .admin-content {
+                padding: 16px;
+            }
+            .card {
+                border-radius: 12px;
+                padding: 16px;
+            }
+            button, a, input, select {
+                min-height: 48px;
+                min-width: 48px;
+            }
+        }
         .cp-nav-links { display: flex; align-items: center; gap: 6px; }
         .cp-nav-links a {
             font-weight: 600; font-size: 13.5px; color: var(--muted);

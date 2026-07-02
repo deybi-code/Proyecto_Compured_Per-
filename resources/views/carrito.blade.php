@@ -199,6 +199,40 @@
         text-transform:uppercase; letter-spacing:0.5px; margin-left:auto;
     }
 
+    /* ===== MOBILE FIXES ===== */
+    @media (max-width: 768px) {
+        .cart-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+        }
+        .prod-thumb {
+            width: 100%;
+            height: 140px;
+        }
+        .step-actions {
+            flex-direction: column;
+        }
+        .step-actions .btn-ghost,
+        .step-actions .btn-mega {
+            width: 100%;
+            min-width: auto;
+        }
+        .cp-grid-2 {
+            grid-template-columns: 1fr;
+        }
+        .checkout-steps {
+            font-size: 11px;
+            gap: 4px;
+        }
+        .checkout-steps .step .dot {
+            width: 28px;
+            height: 28px;
+            font-size: 11px;
+        }
+    }
+
     .review-card {
         background: var(--input-bg); border: 1px solid var(--border); border-radius: 16px;
         padding: 18px 20px; margin: 0 26px 22px 26px;

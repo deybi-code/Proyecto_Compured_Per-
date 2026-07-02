@@ -1356,6 +1356,132 @@ html.dark .cp-mobile-icon-btn svg {
   body { padding-bottom: 0 !important; }
 }
 
+/* ===== TOUCH EVENTS FIX FOR MOBILE ===== */
+/* Corrección crítica para botones que no responden en Android */
+@media (max-width: 768px) {
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"],
+  .btn,
+  [role="button"] {
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  /* Eliminar hover effects en móvil para evitar conflictos con touch */
+  *:hover {
+    transform: none !important;
+  }
+  
+  /* Active state para touch feedback */
+  button:active,
+  a:active,
+  .btn:active {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+  
+  /* Prevenir zoom en inputs */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ===== MOBILE LAYOUT FIXES ===== */
+@media (max-width: 768px) {
+  /* Sidebar de categorías colapsado en móvil */
+  .cat-sidebar {
+    display: none;
+  }
+  
+  /* Dropdown móvil de categorías visible */
+  .mobile-cat-dropdown {
+    display: block;
+  }
+  
+  /* Grids de productos - 2 columnas fluidas */
+  .products-grid,
+  .offers-grid,
+  .glass-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* 1 columna en pantallas muy pequeñas */
+  .products-grid,
+  .offers-grid,
+  .glass-card-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 0;
+  }
+}
+
+/* ===== PANEL ADMIN TABLES MOBILE FIX ===== */
+@media (max-width: 768px) {
+  /* Tablas convertidas a cards en móvil */
+  .admin-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  /* Opcional: transformar filas en cards */
+  .table-responsive-card {
+    display: block;
+  }
+  
+  .table-responsive-card thead {
+    display: none;
+  }
+  
+  .table-responsive-card tbody,
+  .table-responsive-card tr,
+  .table-responsive-card td {
+    display: block;
+    width: 100%;
+  }
+  
+  .table-responsive-card tr {
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--card);
+  }
+  
+  .table-responsive-card td {
+    text-align: left;
+    padding: 8px 0;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .table-responsive-card td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--cp-gray-600);
+    margin-right: 12px;
+  }
+}
+
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

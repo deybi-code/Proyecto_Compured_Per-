@@ -486,60 +486,6 @@
             @endif
         </div>
 
-        @if(isset($productos) && $productos->count())
-        <div style="margin-top:48px; padding-top:32px; border-top:2px solid var(--border);">
-            <h2 class="section-title" style="margin-bottom:24px;"><span style="color:var(--accent);">🔥</span> Ofertas del día</h2>
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:24px;" class="offers-grid">
-                @foreach($productos->take(5) as $producto)
-                @php
-                    $tieneDescuento = !is_null($producto->precio_descuento) && $producto->precio_descuento > 0;
-                    $precioOferta = $tieneDescuento ? $producto->precio_descuento : $producto->precio;
-                    $porcentajeDescuento = $tieneDescuento && !is_null($producto->porcentaje_descuento) ? $producto->porcentaje_descuento : null;
-                @endphp
-                <div class="glass-card" style="border-top:4px solid var(--primary);">
-                    <div class="product-img-wrap">
-                        @if($tieneDescuento)
-                            <span class="badge-offer">
-                                @if($porcentajeDescuento)
-                                    -{{ number_format($porcentajeDescuento, 0) }}%
-                                @else
-                                    OFERTA
-                                @endif
-                            </span>
-                        @endif
-                        @if($producto->imagen ?? false)
-                            <img src="{{ str_starts_with($producto->imagen, 'http') ? $producto->imagen : asset('storage/'.$producto->imagen) }}" alt="{{ $producto->nombre }}" loading="lazy">
-                        @elseif($producto->fotos->first() ?? false)
-                            <img src="{{ str_starts_with($producto->fotos->first()->ruta_foto, 'http') ? $producto->fotos->first()->ruta_foto : asset('storage/'.$producto->fotos->first()->ruta_foto) }}" alt="{{ $producto->nombre }}" loading="lazy">
-                        @else
-                            <img src="{{ asset('img/producto.webp') }}" alt="{{ $producto->nombre }}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><rect fill=%22%23EBF3FF%22 width=%22200%22 height=%22200%22/><text x=%22100%22 y=%22100%22 text-anchor=%22middle%22 dy=%22.35em%22 font-size=%2240%22>🖥️</text></svg>'">
-                        @endif
-                    </div>
-                    <div class="product-body">
-                        <div class="product-name" title="{{ $producto->nombre }}">{{ Str::limit($producto->nombre, 45) }}</div>
-                        @if($tieneDescuento)
-                            <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:16px;">
-                                <div class="product-price" style="font-size:22px; font-weight:900; color:var(--primary);">S/ {{ number_format($precioOferta, 2) }}</div>
-                                <div style="font-size:13px; color:var(--muted); text-decoration:line-through;">S/ {{ number_format($producto->precio, 2) }}</div>
-                            </div>
-                        @else
-                            <div class="product-price" style="font-size:22px; margin-bottom:16px;">S/ {{ number_format($precioOferta, 2) }}</div>
-                        @endif
-                        <form action="{{ route('carrito.store') }}" method="POST" style="margin-top:auto;">
-                            @csrf
-                            <input type="hidden" name="id_producto" value="{{ $producto->id_producto }}">
-                            <input type="hidden" name="cantidad" value="1">
-                            <button type="submit" class="btn-mega">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                Agregar
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
     </section>
 </div>
 

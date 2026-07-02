@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Boleta extends Model
 {
-    protected $table      = 'boletas';
+    protected $table = 'boletas';
+
     protected $primaryKey = 'id_boleta';
-    public    $timestamps = false;
+
+    public $timestamps = false;
 
     protected $fillable = [
         'id_usuario',
@@ -20,6 +22,12 @@ class Boleta extends Model
         'tipo_comprobante',
         'serie_comprobante',
         'ruc_empresa',
+        'dni_cliente',
+        'nombre_cliente',
+        'direccion_cliente',
+        'telefono_cliente',
+        'distrito',
+        'costo_delivery',
     ];
 
     // Relaciones

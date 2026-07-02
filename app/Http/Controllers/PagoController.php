@@ -45,6 +45,9 @@ class PagoController extends Controller
             'direccion' => ['required_if:entrega,delivery', 'nullable', 'string', 'max:255'],
             'referencia' => ['nullable', 'string', 'max:255'],
             'metodo_pago' => ['required', 'in:tarjeta,transferencia,efectivo'],
+            'distrito_id' => ['nullable', 'integer'],
+            'distrito_nombre' => ['nullable', 'string', 'max:255'],
+            'costo_delivery' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $rol = Auth::user()->rol;
@@ -202,7 +205,7 @@ class PagoController extends Controller
             $idBoleta = DB::table('boletas')->insertGetId([
                 'id_usuario' => Auth::user()->id_usuario,
                 'fecha_venta' => now(),
-                'total_pago' => $total,
+                'total_pago' => $total + ($data['costo_delivery'] ?? 0),
                 'metodo_pago' => $data['metodo_pago'],
                 'canal_venta' => $data['entrega'] === 'recojo' ? 'Recojo en Tienda' : 'Tienda Online',
                 'estado_pedido' => $overrides['estado_pedido'] ?? 'Pendiente',
@@ -214,6 +217,8 @@ class PagoController extends Controller
                 'nombre_cliente' => $data['tipo_doc'] === 'ruc' ? ($data['razon_social'] ?? null) : ($data['nombre'] ?? null),
                 'direccion_cliente' => $data['direccion'] ?? null,
                 'telefono_cliente' => $data['telefono'] ?? null,
+                'distrito' => $data['distrito_nombre'] ?? null,
+                'costo_delivery' => $data['costo_delivery'] ?? 0,
             ]);
 
             foreach ($carrito as $id => $item) {

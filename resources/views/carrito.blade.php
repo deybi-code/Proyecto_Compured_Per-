@@ -319,7 +319,31 @@
             metodo_pago: 'tarjeta',
             dni: '', nombre: '', ruc: '', razon_social: '',
             telefono: '', direccion: '', referencia: '',
+            distrito_id: '', distrito_nombre: '', costo_delivery: 0,
+            distritos: [],
             errors2: {},
+            init() {
+                this.cargarDistritos();
+            },
+            cargarDistritos() {
+                fetch('/api/distritos')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.distritos = data;
+                    });
+            },
+            calcularCostoDelivery() {
+                if (this.distrito_id) {
+                    const distrito = this.distritos.find(d => d.id == this.distrito_id);
+                    if (distrito) {
+                        this.distrito_nombre = distrito.nombre;
+                        this.costo_delivery = parseFloat(distrito.costo_delivery);
+                    }
+                } else {
+                    this.distrito_nombre = '';
+                    this.costo_delivery = 0;
+                }
+            },
             validateStep2() {
                 this.errors2 = {};
                 if (this.tipo_doc === 'dni') {
@@ -331,6 +355,7 @@
                 }
                 if (!this.telefono.trim()) this.errors2.telefono = true;
                 if (this.entrega === 'delivery' && !this.direccion.trim()) this.errors2.direccion = true;
+                if (this.entrega === 'delivery' && !this.distrito_id) this.errors2.distrito = true;
                 return Object.keys(this.errors2).length === 0;
             },
             goNext2to3() {
@@ -368,6 +393,9 @@
                     <input type="hidden" name="tipo_doc" :value="tipo_doc">
                     <input type="hidden" name="entrega" :value="entrega">
                     <input type="hidden" name="metodo_pago" :value="metodo_pago">
+                    <input type="hidden" name="distrito_id" :value="distrito_id">
+                    <input type="hidden" name="distrito_nombre" :value="distrito_nombre">
+                    <input type="hidden" name="costo_delivery" :value="costo_delivery">
 
                     {{-- ===== PASO 1: CARRITO ===== --}}
                     <div x-show="step === 1" class="step-pane">
@@ -515,8 +543,18 @@
 
                                 <div x-show="entrega === 'delivery'" x-transition.opacity>
                                     <div class="cp-input-group">
+                                        <label>Distrito de Entrega</label>
+                                        <select name="distrito" x-model="distrito_id" @change="calcularCostoDelivery()" :class="errors2.distrito ? 'input-error' : ''" class="cp-input">
+                                            <option value="">Selecciona un distrito...</option>
+                                            <template x-for="distrito in distritos" :key="distrito.id">
+                                                <option :value="distrito.id" x-text="distrito.nombre + ' (S/ ' + distrito.costo_delivery + ')'" :selected="distrito.id == distrito_id"></option>
+                                            </template>
+                                        </select>
+                                        <div class="field-error" x-show="errors2.distrito">⚠ Selecciona un distrito de entrega.</div>
+                                    </div>
+                                    <div class="cp-input-group">
                                         <label>Dirección Exacta</label>
-                                        <input type="text" name="direccion" x-model="direccion" :class="errors2.direccion ? 'input-error' : ''" class="cp-input" placeholder="Av. / Calle / N° / Distrito">
+                                        <input type="text" name="direccion" x-model="direccion" :class="errors2.direccion ? 'input-error' : ''" class="cp-input" placeholder="Av. / Calle / N° / Depto">
                                         <div class="field-error" x-show="errors2.direccion">⚠ Indica la dirección de entrega.</div>
                                     </div>
                                     <div class="cp-input-group" style="margin-bottom:0;">
@@ -580,7 +618,10 @@
                                 <div class="review-row"><span>Entrega</span><span x-text="entrega === 'delivery' ? 'Envío a domicilio' : 'Recojo en tienda'"></span></div>
                                 <div class="review-row"><span>Teléfono</span><span x-text="telefono || '—'"></span></div>
                                 <template x-if="entrega === 'delivery'">
-                                    <div class="review-row"><span>Dirección</span><span x-text="direccion || '—'"></span></div>
+                                    <div>
+                                        <div class="review-row"><span>Dirección</span><span x-text="direccion || '—'"></span></div>
+                                        <div class="review-row"><span>Distrito</span><span x-text="distrito_nombre || '—'"></span></div>
+                                    </div>
                                 </template>
                             </div>
                         </div>
@@ -707,6 +748,10 @@
                             <span>Subtotal ({{ count($carrito) }} items)</span>
                             <span style="color:var(--text);">S/ {{ number_format($total,2) }}</span>
                         </div>
+                        <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--muted); font-weight:600; margin-bottom:12px;" x-show="entrega === 'delivery' && costo_delivery > 0">
+                            <span>Delivery (<span x-text="distrito_nombre"></span>)</span>
+                            <span style="color:var(--text);">S/ <span x-text="costo_delivery.toFixed(2)"></span></span>
+                        </div>
                         <div style="display:flex; justify-content:space-between; font-size:14px; color:var(--muted); font-weight:600; margin-bottom:20px; padding-bottom:20px; border-bottom:1px dashed var(--border);">
                             <span>Descuentos</span>
                             <span style="color:var(--success);">S/ 0.00</span>
@@ -714,7 +759,7 @@
 
                         <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:22px;">
                             <span style="font-weight:800; color:var(--text); font-size:15px; text-transform:uppercase;">Total</span>
-                            <span style="font-family:'Segoe UI', sans-serif; font-size:28px; font-weight:900; color:var(--primary);">S/ {{ number_format($total,2) }}</span>
+                            <span style="font-family:'Segoe UI', sans-serif; font-size:28px; font-weight:900; color:var(--primary);">S/ <span x-text="(parseFloat({{ $total }}) + costo_delivery).toFixed(2)"></span></span>
                         </div>
 
                         <template x-if="step < 3">

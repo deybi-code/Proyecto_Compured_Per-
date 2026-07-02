@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\BoletaController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DistritoController;
 use App\Http\Controllers\FotoProductoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProfileController;
@@ -227,6 +228,7 @@ Route::get('/api/buscar', function (Request $request) {
 
     return response()->json($productos->map(function ($producto) {
         $foto = $producto->fotos->first();
+
         return [
             'id' => $producto->id_producto,
             'nombre' => $producto->nombre,
@@ -237,6 +239,10 @@ Route::get('/api/buscar', function (Request $request) {
         ];
     }));
 })->name('api.buscar');
+
+// 📍 API para obtener distritos de Trujillo
+Route::get('/api/distritos', [DistritoController::class, 'index'])->name('api.distritos.index');
+Route::get('/api/distritos/{id}', [DistritoController::class, 'show'])->name('api.distritos.show');
 
 /*
 |--------------------------------------------------------------------------

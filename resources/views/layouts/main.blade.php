@@ -46,6 +46,9 @@
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
         }
+        @media (max-width: 768px) {
+            .cp-navbar { display: none; }
+        }
         html.dark .cp-navbar,
         html[data-theme="dark"] .cp-navbar {
             background: var(--card);
@@ -172,6 +175,8 @@
             .cp-nav-actions { gap: 8px; }
             .cp-icon-btn { width: 44px; height: 44px; }
         }
+        /* Ocultar menú móvil antiguo en favor del drawer profesional */
+        .cp-mobile-toggle, .cp-mobile-menu { display: none !important; }
 
         /* Botón flotante WhatsApp exclusivo móvil */
         .cp-whatsapp-float {
@@ -257,7 +262,154 @@
 </head>
 <body>
 
-    <nav class="cp-navbar">
+        {{-- Mobile Header (Solo visible en móvil) --}}
+        <header class="cp-mobile-header mobile-only">
+            <button type="button" class="cp-mobile-menu-btn" id="cp-drawer-toggle" aria-label="Menú">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <div class="cp-mobile-logo">COMPURED</div>
+            <div class="cp-mobile-actions">
+                <button type="button" class="cp-mobile-icon-btn" id="cp-theme-toggle-mobile" aria-label="Cambiar tema">
+                    <svg id="cp-icon-sun-mobile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg id="cp-icon-moon-mobile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+                <a href="{{ route('carrito.index') }}" class="cp-mobile-icon-btn" aria-label="Carrito">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="20" r="1"/>
+                        <circle cx="18" cy="20" r="1"/>
+                        <path d="M2.5 3h2.2l2.2 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/>
+                    </svg>
+                    @php($cpCartCount = collect(session('carrito', []))->sum('cantidad'))
+                    @if($cpCartCount > 0)
+                        <span class="cp-mobile-badge">{{ $cpCartCount }}</span>
+                    @endif
+                </a>
+            </div>
+        </header>
+
+        {{-- Professional Mobile Drawer --}}
+        <div class="cp-mobile-drawer-overlay mobile-only" id="cp-drawer-overlay"></div>
+        <aside class="cp-mobile-drawer mobile-only" id="cp-drawer">
+            <div class="cp-drawer-header">
+                <div class="cp-drawer-brand">COMPURED PERÚ</div>
+            </div>
+            
+            <div class="cp-drawer-section">
+                <div class="cp-drawer-section-title">Navegación</div>
+                <a href="{{ route('home') }}" class="cp-drawer-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    Inicio
+                </a>
+                <a href="{{ route('categoria') }}" class="cp-drawer-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Categorías
+                </a>
+                <a href="{{ route('nosotros') }}" class="cp-drawer-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                    </svg>
+                    Nosotros
+                </a>
+                <a href="{{ route('carrito.index') }}" class="cp-drawer-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="20" r="1"/>
+                        <circle cx="18" cy="20" r="1"/>
+                        <path d="M2.5 3h2.2l2.2 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/>
+                    </svg>
+                    Carrito
+                    @if($cpCartCount > 0)
+                        <span style="margin-left:auto; background:var(--cp-blue); color:white; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px;">{{ $cpCartCount }}</span>
+                    @endif
+                </a>
+            </div>
+            
+            @auth
+                @php($rol = strtolower(trim(auth()->user()->rol ?? '')))
+                <div class="cp-drawer-section">
+                    <div class="cp-drawer-section-title">Mi Cuenta</div>
+                    @if($rol === 'admin')
+                        <a href="{{ route('admin.productos.index') }}" class="cp-drawer-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                            Panel Admin
+                        </a>
+                        <a href="{{ route('admin.ventas.index') }}" class="cp-drawer-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 17l5-5 4 4 8-8M14 8h6v6"/>
+                            </svg>
+                            Ventas
+                        </a>
+                        <a href="{{ route('admin.anuncios.index') }}" class="cp-drawer-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                            </svg>
+                            Anuncios
+                        </a>
+                    @elseif(in_array($rol, ['vendedor', 'ventas'], true))
+                        <a href="{{ route('admin.ventas.index') }}" class="cp-drawer-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 17l5-5 4 4 8-8M14 8h6v6"/>
+                            </svg>
+                            Panel de Ventas
+                        </a>
+                    @endif
+                    <a href="{{ route('dashboard') }}" class="cp-drawer-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/>
+                            <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/>
+                            <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/>
+                            <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>
+                        </svg>
+                        {{ in_array($rol, ['admin', 'vendedor', 'ventas'], true) ? 'Mis Compras' : 'Panel de Usuario' }}
+                    </a>
+                    <a href="{{ route('profile.edit') }}" class="cp-drawer-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15.7 3.3a2 2 0 0 1 2.8 2.8L8 16.6l-4 1 1-4L15.7 3.3z"/>
+                        </svg>
+                        Editar Perfil
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}" style="margin:0">
+                        @csrf
+                        <button type="submit" class="cp-drawer-item logout" style="width:100%; text-align:left; border:none; background:none; cursor:pointer;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 17l5-5-5-5M20 12H9M13 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7"/>
+                            </svg>
+                            Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div class="cp-drawer-section">
+                    <div class="cp-drawer-section-title">Acceso</div>
+                    <a href="{{ route('login') }}" class="cp-drawer-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 17l5-5-5-5M4 12h10M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/>
+                        </svg>
+                        Ingresar
+                    </a>
+                </div>
+            @endauth
+        </aside>
+
+    <nav class="cp-navbar desktop-only">
         <div class="cp-navbar-inner">
             <a href="{{ route('home') }}" class="cp-logo">
                 <img src="{{ asset('img/logo.png') }}" alt="Compured Perú">
@@ -382,80 +534,67 @@
                         Ingresar
                     </a>
                 @endauth
-
-                <button type="button" class="cp-mobile-toggle" id="cp-mobile-toggle">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </button>
             </div>
         </div>
+    </nav>
 
-        <div class="cp-mobile-menu" id="cp-mobile-menu">
-            <div class="cp-mobile-menu-section">Navegación</div>
-            <a href="{{ route('home') }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                Inicio
+    @if(session('success') || session('error'))
+        <div class="cp-flash">
+            @if(session('success'))
+                <div class="cp-flash-msg cp-flash-success">✅ {{ session('success') }}</div>
+            @endif
+            @if(session('error'))
+                <div class="cp-flash-msg cp-flash-error">⚠️ {{ session('error') }}</div>
+            @endif
+        </div>
+    @endif
+
+    {{-- Bottom Navigation Bar (Solo visible en móvil) --}}
+    <nav class="cp-bottom-nav mobile-only">
+        <div class="cp-bottom-nav-inner">
+            <a href="{{ route('home') }}" class="cp-bottom-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>Inicio</span>
             </a>
-            <a href="{{ route('categoria') }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                Categorías
+            <a href="{{ route('categoria') }}" class="cp-bottom-nav-item {{ request()->routeIs('categoria') ? 'active' : '' }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Categorías</span>
             </a>
-            <a href="{{ route('nosotros') }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                Nosotros
-            </a>
-            <a href="{{ route('carrito.index') }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M2.5 3h2.2l2.2 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/></svg>
-                Carrito
-                @php($cpCarritoCountMobile = collect(session('carrito', []))->sum('cantidad'))
-                @if($cpCarritoCountMobile > 0)
-                    <span style="background:var(--primary); color:white; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; margin-left:auto;">{{ $cpCarritoCountMobile }}</span>
+            <a href="{{ route('carrito.index') }}" class="cp-bottom-nav-item {{ request()->routeIs('carrito.index') ? 'active' : '' }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="20" r="1"/>
+                    <circle cx="18" cy="20" r="1"/>
+                    <path d="M2.5 3h2.2l2.2 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/>
+                </svg>
+                <span>Carrito</span>
+                @if($cpCartCount > 0)
+                    <span style="position:absolute; top:4px; right:4px; min-width:16px; height:16px; background:var(--cp-blue); color:white; font-size:10px; font-weight:800; border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 4px;">{{ $cpCartCount }}</span>
                 @endif
             </a>
-            
-            <div class="cp-mobile-menu-divider"></div>
-            
             @auth
-                @php($rolMobile = strtolower(trim(auth()->user()->rol ?? '')))
-                <div class="cp-mobile-menu-section">Mi Cuenta</div>
-                @if($rolMobile === 'admin')
-                    <a href="{{ route('admin.productos.index') }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                        Panel Admin
-                    </a>
-                    <a href="{{ route('admin.ventas.index') }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
-                        Ventas
-                    </a>
-                    <a href="{{route('admin.anuncios.index') }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-                        Anuncios
-                    </a>
-                @elseif(in_array($rolMobile, ['vendedor', 'ventas'], true))
-                    <a href="{{ route('admin.ventas.index') }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
-                        Panel de Ventas
-                    </a>
-                @endif
-                <a href="{{ route('dashboard') }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
-                    {{ in_array($rolMobile, ['admin', 'vendedor', 'ventas'], true) ? 'Mis Compras' : 'Panel de Usuario' }}
+                <a href="{{ route('dashboard') }}" class="cp-bottom-nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/>
+                        <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/>
+                        <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/>
+                        <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/>
+                    </svg>
+                    <span>Cuenta</span>
                 </a>
-                <a href="{{ route('profile.edit') }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.7 3.3a2 2 0 0 1 2.8 2.8L8 16.6l-4 1 1-4L15.7 3.3z"/></svg>
-                    Editar Perfil
-                </a>
-                <form method="POST" action="{{ route('logout') }}" style="margin:0">
-                    @csrf
-                    <button type="submit" style="color:#DC2626;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l5-5-5-5M20 12H9M13 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7"/></svg>
-                        Cerrar Sesión
-                    </button>
-                </form>
             @else
-                <div class="cp-mobile-menu-section">Acceso</div>
-                <a href="{{ route('login') }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17l5-5-5-5M4 12h10M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></svg>
-                    Ingresar
+                <a href="{{ route('login') }}" class="cp-bottom-nav-item {{ request()->routeIs('login') ? 'active' : '' }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 17l5-5-5-5M4 12h10M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/>
+                    </svg>
+                    <span>Ingresar</span>
                 </a>
             @endauth
         </div>
@@ -488,7 +627,7 @@
     </footer>
 
     <script>
-        // Toggle de tema (sincronizado con el resto de páginas del sitio)
+        // Toggle de tema (desktop)
         const themeBtn  = document.getElementById('cp-theme-toggle');
         const iconSun   = document.getElementById('cp-icon-sun');
         const iconMoon  = document.getElementById('cp-icon-moon');
@@ -510,21 +649,61 @@
             syncThemeIcon();
         });
 
-        // Menú móvil
-        const mobileToggle = document.getElementById('cp-mobile-toggle');
-        const mobileMenu = document.getElementById('cp-mobile-menu');
-        mobileToggle?.addEventListener('click', function () {
-            mobileMenu.classList.toggle('open');
+        // Toggle de tema (móvil)
+        const themeBtnMobile  = document.getElementById('cp-theme-toggle-mobile');
+        const iconSunMobile   = document.getElementById('cp-icon-sun-mobile');
+        const iconMoonMobile  = document.getElementById('cp-icon-moon-mobile');
+
+        function syncThemeIconMobile() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            iconSunMobile.style.display  = isDark ? 'none' : 'block';
+            iconMoonMobile.style.display = isDark ? 'block' : 'none';
+        }
+        syncThemeIconMobile();
+
+        themeBtnMobile?.addEventListener('click', function () {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            localStorage.setItem('cpTheme', newTheme);
+            document.documentElement.classList.toggle('dark', newTheme === 'dark');
+            syncThemeIconMobile();
         });
 
-        // Cerrar menú móvil al hacer clic en un enlace
-        mobileMenu?.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.remove('open');
-            });
+        // Professional Mobile Drawer
+        const drawerToggle = document.getElementById('cp-drawer-toggle');
+        const drawer = document.getElementById('cp-drawer');
+        const drawerOverlay = document.getElementById('cp-drawer-overlay');
+
+        function openDrawer() {
+            drawer.classList.add('open');
+            drawerOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            drawerOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        drawerToggle?.addEventListener('click', openDrawer);
+        drawerOverlay?.addEventListener('click', closeDrawer);
+
+        // Cerrar drawer al hacer clic en enlaces
+        drawer?.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', closeDrawer);
         });
 
-        // Dropdown de usuario (panel / perfil / cerrar sesión)
+        // Cerrar drawer con tecla ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && drawer.classList.contains('open')) {
+                closeDrawer();
+            }
+        });
+
+        // Dropdown de usuario (desktop)
         const userToggle = document.getElementById('cp-user-toggle');
         const userDropdown = document.getElementById('cp-user-dropdown');
         userToggle?.addEventListener('click', function (e) {

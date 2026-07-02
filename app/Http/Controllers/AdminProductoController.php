@@ -346,21 +346,26 @@ class AdminProductoController extends Controller
     public function destroyMultiple(Request $request)
     {
         $request->validate([
-            'productos' => 'required',
+            'productos' => 'required|array',
+            'productos.*' => 'integer',
         ]);
 
         try {
-            // Decodificar el JSON de IDs
-            $productosIds = json_decode($request->productos, true);
+            \Log::info('destroyMultiple recibido', [
+                'productos' => $request->productos,
+                'count' => count($request->productos),
+            ]);
 
-            if (!is_array($productosIds) || empty($productosIds)) {
+            $productosIds = $request->productos;
+
+            if (empty($productosIds)) {
                 return redirect()->route('admin.productos.index')
                     ->with('error', '❌ No se seleccionaron productos para eliminar.');
             }
 
-            // Convertir a enteros y filtrar valores inválidos
-            $productosIds = array_filter(array_map('intval', $productosIds), function($id) {
-                return $id > 0;
+            // Filtrar IDs válidos
+            $productosIds = array_filter($productosIds, function($id) {
+                return is_numeric($id) && $id > 0;
             });
 
             if (empty($productosIds)) {

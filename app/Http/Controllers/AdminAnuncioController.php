@@ -88,9 +88,18 @@ class AdminAnuncioController extends Controller
     // ─────────────────────────────────────────────
     public function store(Request $request)
     {
+        \Log::info('store anuncio recibido', [
+            'has_files' => $request->hasFile('imagenes'),
+            'files_count' => $request->hasFile('imagenes') ? count($request->file('imagenes')) : 0,
+            'titulo' => $request->titulo,
+            'posicion' => $request->posicion,
+            'all_request' => $request->all(),
+        ]);
+
         $request->validate([
             'titulo' => 'required|string|max:100',
-            'imagenes.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'imagenes' => 'required|array|min:1',
+            'imagenes.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'posicion' => 'required|in:principal,secundario,lateral',
         ]);
 

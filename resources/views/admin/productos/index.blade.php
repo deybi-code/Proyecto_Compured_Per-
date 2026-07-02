@@ -41,7 +41,6 @@
             <form method="POST" action="{{ route('admin.productos.destroyMultiple') }}" id="bulkDeleteForm" style="display:inline;">
                 @csrf
                 @method('DELETE')
-                <input type="hidden" name="productos" id="selectedProductos" value="">
                 <button type="submit" onclick="return confirm('¿Estás seguro de eliminar los productos seleccionados?')" style="background:#ef4444;color:white;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
                     🗑 Eliminar seleccionados
                 </button>
@@ -252,10 +251,7 @@
         document.querySelectorAll('.product-checkbox:checked').forEach(cb => {
             selected.push(cb.value);
         });
-        const hiddenField = document.getElementById('selectedProductos');
-        if (hiddenField) {
-            hiddenField.value = JSON.stringify(selected);
-        }
+        console.log('IDs seleccionados:', selected);
     }
 
     // Inicializar estado del botón

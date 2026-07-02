@@ -81,6 +81,20 @@
     .modern-breadcrumb a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
     .modern-breadcrumb a:hover { color: var(--primary-hover); text-decoration: underline; }
     .modern-breadcrumb span.sep { color: var(--border); }
+
+    @media (max-width: 768px) {
+        .cat-hero { padding: 24px; flex-direction: column; text-align: center; gap: 16px; }
+        .cat-icon-wrap { width: 64px; height: 64px; font-size: 32px; }
+        .cat-hero h1 { font-size: 1.8rem; }
+        .modern-breadcrumb { font-size: 12px; padding: 10px 16px; }
+        .animate-card { animation-delay: 0s !important; }
+    }
+    @media (max-width: 480px) {
+        .glass-card { border-radius: 12px; }
+        .product-img-wrap { height: 160px; padding: 16px; }
+        .product-body { padding: 16px; }
+        .btn-mega, .btn-outline-mega { padding: 14px 16px; font-size: 15px; }
+    }
 </style>
 
 <div class="max-w-7xl mx-auto px-4 py-8" style="min-height: calc(100vh - 200px);">

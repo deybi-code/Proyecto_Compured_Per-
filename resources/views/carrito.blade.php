@@ -90,6 +90,7 @@
     .cart-item {
         display:flex; align-items:center; gap:16px; padding: 18px 26px;
         border-bottom: 1px solid var(--border); transition: background .2s;
+        position: relative;
     }
     .cart-item:last-child { border-bottom:none; }
     .cart-item:hover { background: rgba(59,130,246,0.04); }
@@ -232,6 +233,14 @@
         .step-actions { flex-direction: column-reverse; }
         .step-actions .btn-ghost { width: 100%; }
         .review-card { margin-left: 20px; margin-right: 20px; }
+        .cart-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+        .prod-thumb { width: 100%; height: 120px; }
+        .btn-danger-icon { position: absolute; top: 12px; right: 12px; }
+        .premium-panel { border-radius: 16px; }
+        .toggle-btn { padding: 12px 8px; font-size: 12px; }
+        .cp-input { padding: 16px; font-size: 16px; }
+        .btn-mega { padding: 16px 20px; font-size: 15px; }
+        .btn-ghost { padding: 16px 20px; font-size: 15px; }
     }
 </style>
 

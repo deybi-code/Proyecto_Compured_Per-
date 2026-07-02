@@ -145,6 +145,28 @@
     @media (max-width:768px) {
         .tab-panel { padding:20px 16px; }
         .recom-grid { grid-template-columns:repeat(2, 1fr); }
+        .product-main-grid { grid-template-columns: 1fr !important; gap: 24px; }
+        .gallery-wrap { min-height: 280px; padding: 20px; }
+        .gallery-wrap img { max-height: 280px; }
+        .thumbs { gap: 8px; }
+        .thumb { width: 56px; height: 56px; }
+        .product-title { font-size: 1.5rem; }
+        .product-price { font-size: 2rem; }
+        .qty-wrap { width: 100%; }
+        .qty-btn { width: 50px; height: 48px; }
+        .qty-input { width: 60px; font-size: 18px; }
+        .btn-cart { padding: 16px; font-size: 16px; }
+        .trust-bar { flex-direction: column; gap: 12px; align-items: flex-start; }
+        .tabs-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .tab-btn { padding: 14px 16px; font-size: 13px; white-space: nowrap; }
+        .specs-table td { padding: 12px 10px; font-size: 13px; }
+        .specs-table td:first-child { width: 45%; }
+    }
+    @media (max-width: 480px) {
+        .recom-grid { grid-template-columns: 1fr; }
+        .product-card { border-radius: 16px; }
+        .tabs-section { border-radius: 16px; }
+        .comments-grid { grid-template-columns: 1fr !important; }
     }
 </style>
 
@@ -335,7 +357,7 @@
 
             {{-- COMENTARIOS --}}
             <div class="tab-panel" x-show="tab === 'comentarios'" x-transition.opacity x-cloak>
-                <div style="display:grid; grid-template-columns:3fr 2fr; gap:32px;">
+                <div style="display:grid; grid-template-columns:3fr 2fr; gap:32px;" class="comments-grid">
                     <div>
                         <h3>💬 Reseñas de Clientes</h3>
                         <div class="comment-empty">

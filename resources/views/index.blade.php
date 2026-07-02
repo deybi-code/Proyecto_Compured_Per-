@@ -70,6 +70,89 @@
         transform: translateY(-1px);
         box-shadow: 0 6px 20px rgba(0, 82, 204, 0.35);
     }
+    @media (max-width: 768px) {
+        .btn-mega { padding: 14px 16px; font-size: 15px; }
+        .btn-outline-mega { padding: 14px 16px; font-size: 15px; }
+        .main-content { flex-direction: column; }
+        .products-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .offers-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .product-img-wrap img { height: 140px; }
+        .hero-scene { min-height: 300px; border-radius: 0 0 20px 20px; }
+        .glass-card { border-radius: 12px; }
+        .cat-sidebar-title { padding: 12px 16px; font-size: 13px; }
+        .cat-item { padding: 12px 16px; font-size: 13px; }
+    }
+    @media (max-width: 480px) {
+        .products-grid { grid-template-columns: 1fr; }
+        .offers-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Dropdown de categorías móvil */
+    .mobile-cat-dropdown {
+        display: none;
+        margin-bottom: 20px;
+    }
+    .mobile-cat-toggle {
+        display: none;
+        width: 100%;
+        padding: 14px 16px;
+        background: var(--card);
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        cursor: pointer;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        transition: all 0.2s;
+    }
+    .mobile-cat-toggle:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    .mobile-cat-toggle svg {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s;
+    }
+    .mobile-cat-toggle.open svg {
+        transform: rotate(180deg);
+    }
+    .mobile-cat-menu {
+        display: none;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 16px;
+        background: var(--card);
+        border: 2px solid var(--border);
+        border-radius: 12px;
+    }
+    .mobile-cat-menu.open {
+        display: flex;
+    }
+    .mobile-cat-menu a {
+        padding: 12px 16px;
+        background: var(--input-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .mobile-cat-menu a:hover {
+        background: rgba(59, 130, 246, 0.08);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    @media (max-width: 768px) {
+        .mobile-cat-dropdown { display: block; }
+        .mobile-cat-toggle { display: flex; }
+    }
     .btn-outline-mega {
         display: inline-flex;
         align-items: center;
@@ -204,7 +287,7 @@
 
 <div style="max-width:1280px; margin:0 auto; padding:0 16px 60px 16px; display:flex; flex-wrap:wrap; gap:30px;">
 
-    <aside style="width:260px; flex-shrink:0;" class="hidden md:block">
+    <aside style="width:260px; flex-shrink:0;" class="hidden md:block" id="desktop-sidebar">
         <div class="glass-card" style="padding:0; margin-bottom:24px; border-top:4px solid var(--primary);">
             <div class="cat-sidebar-title">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:inline; margin-right:8px; vertical-align:-3px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -239,7 +322,34 @@
         </div>
     </aside>
 
-    <section style="flex:1; min-width:0;">
+    <section style="flex:1; min-width:0;" class="products-section">
+        {{-- Dropdown de categorías móvil --}}
+        <div class="mobile-cat-dropdown">
+            <button type="button" class="mobile-cat-toggle" id="mobile-cat-toggle">
+                <span style="display:flex; align-items:center; gap:10px;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Filtrar por Categoría
+                </span>
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="mobile-cat-menu" id="mobile-cat-menu">
+                @if(isset($categorias) && $categorias->count())
+                    @foreach($categorias as $cat)
+                    <a href="/categoria/{{ Str::slug($cat->nombre_categoria) }}">{{ $cat->nombre_categoria }}</a>
+                    @endforeach
+                @else
+                    <a href="/categoria/computadoras">Computadoras</a>
+                    <a href="/categoria/laptops">Laptops</a>
+                    <a href="/categoria/accesorios">Accesorios</a>
+                    <a href="/categoria/redes">Redes / Conectividad</a>
+                    <a href="/categoria/case">Cases</a>
+                    <a href="/categoria/fuentes">Fuentes para Case</a>
+                    <a href="/categoria/coolers">Coolers / CPU</a>
+                    <a href="/categoria/monitores">Monitores</a>
+                @endif
+            </div>
+        </div>
+
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid var(--border);">
             <h2 class="section-title"><span style="color:var(--accent);">⭐</span> Más Valorados</h2>
             <a href="/buscar" style="font-size:13px; color:var(--primary); font-weight:700; text-decoration:none;">Ver catálogo completo →</a>
@@ -309,7 +419,7 @@
         @if(isset($productos) && $productos->count())
         <div style="margin-top:48px; padding-top:32px; border-top:2px solid var(--border);">
             <h2 class="section-title" style="margin-bottom:24px;"><span style="color:var(--accent);">🔥</span> Ofertas del día</h2>
-            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:24px;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:24px;" class="offers-grid">
                 @foreach($productos->take(4) as $producto)
                 <div class="glass-card" style="border-top:4px solid var(--primary);">
                     <div class="product-img-wrap">
@@ -337,6 +447,16 @@
         @endif
     </section>
 </div>
+
+<script>
+    // Dropdown de categorías móvil
+    const mobileCatToggle = document.getElementById('mobile-cat-toggle');
+    const mobileCatMenu = document.getElementById('mobile-cat-menu');
+    mobileCatToggle?.addEventListener('click', function () {
+        mobileCatToggle.classList.toggle('open');
+        mobileCatMenu.classList.toggle('open');
+    });
+</script>
 
 <div class="hero-scene features-strip" style="margin-top:20px; padding:48px 16px; border-radius:30px 30px 0 0;">
     <div class="hero-grid"></div>

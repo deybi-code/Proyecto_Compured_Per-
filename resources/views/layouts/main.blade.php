@@ -114,23 +114,98 @@
 
         .cp-mobile-toggle {
             display: none; align-items: center; justify-content: center;
-            width: 40px; height: 40px; border-radius: 10px;
+            width: 44px; height: 44px; border-radius: 12px;
             background: var(--input-bg); border: 1px solid var(--border);
             color: var(--text); cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .cp-mobile-toggle svg { width: 19px; height: 19px; }
-        .cp-mobile-menu { display: none; flex-direction: column; gap: 12px; padding: 16px 20px; border-top: 1px solid var(--border); }
-        .cp-mobile-menu.open { display: flex; }
+        .cp-mobile-toggle:hover { background: var(--border); }
+        .cp-mobile-toggle svg { width: 20px; height: 20px; }
+        .cp-mobile-menu { 
+            display: none; 
+            flex-direction: column; 
+            gap: 8px; 
+            padding: 20px; 
+            border-top: 1px solid var(--border);
+            background: var(--card);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        .cp-mobile-menu.open { 
+            display: flex;
+            max-height: 500px;
+            padding: 20px;
+        }
         .cp-mobile-menu a, .cp-mobile-menu button {
-            display: flex; align-items: center; gap: 10px;
-            font-weight: 600; font-size: 14px; color: var(--text);
-            background: none; border: none; padding: 0; text-align: left; cursor: pointer; font-family: inherit;
+            display: flex; align-items: center; gap: 12px;
+            font-weight: 600; font-size: 15px; color: var(--text);
+            background: var(--input-bg); border: 1px solid var(--border);
+            padding: 14px 16px; text-align: left; cursor: pointer; font-family: inherit;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            text-decoration: none;
         }
-        .cp-mobile-menu svg { width: 17px; height: 17px; }
+        .cp-mobile-menu a:hover, .cp-mobile-menu button:hover {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .cp-mobile-menu svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .cp-mobile-menu-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 8px 0;
+        }
+        .cp-mobile-menu-section {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 12px 0 8px 0;
+        }
 
         @media (max-width: 860px) {
             .cp-nav-links { display: none; }
             .cp-mobile-toggle { display: inline-flex; }
+            .cp-nav-actions { gap: 8px; }
+            .cp-icon-btn { width: 44px; height: 44px; }
+        }
+
+        /* Botón flotante WhatsApp exclusivo móvil */
+        .cp-whatsapp-float {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulseWhatsApp 2s infinite;
+        }
+        .cp-whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 28px rgba(37, 211, 102, 0.6);
+        }
+        .cp-whatsapp-float svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+        @keyframes pulseWhatsApp {
+            0%, 100% { box-shadow: 0 4px 20px rgba(37, 211, 102, 0.5); }
+            50% { box-shadow: 0 4px 30px rgba(37, 211, 102, 0.7); }
+        }
+        @media (max-width: 768px) {
+            .cp-whatsapp-float { display: flex; }
         }
 
         .cp-footer {
@@ -315,31 +390,73 @@
         </div>
 
         <div class="cp-mobile-menu" id="cp-mobile-menu">
-            <a href="{{ route('home') }}">Inicio</a>
-            <a href="{{ route('categoria') }}">Categorías</a>
-            <a href="{{ route('nosotros') }}">Nosotros</a>
-            <a href="{{ route('terminos') }}">Términos</a>
-            <a href="{{ route('carrito.index') }}">Carrito</a>
+            <div class="cp-mobile-menu-section">Navegación</div>
+            <a href="{{ route('home') }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Inicio
+            </a>
+            <a href="{{ route('categoria') }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Categorías
+            </a>
+            <a href="{{ route('nosotros') }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                Nosotros
+            </a>
+            <a href="{{ route('carrito.index') }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/><path d="M2.5 3h2.2l2.2 12.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+                Carrito
+                @php($cpCarritoCountMobile = collect(session('carrito', []))->sum('cantidad'))
+                @if($cpCarritoCountMobile > 0)
+                    <span style="background:var(--primary); color:white; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; margin-left:auto;">{{ $cpCarritoCountMobile }}</span>
+                @endif
+            </a>
+            
+            <div class="cp-mobile-menu-divider"></div>
+            
             @auth
                 @php($rolMobile = strtolower(trim(auth()->user()->rol ?? '')))
+                <div class="cp-mobile-menu-section">Mi Cuenta</div>
                 @if($rolMobile === 'admin')
-                    <a href="{{ route('admin.productos.index') }}">Panel Admin (Productos)</a>
-                    <a href="{{ route('admin.ventas.index') }}">Ventas</a>
-                    <a href="{{route('admin.anuncios.index') }}">Anuncios</a>
+                    <a href="{{ route('admin.productos.index') }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        Panel Admin
+                    </a>
+                    <a href="{{ route('admin.ventas.index') }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
+                        Ventas
+                    </a>
+                    <a href="{{route('admin.anuncios.index') }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
+                        Anuncios
+                    </a>
                 @elseif(in_array($rolMobile, ['vendedor', 'ventas'], true))
-                    <a href="{{ route('admin.ventas.index') }}">Panel de Ventas</a>
+                    <a href="{{ route('admin.ventas.index') }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8M14 8h6v6"/></svg>
+                        Panel de Ventas
+                    </a>
                 @endif
-                <a href="{{ route('dashboard') }}">{{ in_array($rolMobile, ['admin', 'vendedor', 'ventas'], true) ? 'Mis Compras' : 'Panel de Usuario' }}</a>
-                <a href="{{ route('profile.edit') }}">Editar Perfil</a>
+                <a href="{{ route('dashboard') }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+                    {{ in_array($rolMobile, ['admin', 'vendedor', 'ventas'], true) ? 'Mis Compras' : 'Panel de Usuario' }}
+                </a>
+                <a href="{{ route('profile.edit') }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.7 3.3a2 2 0 0 1 2.8 2.8L8 16.6l-4 1 1-4L15.7 3.3z"/></svg>
+                    Editar Perfil
+                </a>
                 <form method="POST" action="{{ route('logout') }}" style="margin:0">
                     @csrf
-                    <button type="submit" style="color:var(--error);">
+                    <button type="submit" style="color:#DC2626;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l5-5-5-5M20 12H9M13 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7"/></svg>
                         Cerrar Sesión
                     </button>
                 </form>
             @else
-                <a href="{{ route('login') }}">Ingresar</a>
+                <div class="cp-mobile-menu-section">Acceso</div>
+                <a href="{{ route('login') }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17l5-5-5-5M4 12h10M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></svg>
+                    Ingresar
+                </a>
             @endauth
         </div>
     </nav>
@@ -400,6 +517,13 @@
             mobileMenu.classList.toggle('open');
         });
 
+        // Cerrar menú móvil al hacer clic en un enlace
+        mobileMenu?.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+            });
+        });
+
         // Dropdown de usuario (panel / perfil / cerrar sesión)
         const userToggle = document.getElementById('cp-user-toggle');
         const userDropdown = document.getElementById('cp-user-dropdown');
@@ -413,6 +537,13 @@
             }
         });
     </script>
+
+    {{-- Botón flotante WhatsApp exclusivo móvil --}}
+    <a href="https://wa.me/51999999999" target="_blank" class="cp-whatsapp-float" aria-label="Contactar por WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+    </a>
 
     @yield('scripts')
 </body>

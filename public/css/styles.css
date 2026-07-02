@@ -1110,3 +1110,42 @@ body {
 .btn-finalizar-ws:hover {
     background: #1ea952;
 }
+
+
+
+
+.cat-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 340px;
+}
+
+.cat-card-img {
+    height: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cat-card-img img {
+    max-height: 150px;
+    width: auto;
+    object-fit: contain;
+}
+
+.cat-card-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.cat-card-nombre {
+    min-height: 40px;
+}
+
+.cat-card-precio {
+    margin-top: auto;
+}

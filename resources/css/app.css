@@ -541,61 +541,12 @@ html.dark .site-footer {
   margin-top: 32px;
 }
 
-/* ===== ADMIN SIDEBAR ===== */
-.admin-sidebar {
-  width: 240px;
-  min-height: 100vh;
-  background: var(--cp-navy);
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow-y: auto;
-}
-html.dark .admin-sidebar {
-  background: #010409;
-  border-right: 1px solid var(--cp-dark-border);
-}
-
-.admin-logo-area {
-  padding: 20px 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  background: linear-gradient(135deg, rgba(0,82,204,0.3) 0%, transparent 100%);
-}
-
-.admin-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 20px;
-  color: rgba(255,255,255,0.65);
-  text-decoration: none;
-  font-size: 0.87rem;
-  font-weight: 500;
-  transition: all 0.15s;
-  border-left: 3px solid transparent;
-}
-.admin-nav-item:hover {
-  background: rgba(0,82,204,0.2);
-  color: white;
-  border-left-color: var(--cp-blue-light);
-}
-.admin-nav-item.active {
-  background: rgba(0,82,204,0.25);
-  color: white;
-  border-left-color: var(--cp-blue);
-  font-weight: 600;
-}
-
-.admin-nav-icon {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  opacity: 0.7;
-}
-.admin-nav-item:hover .admin-nav-icon,
-.admin-nav-item.active .admin-nav-icon { opacity: 1; }
+/* NOTA: el bloque ".admin-sidebar / .admin-logo-area / .admin-nav-item" que
+   estaba aquí antes era CSS muerto (ninguna vista lo usaba) pero, por
+   coincidencia de nombre con la clase real del sidebar admin (definida en
+   layouts/admin.blade.php), a veces ganaba la cascada y dejaba el sidebar
+   siempre oscuro sin importar el tema. Se eliminó para que ya no choque.
+   El estilo real y correcto del sidebar admin vive en layouts/admin.blade.php. */
 
 /* ===== BUTTONS ===== */
 .btn-primary {

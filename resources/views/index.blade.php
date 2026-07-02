@@ -490,7 +490,7 @@
         <div style="margin-top:48px; padding-top:32px; border-top:2px solid var(--border);">
             <h2 class="section-title" style="margin-bottom:24px;"><span style="color:var(--accent);">🔥</span> Ofertas del día</h2>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:24px;" class="offers-grid">
-                @foreach($productos->take(4) as $producto)
+                @foreach($productos->take(5) as $producto)
                 @php
                     $tieneDescuento = !is_null($producto->precio_descuento) && $producto->precio_descuento > 0;
                     $precioOferta = $tieneDescuento ? $producto->precio_descuento : $producto->precio;

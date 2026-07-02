@@ -20,12 +20,13 @@ class AdminProductoController extends Controller
         $apiSecret = env('CLOUDINARY_API_SECRET');
 
         // Verificar que las credenciales estén configuradas
-        if (!$cloudName || !$apiKey || !$apiSecret) {
+        if (! $cloudName || ! $apiKey || ! $apiSecret) {
             \Log::error('Cloudinary credentials not configured', [
                 'cloud_name' => $cloudName ? 'SET' : 'MISSING',
                 'api_key' => $apiKey ? 'SET' : 'MISSING',
                 'api_secret' => $apiSecret ? 'SET' : 'MISSING',
             ]);
+
             return null;
         }
 
@@ -54,6 +55,7 @@ class AdminProductoController extends Controller
 
         if ($curlError) {
             \Log::error('Cloudinary cURL error', ['error' => $curlError]);
+
             return null;
         }
 
@@ -62,6 +64,7 @@ class AdminProductoController extends Controller
                 'http_code' => $httpCode,
                 'response' => $response,
             ]);
+
             return null;
         }
 
@@ -72,11 +75,13 @@ class AdminProductoController extends Controller
                 'error' => json_last_error_msg(),
                 'response' => $response,
             ]);
+
             return null;
         }
 
-        if (!isset($data['secure_url'])) {
+        if (! isset($data['secure_url'])) {
             \Log::error('Cloudinary response missing secure_url', ['data' => $data]);
+
             return null;
         }
 
@@ -164,6 +169,8 @@ class AdminProductoController extends Controller
         $data = $request->validate([
             'nombre' => 'required|string|max:150',
             'precio' => 'required|numeric|min:0',
+            'precio_descuento' => 'nullable|numeric|min:0',
+            'porcentaje_descuento' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'marca' => 'required|string|max:50',
             'id_categoria' => 'required|integer|exists:categorias,id_categoria',
@@ -249,6 +256,8 @@ class AdminProductoController extends Controller
         $data = $request->validate([
             'nombre' => 'required|string|max:150',
             'precio' => 'required|numeric|min:0',
+            'precio_descuento' => 'nullable|numeric|min:0',
+            'porcentaje_descuento' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'marca' => 'required|string|max:50',
             'id_categoria' => 'required|integer|exists:categorias,id_categoria',
@@ -364,7 +373,7 @@ class AdminProductoController extends Controller
             }
 
             // Filtrar IDs válidos
-            $productosIds = array_filter($productosIds, function($id) {
+            $productosIds = array_filter($productosIds, function ($id) {
                 return is_numeric($id) && $id > 0;
             });
 
@@ -398,14 +407,14 @@ class AdminProductoController extends Controller
                 $producto->delete();
             }
 
-            $mensaje = count($productos) . ' productos eliminados correctamente.';
+            $mensaje = count($productos).' productos eliminados correctamente.';
 
             if ($request->expectsJson()) {
                 return response()->json(['message' => $mensaje]);
             }
 
             return redirect()->route('admin.productos.index')
-                ->with('success', '✅ ' . $mensaje);
+                ->with('success', '✅ '.$mensaje);
 
         } catch (\Exception $e) {
             \Log::error('Error al eliminar múltiples productos', [
@@ -419,7 +428,7 @@ class AdminProductoController extends Controller
             }
 
             return redirect()->route('admin.productos.index')
-                ->with('error', '❌ Error al eliminar productos: ' . $e->getMessage());
+                ->with('error', '❌ Error al eliminar productos: '.$e->getMessage());
         }
     }
 
@@ -458,6 +467,8 @@ class AdminProductoController extends Controller
                 $marca = trim($fila[3] ?? '');
                 $categoriaNombre = trim($fila[4] ?? '');
                 $detalles = trim($fila[5] ?? '');
+                $precioDescuento = ! empty($fila[6]) ? floatval($fila[6]) : null;
+                $porcentajeDescuento = ! empty($fila[7]) ? floatval($fila[7]) : null;
 
                 // Validaciones básicas
                 if (empty($nombre) || $precio <= 0 || $stock < 0) {
@@ -479,6 +490,8 @@ class AdminProductoController extends Controller
                 Producto::create([
                     'nombre' => $nombre,
                     'precio' => $precio,
+                    'precio_descuento' => $precioDescuento,
+                    'porcentaje_descuento' => $porcentajeDescuento,
                     'stock' => $stock,
                     'marca' => $marca ?: 'Sin marca',
                     'id_categoria' => $categoria->id_categoria,

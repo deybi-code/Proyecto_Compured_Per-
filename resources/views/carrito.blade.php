@@ -528,7 +528,7 @@
                                 <div x-show="entrega === 'recojo'" x-transition.opacity x-cloak>
                                     <div style="background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2); padding:16px; border-radius:14px;">
                                         <div style="font-weight:800; color:var(--primary); font-size:13px; margin-bottom:4px;">📍 Dirección de Tienda</div>
-                                        <div style="color:var(--text); font-size:13px; font-weight:600;">Av. Tecnología 123, Centro de Lima.</div>
+                                        <div style="color:var(--text); font-size:13px; font-weight:600;">Trujillo, centro histórico.</div>
                                         <div style="color:var(--muted); font-size:12px; margin-top:4px;">Presentar comprobante digital al recoger. Te avisaremos por teléfono cuando esté listo.</div>
                                     </div>
                                 </div>

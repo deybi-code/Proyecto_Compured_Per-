@@ -94,6 +94,36 @@
             </div>
         </div>
 
+        {{-- DESCUENTO --}}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:5px;">
+                    Precio con Descuento (S/) - Opcional
+                </label>
+                <input type="number"
+                       name="precio_descuento"
+                       value="{{ old('precio_descuento') }}"
+                       step="0.01"
+                       min="0"
+                       placeholder="0.00"
+                       style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+                <small style="color:#6b7280;font-size:12px;">Dejar vacío si no hay descuento</small>
+            </div>
+            <div>
+                <label style="display:block;font-weight:600;margin-bottom:5px;">
+                    Porcentaje de Descuento (%) - Opcional
+                </label>
+                <input type="number"
+                       name="porcentaje_descuento"
+                       value="{{ old('porcentaje_descuento') }}"
+                       step="0.01"
+                       min="0"
+                       placeholder="Ej: 20"
+                       style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+                <small style="color:#6b7280;font-size:12px;">Ej: 20 para 20% de descuento</small>
+            </div>
+        </div>
+
         {{-- CATEGORÍA --}}
         <div style="margin-bottom:15px;">
             <label style="display:block;font-weight:600;margin-bottom:5px;">

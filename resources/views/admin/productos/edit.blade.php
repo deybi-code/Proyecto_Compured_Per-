@@ -67,6 +67,22 @@
             </div>
         </div>
 
+        {{-- DESCUENTO --}}
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
+            <div>
+                <label style="display:block; color:#334155; font-weight:600; margin-bottom:6px;">Precio con Descuento (S/) - Opcional</label>
+                <input type="number" name="precio_descuento" value="{{ $producto->precio_descuento }}" step="0.01"
+                       style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; font-size:15px; outline:none;">
+                <small style="color:#64748b; font-size:12px;">Dejar vacío si no hay descuento</small>
+            </div>
+            <div>
+                <label style="display:block; color:#334155; font-weight:600; margin-bottom:6px;">Porcentaje de Descuento (%) - Opcional</label>
+                <input type="number" name="porcentaje_descuento" value="{{ $producto->porcentaje_descuento }}" step="0.01"
+                       style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; font-size:15px; outline:none;">
+                <small style="color:#64748b; font-size:12px;">Ej: 20 para 20% de descuento</small>
+            </div>
+        </div>
+
         <div style="margin-bottom:18px;">
             <label style="display:block; color:#334155; font-weight:600; margin-bottom:6px;">Detalles Técnicos</label>
             <textarea name="detalles_tecnicos" rows="4"

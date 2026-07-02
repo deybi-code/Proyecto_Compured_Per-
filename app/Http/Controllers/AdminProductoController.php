@@ -354,22 +354,26 @@ class AdminProductoController extends Controller
     // ─────────────────────────────────────────────
     public function destroyMultiple(Request $request)
     {
+        \Log::info('destroyMultiple llamado', [
+            'method' => $request->method(),
+            'all' => $request->all(),
+            'productos' => $request->productos,
+        ]);
+
         $request->validate([
             'productos' => 'required|array',
             'productos.*' => 'integer',
         ]);
 
         try {
-            \Log::info('destroyMultiple recibido', [
-                'productos' => $request->productos,
-                'count' => count($request->productos),
-            ]);
-
             $productosIds = $request->productos;
 
+            \Log::info('Productos IDs recibidos', ['ids' => $productosIds]);
+
             if (empty($productosIds)) {
-                return redirect()->route('admin.productos.index')
-                    ->with('error', '❌ No se seleccionaron productos para eliminar.');
+                \Log::warning('No se seleccionaron productos');
+
+                return response()->json(['message' => '❌ No se seleccionaron productos para eliminar.'], 400);
             }
 
             // Filtrar IDs válidos
@@ -377,9 +381,12 @@ class AdminProductoController extends Controller
                 return is_numeric($id) && $id > 0;
             });
 
+            \Log::info('Productos IDs filtrados', ['ids' => $productosIds]);
+
             if (empty($productosIds)) {
-                return redirect()->route('admin.productos.index')
-                    ->with('error', '❌ IDs de productos inválidos.');
+                \Log::warning('IDs de productos inválidos');
+
+                return response()->json(['message' => '❌ IDs de productos inválidos.'], 400);
             }
 
             // Eliminar detalles de boleta asociados
@@ -390,6 +397,8 @@ class AdminProductoController extends Controller
 
             // Obtener productos para eliminar imágenes de Cloudinary
             $productos = Producto::with('fotos')->whereIn('id_producto', $productosIds)->get();
+
+            \Log::info('Productos a eliminar', ['count' => $productos->count()]);
 
             foreach ($productos as $producto) {
                 // Eliminar imagen principal de Cloudinary si existe
@@ -409,12 +418,9 @@ class AdminProductoController extends Controller
 
             $mensaje = count($productos).' productos eliminados correctamente.';
 
-            if ($request->expectsJson()) {
-                return response()->json(['message' => $mensaje]);
-            }
+            \Log::info('Eliminación exitosa', ['mensaje' => $mensaje]);
 
-            return redirect()->route('admin.productos.index')
-                ->with('success', '✅ '.$mensaje);
+            return response()->json(['message' => $mensaje]);
 
         } catch (\Exception $e) {
             \Log::error('Error al eliminar múltiples productos', [
@@ -423,12 +429,7 @@ class AdminProductoController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            if ($request->expectsJson()) {
-                return response()->json(['message' => $e->getMessage()], 500);
-            }
-
-            return redirect()->route('admin.productos.index')
-                ->with('error', '❌ Error al eliminar productos: '.$e->getMessage());
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 

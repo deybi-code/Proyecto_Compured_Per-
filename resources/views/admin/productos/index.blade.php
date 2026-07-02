@@ -231,86 +231,77 @@
 
 @push('scripts')
 <script>
+    function eliminarSeleccionados() {
+        const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+        const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+
+        if (selectedIds.length === 0) {
+            alert('Selecciona al menos un producto para eliminar.');
+            return;
+        }
+
+        if (!confirm('¿Estás seguro de eliminar ' + selectedIds.length + ' producto(s) seleccionado(s)?')) {
+            return;
+        }
+
+        const form = document.getElementById('bulkDeleteForm');
+        const formData = new FormData(form);
+        
+        // Limpiar productos anteriores y agregar los nuevos
+        formData.delete('productos[]');
+        selectedIds.forEach(id => formData.append('productos[]', id));
+
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            alert('Error al eliminar los productos: ' + error.message);
+        });
+    }
+
+    function actualizarBotonEliminar() {
+        const checkboxes = document.querySelectorAll('.product-checkbox:checked');
+        const btn = document.getElementById('bulkDeleteBtn');
+        if (btn) {
+            btn.disabled = checkboxes.length === 0;
+            btn.style.opacity = checkboxes.length > 0 ? '1' : '0.5';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Seleccionar/deseleccionar todos
+        // Checkbox seleccionar todos
         const selectAll = document.getElementById('selectAll');
         if (selectAll) {
             selectAll.addEventListener('change', function() {
                 const checkboxes = document.querySelectorAll('.product-checkbox');
                 checkboxes.forEach(cb => cb.checked = this.checked);
-                updateSelectedProductos();
+                actualizarBotonEliminar();
             });
         }
 
-        // Habilitar/deshabilitar botón de eliminación masiva
+        // Checkboxes individuales
         const checkboxes = document.querySelectorAll('.product-checkbox');
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', actualizarBotonEliminar);
+        });
+
+        // Botón eliminar seleccionados
         const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
-
         if (bulkDeleteBtn) {
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', function() {
-                    const anyChecked = document.querySelectorAll('.product-checkbox:checked').length > 0;
-                    bulkDeleteBtn.disabled = !anyChecked;
-                    bulkDeleteBtn.style.opacity = anyChecked ? '1' : '0.5';
-                    updateSelectedProductos();
-                });
-            });
-
-            // Actualizar campo oculto con IDs seleccionados
-            function updateSelectedProductos() {
-                const selected = [];
-                document.querySelectorAll('.product-checkbox:checked').forEach(cb => {
-                    selected.push(cb.value);
-                });
-                console.log('IDs seleccionados:', selected);
-            }
-
-            // Eliminar seleccionados vía fetch
-            bulkDeleteBtn.addEventListener('click', function() {
-                const selectedIds = Array.from(document.querySelectorAll('.product-checkbox:checked')).map(cb => cb.value);
-
-                if (selectedIds.length === 0) {
-                    alert('Selecciona al menos un producto para eliminar.');
-                    return;
-                }
-
-                if (!confirm(`¿Estás seguro de eliminar ${selectedIds.length} producto(s) seleccionado(s)?`)) {
-                    return;
-                }
-
-                const btn = this;
-                btn.disabled = true;
-                btn.textContent = 'Eliminando...';
-
-                const token = document.querySelector('#bulkDeleteForm input[name="_token"]').value;
-                const formData = new FormData();
-                formData.append('_token', token);
-                formData.append('_method', 'DELETE');
-                selectedIds.forEach(id => formData.append('productos[]', id));
-
-                fetch('{{ route('admin.productos.destroyMultiple') }}', {
-                    method: 'POST',
-                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                    body: formData,
-                })
-                .then(async response => {
-                    if (!response.ok) {
-                        const text = await response.text();
-                        throw new Error('HTTP ' + response.status + ': ' + text.slice(0, 300));
-                    }
-                    window.location.href = '{{ route('admin.productos.index') }}';
-                })
-                .catch(error => {
-                    console.error('Error al eliminar productos:', error);
-                    alert('Ocurrió un error al eliminar los productos:\n\n' + error.message);
-                    btn.disabled = false;
-                    btn.textContent = '🗑 Eliminar seleccionados';
-                });
-            });
-
-            // Inicializar estado del botón
-            bulkDeleteBtn.disabled = true;
-            bulkDeleteBtn.style.opacity = '0.5';
+            bulkDeleteBtn.addEventListener('click', eliminarSeleccionados);
+            actualizarBotonEliminar();
         }
     });
 </script>

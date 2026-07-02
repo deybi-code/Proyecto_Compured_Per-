@@ -1,0 +1,6 @@
+nombre,precio,stock,marca,categoria,detalles_tecnicos,precio_descuento,porcentaje_descuento
+Laptop HP 15.6,1200.00,5,HP,Laptops,Intel i5 8GB RAM 256GB SSD,960.00,20
+Monitor Samsung 24,350.00,10,Samsung,Monitores,1080p IPS 75Hz,280.00,20
+Teclado Mecánico,150.00,8,Redragon,Perifericos,Switch azul RGB,120.00,20
+Mouse Inalambrico,80.00,15,Logitech,Perifericos,1600 DPI,,
+Auriculares Gaming,200.00,6,Corsair,Audio,7.1 surround,140.00,30

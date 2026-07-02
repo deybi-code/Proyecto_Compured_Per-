@@ -270,7 +270,7 @@
         <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
             @if($anuncio->imagen_url)
                 <div style="flex:1; min-width:300px;">
-                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:20px; border:4px solid rgba(0,82,204,0.12); box-shadow:0 20px 40px rgba(0,82,204,0.12);">
+                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(0,82,204,0.12); box-shadow:0 20px 40px rgba(0,82,204,0.12);">
                 </div>
             @endif
             <div class="hero-slide-panel" style="flex:1; min-width:300px; padding:40px; backdrop-filter:blur(10px); border-radius:20px;">
@@ -286,7 +286,7 @@
         <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
             @if($anuncio->imagen_url)
                 <div style="flex:1; min-width:300px;">
-                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:20px; border:4px solid rgba(245,158,11,0.12); box-shadow:0 20px 40px rgba(245,158,11,0.12);">
+                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(245,158,11,0.12); box-shadow:0 20px 40px rgba(245,158,11,0.12);">
                 </div>
             @endif
             <div class="hero-slide-panel" style="flex:1; min-width:300px; padding:40px; backdrop-filter:blur(10px); border-radius:20px;">
@@ -302,7 +302,7 @@
         <div x-show="slide === {{ $slideIndex }}" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0" class="max-w-7xl mx-auto px-4 w-full z-10" style="display:flex; flex-wrap:wrap; align-items:center; gap:30px;">
             @if($anuncio->imagen_url)
                 <div style="flex:1; min-width:300px;">
-                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:20px; border:4px solid rgba(16,185,129,0.12); box-shadow:0 20px 40px rgba(16,185,129,0.12);">
+                    <img src="{{ $anuncio->imagen_url }}" alt="{{ $anuncio->titulo }}" style="width:100%; max-height:450px; object-fit:cover; border-radius:20px; border:4px solid rgba(16,185,129,0.12); box-shadow:0 20px 40px rgba(16,185,129,0.12);">
                 </div>
             @endif
             <div class="hero-slide-panel" style="flex:1; min-width:300px; padding:40px; backdrop-filter:blur(10px); border-radius:20px;">

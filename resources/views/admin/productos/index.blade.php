@@ -38,8 +38,9 @@
             </button>
 
             {{-- ELIMINAR MASIVO --}}
-            <form id="bulkDeleteForm" style="display:inline;">
+            <form id="bulkDeleteForm" action="{{ route('admin.productos.destroyMultiple') }}" method="POST" style="display:inline;">
                 @csrf
+                @method('DELETE')
                 <button type="button" id="bulkDeleteBtn" style="background:#ef4444;color:white;padding:10px 14px;border:none;border-radius:8px;cursor:pointer; font-weight: 600;">
                     🗑 Eliminar seleccionados
                 </button>

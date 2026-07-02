@@ -34,6 +34,7 @@ RUN apk add --no-cache \
     oniguruma-dev \
     libxml2-dev \
     icu-dev \
+    libzip-dev \
     mysql-client
 
 # Instalar extensiones PHP
